@@ -972,102 +972,182 @@ img, svg { display: block; max-width: 100%; }
 }
 .uc:hover::after { opacity: 1; }
 
-/* ── Layer triangle (Solution section) ─────────────────────── */
-/* Three cards arranged as a triangle with labeled action flows
-   between them. Shows how endpoint → AI → dashboard connect
-   as a cycle instead of a linear grid. */
-.layer-triangle {
+/* ── Layer flow (Solution section) ──────────────────────────
+   Hub-and-spoke topology on desktop:
+     [Desk Agent]    ─┐
+                       ├──▶ [AI Ticket Assistant] ──▶ [Admin Dashboard]
+     [Server Agent]  ─┘
+   Two compact supporting agents on the left both feed the AI
+   core in the middle, which then reports out to the admin
+   dashboard on the right. On mobile everything stacks. */
+.layer-flow {
   position: relative;
   display: grid; gap: 1.5rem;
   grid-template-columns: 1fr;
   isolation: isolate;
 }
-@media (min-width: 64rem) {
-  .layer-triangle {
-    /* 3 equal columns aligned with the 3 cards on the bottom row.
-       AI card lives in the middle column of the top row.
-       Row 2 and row 4 are given generous height so the pills
-       have vertical breathing room and land visually on the
-       midpoint of each dotted line. */
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto 6rem auto 5rem;
-    column-gap: 2rem;
-    row-gap: 0;
-    padding: 0 1rem 0;
-  }
-  /* Card positions */
-  .layer-triangle > .layer-ai       { grid-column: 2; grid-row: 1; }
-  .layer-triangle > .layer-endpoint { grid-column: 1; grid-row: 3; }
-  .layer-triangle > .layer-command  { grid-column: 3; grid-row: 3; }
+/* Mobile: only cards; connectors are decorative and would
+   break the vertical read. */
+.layer-flow > .flow-connect { display: none; }
 
-  /* Flow-link pills — each mirrors the other across the vertical
-     centerline of the grid, so they're always perfectly symmetric.
-     align-self: center puts the pill's vertical center on the
-     midpoint of the row, which lines up with the dotted line. */
-  .layer-triangle > .flow-link-1 {
-    grid-column: 1 / span 2;   /* spans endpoint + AI columns */
-    grid-row: 2;
-    justify-self: center;
-    align-self: center;
+@media (min-width: 80rem) {
+  .layer-flow {
+    /* 5 cols × 2 rows.
+       Col 1: agent cards (stacked, compact)
+       Col 2: Y-merge connector (spans both rows)
+       Col 3: AI ticket assistant (spans both rows, featured)
+       Col 4: straight connector (spans both rows)
+       Col 5: admin dashboard (spans both rows) */
+    grid-template-columns:
+      minmax(0, 0.9fr)
+      minmax(6rem, 9rem)
+      minmax(0, 1.15fr)
+      minmax(6rem, 9rem)
+      minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 0.5rem;
+    row-gap: 1rem;
+    padding: 0.5rem 0.25rem;
+    align-items: stretch;
   }
-  .layer-triangle > .flow-link-2 {
-    grid-column: 2 / span 2;   /* spans AI + command columns */
-    grid-row: 2;
-    justify-self: center;
-    align-self: center;
+  .layer-flow > .layer-endpoint { grid-column: 1; grid-row: 1; }
+  .layer-flow > .layer-server   { grid-column: 1; grid-row: 2; }
+  .layer-flow > .flow-connect-1 { grid-column: 2; grid-row: 1 / span 2; }
+  .layer-flow > .layer-ai       { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
+  .layer-flow > .flow-connect-2 { grid-column: 4; grid-row: 1 / span 2; }
+  .layer-flow > .layer-command  { grid-column: 5; grid-row: 1 / span 2; align-self: center; }
+
+  .layer-flow > .flow-connect { display: block; }
+
+  /* Compact "supporting agent" styling — smaller viz, tighter
+     padding, floating glyphs hidden. Full-content cards would
+     otherwise dwarf the AI core. */
+  .layer-flow > .layer-endpoint,
+  .layer-flow > .layer-server {
+    padding: 1.15rem 1.1rem 1rem;
   }
-  .layer-triangle > .flow-link-3 {
-    grid-column: 1 / -1;
-    grid-row: 4;
-    justify-self: center;
-    align-self: center;
+  .layer-flow > .layer-endpoint .layer-viz,
+  .layer-flow > .layer-server .layer-viz {
+    height: 4.5rem;
+    margin-bottom: 0.85rem;
+  }
+  .layer-flow > .layer-endpoint .layer-viz-glyph,
+  .layer-flow > .layer-server .layer-viz-glyph { display: none; }
+  .layer-flow > .layer-endpoint .layer-ico,
+  .layer-flow > .layer-server .layer-ico {
+    width: 2.5rem; height: 2.5rem;
+  }
+  .layer-flow > .layer-endpoint .layer-ico svg,
+  .layer-flow > .layer-server .layer-ico svg {
+    width: 1.2rem; height: 1.2rem;
+  }
+  .layer-flow > .layer-endpoint .layer-title,
+  .layer-flow > .layer-server .layer-title { font-size: 1rem; }
+  .layer-flow > .layer-endpoint .layer-text,
+  .layer-flow > .layer-server .layer-text {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin-top: 0.4rem;
+  }
+  .layer-flow > .layer-endpoint .layer-caps,
+  .layer-flow > .layer-server .layer-caps {
+    margin: 0.75rem 0;
+    gap: 0.3rem;
+  }
+  .layer-flow > .layer-endpoint .layer-caps li,
+  .layer-flow > .layer-server .layer-caps li {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.55rem;
+  }
+  .layer-flow > .layer-endpoint .layer-foot,
+  .layer-flow > .layer-server .layer-foot {
+    font-size: 0.75rem;
+    padding-top: 0.7rem;
+  }
+
+  /* AI card sits above the connectors with an accent halo — no
+     translate this time (it's already tall from spanning 2 rows). */
+  .layer-flow > .layer-featured {
+    z-index: 2;
+    box-shadow:
+      0 0 0 1px var(--accent-line),
+      0 1.75rem 3rem -1.25rem rgba(21, 160, 107, .22),
+      var(--shadow);
   }
 }
 
-/* Decorative dashed triangle drawn behind the cards.
-   Uses vector-effect: non-scaling-stroke so the dashes stay
-   uniform regardless of viewbox stretching. */
-.triangle-guide {
-  display: none;
-  position: absolute; inset: 0;
+/* ── Connectors: SVG lines with animated dots ──────────────── */
+.flow-connect { position: relative; }
+.flow-svg {
+  position: absolute;
+  inset: 0;
   width: 100%; height: 100%;
+  overflow: visible;
   pointer-events: none;
   z-index: 0;
-  overflow: visible;
-  opacity: 0;
-  animation: guide-in 1s ease .3s forwards;
 }
-@keyframes guide-in { to { opacity: 1; } }
-.triangle-guide path {
+.flow-svg path {
   fill: none;
   stroke: var(--accent-line);
   stroke-width: 2;
   stroke-dasharray: 8 8;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  opacity: 0.75;
-}
-.triangle-guide .arrow-head {
-  fill: var(--accent-deep);
   opacity: 0.8;
 }
-[data-theme="dark"] .triangle-guide .arrow-head { fill: var(--accent-bright); }
-@media (min-width: 64rem) { .triangle-guide { display: block; } }
 
-/* Flow-link labels — one per triangle edge */
+/* Traveling pulse dot — base styling applies to all pulses.
+   Modifier classes swap in different keyframes for merge lines. */
+.flow-pulse {
+  position: absolute;
+  top: 50%; left: 0;
+  width: 0.55rem; height: 0.55rem;
+  margin-left: -0.28rem;
+  margin-top: -0.28rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0.28rem var(--accent-soft);
+  z-index: 1;
+  animation: flow-pulse-line 2.6s cubic-bezier(.5,.15,.5,.85) infinite;
+}
+.flow-pulse-top    { animation-name: flow-pulse-merge-top; }
+.flow-pulse-bottom { animation-name: flow-pulse-merge-bottom; animation-delay: -1.3s; }
+@keyframes flow-pulse-line {
+  0%   { left: 0%;   opacity: 0; }
+  12%  {             opacity: 1; }
+  88%  {             opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes flow-pulse-merge-top {
+  0%   { left: 0%;   top: 25%; opacity: 0; }
+  12%  {                       opacity: 1; }
+  88%  {                       opacity: 1; }
+  100% { left: 100%; top: 50%; opacity: 0; }
+}
+@keyframes flow-pulse-merge-bottom {
+  0%   { left: 0%;   top: 75%; opacity: 0; }
+  12%  {                       opacity: 1; }
+  88%  {                       opacity: 1; }
+  100% { left: 100%; top: 50%; opacity: 0; }
+}
+
+/* Flow-link pill — centered on top of the connector */
 .flow-link {
-  display: flex; align-items: center; gap: 0.55rem;
-  padding: 0.55rem 0.9rem;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
   background: var(--card);
   border: 1px solid var(--accent-line);
   border-radius: var(--radius-pill);
-  font-size: 0.8rem; font-weight: 600; color: var(--text);
+  font-size: 0.72rem; font-weight: 600; color: var(--text);
   box-shadow: var(--shadow-soft);
   white-space: nowrap;
-  z-index: 2;
 }
 .flow-link svg {
-  width: 0.9rem; height: 0.9rem;
+  width: 0.8rem; height: 0.8rem;
   color: var(--accent-deep);
   flex-shrink: 0;
 }
@@ -1078,16 +1158,6 @@ img, svg { display: block; max-width: 100%; }
   font-weight: 700;
 }
 [data-theme="dark"] .flow-link em { color: var(--accent-bright); }
-
-/* Mobile: hide the triangle-flow labels (the vertical card stack
-   reads naturally top-to-bottom, extra labels would be noise) */
-.flow-link { display: none; }
-
-/* Desktop: flow-links become visible and their placement is handled
-   by the grid template above (see .layer-triangle desktop rules). */
-@media (min-width: 64rem) {
-  .flow-link { display: flex; z-index: 3; }
-}
 
 .layer {
   position: relative; z-index: 1;
@@ -1220,5 +1290,5 @@ img, svg { display: block; max-width: 100%; }
 .layer-foot .live-dot { width: 0.5rem; height: 0.5rem; }
 .layer-foot strong { color: var(--text); font-weight: 700; }
 
-/* Ensure the layer card sits above the triangle guide */
-.layer-triangle > .layer { position: relative; z-index: 1; }
+/* Ensure the layer card sits above any decorative guides */
+.layer-flow > .layer { position: relative; z-index: 1; }

@@ -990,7 +990,7 @@ img, svg { display: block; max-width: 100%; }
    break the vertical read. */
 .layer-flow > .flow-connect { display: none; }
 
-@media (min-width: 80rem) {
+@media (min-width: 72rem) {
   .layer-flow {
     /* 5 cols × 2 rows.
        Col 1: agent cards (stacked, compact)
@@ -1000,9 +1000,9 @@ img, svg { display: block; max-width: 100%; }
        Col 5: admin dashboard (spans both rows) */
     grid-template-columns:
       minmax(0, 0.9fr)
-      minmax(6rem, 9rem)
+      minmax(5rem, 8rem)
       minmax(0, 1.15fr)
-      minmax(6rem, 9rem)
+      minmax(5rem, 8rem)
       minmax(0, 1fr);
     grid-template-rows: auto auto;
     column-gap: 0.5rem;

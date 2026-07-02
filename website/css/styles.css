@@ -122,8 +122,8 @@ img, svg { display: block; max-width: 100%; }
 
 .eyebrow {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--accent-deep);
+  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em;
+  color: var(--accent-deep);
 }
 [data-theme="dark"] .eyebrow { color: var(--accent-bright); }
 
@@ -775,3 +775,450 @@ img, svg { display: block; max-width: 100%; }
 .section-head { max-width: 44rem; margin-bottom: 3rem; }
 .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
 .shadow-img { border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-lg); width: 100%; }
+
+/* ============================================================
+   Section variety — distinctive treatments per section so the
+   page has visual rhythm instead of a wall of white cards.
+   ============================================================ */
+
+/* ── Capability strip (Outcome bar) ────────────────────────── */
+/* A single glowing panel with 4 columns divided by hairlines,
+   instead of 4 separate flat cards. Feels like a status bar. */
+.cap-strip {
+  position: relative;
+  display: grid; grid-template-columns: 1fr; gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background:
+    radial-gradient(ellipse 60% 100% at 50% 0%, var(--accent-soft), transparent 70%),
+    linear-gradient(180deg, var(--card), var(--surface));
+  box-shadow: var(--shadow-soft);
+  overflow: hidden; isolation: isolate;
+}
+.cap-strip::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
+  height: 1px; top: 0;
+}
+.cap-cell {
+  display: flex; flex-direction: column; gap: 0.55rem;
+  padding: 1.75rem 1.5rem;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+.cap-cell:first-child { border-top: none; }
+.cap-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  width: fit-content;
+  padding: 0.35rem 0.7rem; border-radius: var(--radius-pill);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
+  color: var(--accent-deep); background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+}
+[data-theme="dark"] .cap-badge { color: var(--accent-bright); }
+.cap-badge svg { width: 0.9rem; height: 0.9rem; }
+.cap-title { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+.cap-text { font-size: 0.88rem; color: var(--dim); line-height: 1.55; }
+
+@media (min-width: 48rem) {
+  .cap-strip { grid-template-columns: repeat(2, 1fr); }
+  .cap-cell { border-top: none; border-left: 1px solid var(--border); }
+  .cap-cell:nth-child(2n+1) { border-left: none; }
+  .cap-cell:nth-child(n+3) { border-top: 1px solid var(--border); }
+}
+@media (min-width: 64rem) {
+  .cap-strip { grid-template-columns: repeat(4, 1fr); }
+  .cap-cell,
+  .cap-cell:nth-child(2n+1),
+  .cap-cell:nth-child(n+3) { border-top: none; border-left: 1px solid var(--border); }
+  .cap-cell:first-child { border-left: none; }
+}
+
+/* ── Pain point cards (Problem section) ────────────────────── */
+/* Clean cards with a big ghosted number as the visual anchor.
+   Uses the neutral/emerald palette so it stays on brand. */
+.pain-grid {
+  display: grid; gap: 1.25rem; grid-template-columns: 1fr;
+  counter-reset: pain;
+}
+@media (min-width: 48rem) { .pain-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64rem) { .pain-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.pain {
+  position: relative; counter-increment: pain;
+  background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+  padding: 1.75rem 1.5rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.pain:hover { box-shadow: var(--shadow); border-color: var(--accent-line); }
+
+/* Big ghosted number in the corner — the hero visual for each card.
+   Uses a faint fill (not stroke) so characters like "4" stay clean
+   without overlapping stroke lines. */
+.pain-num {
+  position: absolute; top: 1rem; right: 1.25rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 4rem; font-weight: 800; line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--border-2);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+  transition: color .3s ease, opacity .3s ease;
+}
+.pain-num::before { content: '0' counter(pain); }
+.pain:hover .pain-num { color: var(--accent-line); opacity: 1; }
+
+.pain-ico {
+  position: relative; z-index: 1;
+  width: 2.5rem; height: 2.5rem; border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--dim); background: var(--card-2);
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  transition: color .3s ease, background .3s ease, border-color .3s ease;
+}
+.pain:hover .pain-ico {
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+[data-theme="dark"] .pain:hover .pain-ico { color: var(--accent-bright); }
+.pain-ico svg { width: 1.3rem; height: 1.3rem; }
+.pain-title { font-size: 1.02rem; font-weight: 700; color: var(--text); position: relative; z-index: 1; }
+.pain-text { font-size: 0.9rem; color: var(--dim); line-height: 1.6; margin-top: 0.5rem; position: relative; z-index: 1; }
+
+/* ── Feature rows (AI ticketing sub-grid & Admin dashboard) ── */
+/* Horizontal, compact rows with icon on the left. Denser and
+   more scannable than square cards; breaks up the card rhythm. */
+.frow-grid {
+  display: grid; gap: 0.75rem; grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) { .frow-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64rem) { .frow-grid.frow-3 { grid-template-columns: repeat(3, 1fr); } }
+
+.frow {
+  position: relative;
+  display: grid; grid-template-columns: auto 1fr; align-items: start; gap: 0.9rem;
+  padding: 1.1rem 1.15rem;
+  background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+.frow:hover { border-color: var(--accent-line); background: var(--hover-fade); transform: translateY(-0.15rem); }
+.frow-ico {
+  width: 2.25rem; height: 2.25rem; border-radius: var(--radius);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent-deep); background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  flex-shrink: 0;
+}
+[data-theme="dark"] .frow-ico { color: var(--accent-bright); }
+.frow-ico svg { width: 1.15rem; height: 1.15rem; }
+.frow-title { font-size: 0.97rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+.frow-text { font-size: 0.86rem; color: var(--dim); line-height: 1.55; margin-top: 0.3rem; }
+
+/* ── Use case tiles (checkerboard tint) ────────────────────── */
+/* Alternating emerald-tinted and plain tiles with monospace
+   "#tag" labels. More editorial, less brochure. */
+.uc-grid {
+  display: grid; gap: 1rem; grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) { .uc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64rem) { .uc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.uc {
+  position: relative;
+  padding: 1.5rem 1.5rem 1.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  overflow: hidden;
+}
+.uc:hover { transform: translateY(-0.3rem); box-shadow: var(--shadow); border-color: var(--accent-line); }
+.uc-tag {
+  display: inline-flex; align-items: center;
+  font-family: 'Consolas', 'SFMono-Regular', Menlo, monospace;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
+  color: var(--muted);
+  margin-bottom: 0.85rem;
+}
+.uc-title { font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+.uc-text { font-size: 0.9rem; color: var(--dim); line-height: 1.6; margin-top: 0.55rem; }
+
+/* Alternating tint — checkerboard rhythm.
+   Single column: every other. 2-col: every other. 3-col: odd positions
+   (1, 3, 5) which produces a true checkerboard across 2 rows. */
+.uc-grid > .uc:nth-child(odd) {
+  background:
+    linear-gradient(180deg, var(--accent-soft), transparent 60%),
+    var(--card);
+  border-color: var(--accent-line);
+}
+.uc-grid > .uc:nth-child(odd) .uc-tag { color: var(--accent-deep); }
+[data-theme="dark"] .uc-grid > .uc:nth-child(odd) .uc-tag { color: var(--accent-bright); }
+
+/* Decorative corner glyph */
+.uc::after {
+  content: ''; position: absolute; right: -1rem; bottom: -1rem;
+  width: 5rem; height: 5rem; border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-soft), transparent 65%);
+  opacity: 0; transition: opacity .3s ease;
+  pointer-events: none;
+}
+.uc:hover::after { opacity: 1; }
+
+/* ── Layer triangle (Solution section) ─────────────────────── */
+/* Three cards arranged as a triangle with labeled action flows
+   between them. Shows how endpoint → AI → dashboard connect
+   as a cycle instead of a linear grid. */
+.layer-triangle {
+  position: relative;
+  display: grid; gap: 1.5rem;
+  grid-template-columns: 1fr;
+  isolation: isolate;
+}
+@media (min-width: 64rem) {
+  .layer-triangle {
+    /* 3 equal columns aligned with the 3 cards on the bottom row.
+       AI card lives in the middle column of the top row.
+       Row 2 and row 4 are given generous height so the pills
+       have vertical breathing room and land visually on the
+       midpoint of each dotted line. */
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto 6rem auto 5rem;
+    column-gap: 2rem;
+    row-gap: 0;
+    padding: 0 1rem 0;
+  }
+  /* Card positions */
+  .layer-triangle > .layer-ai       { grid-column: 2; grid-row: 1; }
+  .layer-triangle > .layer-endpoint { grid-column: 1; grid-row: 3; }
+  .layer-triangle > .layer-command  { grid-column: 3; grid-row: 3; }
+
+  /* Flow-link pills — each mirrors the other across the vertical
+     centerline of the grid, so they're always perfectly symmetric.
+     align-self: center puts the pill's vertical center on the
+     midpoint of the row, which lines up with the dotted line. */
+  .layer-triangle > .flow-link-1 {
+    grid-column: 1 / span 2;   /* spans endpoint + AI columns */
+    grid-row: 2;
+    justify-self: center;
+    align-self: center;
+  }
+  .layer-triangle > .flow-link-2 {
+    grid-column: 2 / span 2;   /* spans AI + command columns */
+    grid-row: 2;
+    justify-self: center;
+    align-self: center;
+  }
+  .layer-triangle > .flow-link-3 {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-self: center;
+    align-self: center;
+  }
+}
+
+/* Decorative dashed triangle drawn behind the cards.
+   Uses vector-effect: non-scaling-stroke so the dashes stay
+   uniform regardless of viewbox stretching. */
+.triangle-guide {
+  display: none;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+  opacity: 0;
+  animation: guide-in 1s ease .3s forwards;
+}
+@keyframes guide-in { to { opacity: 1; } }
+.triangle-guide path {
+  fill: none;
+  stroke: var(--accent-line);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.75;
+}
+.triangle-guide .arrow-head {
+  fill: var(--accent-deep);
+  opacity: 0.8;
+}
+[data-theme="dark"] .triangle-guide .arrow-head { fill: var(--accent-bright); }
+@media (min-width: 64rem) { .triangle-guide { display: block; } }
+
+/* Flow-link labels — one per triangle edge */
+.flow-link {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.55rem 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem; font-weight: 600; color: var(--text);
+  box-shadow: var(--shadow-soft);
+  white-space: nowrap;
+  z-index: 2;
+}
+.flow-link svg {
+  width: 0.9rem; height: 0.9rem;
+  color: var(--accent-deep);
+  flex-shrink: 0;
+}
+[data-theme="dark"] .flow-link svg { color: var(--accent-bright); }
+.flow-link em {
+  font-style: normal;
+  color: var(--accent-deep);
+  font-weight: 700;
+}
+[data-theme="dark"] .flow-link em { color: var(--accent-bright); }
+
+/* Mobile: hide the triangle-flow labels (the vertical card stack
+   reads naturally top-to-bottom, extra labels would be noise) */
+.flow-link { display: none; }
+
+/* Desktop: flow-links become visible and their placement is handled
+   by the grid template above (see .layer-triangle desktop rules). */
+@media (min-width: 64rem) {
+  .flow-link { display: flex; z-index: 3; }
+}
+
+.layer {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  padding: 1.75rem 1.5rem 1.25rem;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  transition: box-shadow .3s ease, border-color .3s ease;
+}
+.layer:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--border-2);
+}
+
+/* Featured middle card — very subtle emerald wash at the top only */
+.layer.layer-featured {
+  background:
+    linear-gradient(180deg, rgba(21, 160, 107, .04), transparent 25%),
+    var(--card);
+  border-color: var(--accent-line);
+}
+.layer.layer-featured:hover { border-color: var(--accent-line); }
+
+/* Header row — layer number + optional "core" pill */
+.layer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.1rem;
+}
+.layer-num {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: 'Consolas', 'SFMono-Regular', Menlo, monospace;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--dim); text-transform: uppercase;
+}
+.layer-num-dot {
+  width: 0.35rem; height: 0.35rem; border-radius: 50%;
+  background: var(--accent);
+}
+.layer-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.2rem 0.6rem; border-radius: var(--radius-pill);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent-deep); background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+}
+[data-theme="dark"] .layer-pill { color: var(--accent-bright); }
+
+/* Icon panel — big, decorative, gradient */
+.layer-viz {
+  position: relative;
+  height: 6.5rem;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(ellipse 80% 100% at 50% 100%, var(--accent-soft), transparent 70%),
+    linear-gradient(180deg, var(--card-2), var(--card));
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.15rem;
+  overflow: hidden;
+}
+.layer-viz::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 0.6rem 0.6rem;
+  opacity: 0.5; pointer-events: none;
+  mask-image: radial-gradient(ellipse 60% 80% at 50% 50%, #000 30%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 80% at 50% 50%, #000 30%, transparent 90%);
+}
+.layer-featured .layer-viz {
+  background:
+    radial-gradient(ellipse 90% 100% at 50% 100%, var(--accent-soft), transparent 70%),
+    linear-gradient(180deg, var(--card-2), var(--card));
+  border-color: var(--accent-line);
+}
+
+.layer-ico {
+  position: relative; z-index: 1;
+  width: 3.5rem; height: 3.5rem; border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent-deep); background: var(--card);
+  border: 1px solid var(--accent-line);
+  box-shadow: 0 0.375rem 1rem rgba(21,160,107,.10);
+}
+[data-theme="dark"] .layer-ico { color: var(--accent-bright); }
+.layer-ico svg { width: 1.6rem; height: 1.6rem; }
+
+/* Floating mini glyphs — no animation, positioned to avoid the icon */
+.layer-viz-glyph {
+  position: absolute; z-index: 1;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.25rem 0.6rem; border-radius: var(--radius-pill);
+  background: var(--card); border: 1px solid var(--border);
+  font-size: 0.68rem; font-weight: 600; color: var(--dim);
+  box-shadow: var(--shadow-soft);
+  white-space: nowrap;
+}
+.layer-viz-glyph svg { width: 0.75rem; height: 0.75rem; color: var(--accent-deep); }
+[data-theme="dark"] .layer-viz-glyph svg { color: var(--accent-bright); }
+.layer-viz-glyph.g-tl { top: 0.55rem; left: 0.55rem; }
+.layer-viz-glyph.g-tr { top: 0.55rem; right: 0.55rem; }
+.layer-viz-glyph.g-bl { bottom: 0.55rem; left: 0.55rem; }
+.layer-viz-glyph.g-br { bottom: 0.55rem; right: 0.55rem; }
+
+.layer-title { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+.layer-text { font-size: 0.92rem; color: var(--dim); line-height: 1.6; margin-top: 0.55rem; }
+
+/* Capability chips instead of check bullets — denser, more premium */
+.layer-caps {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  margin: 1.15rem 0 1rem; list-style: none;
+}
+.layer-caps li {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.75rem; font-weight: 600; color: var(--dim);
+  padding: 0.3rem 0.65rem; border-radius: var(--radius-pill);
+  background: var(--card-2); border: 1px solid var(--border);
+}
+
+/* Live status footer strip */
+.layer-foot {
+  margin-top: auto;
+  display: flex; align-items: center; gap: 0.5rem;
+  padding-top: 0.9rem; border-top: 1px dashed var(--border);
+  font-size: 0.8rem; color: var(--dim); font-weight: 500;
+}
+.layer-foot .live-dot { width: 0.5rem; height: 0.5rem; }
+.layer-foot strong { color: var(--text); font-weight: 700; }
+
+/* Ensure the layer card sits above the triangle guide */
+.layer-triangle > .layer { position: relative; z-index: 1; }

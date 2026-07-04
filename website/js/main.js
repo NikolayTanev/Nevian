@@ -182,7 +182,7 @@
     status.className = 'form-status' + (kind ? ' ' + kind : '');
   }
   function mailtoFallback(data) {
-    var subject = 'Nevian demo request: ' + (data.company || data.firstName || 'New lead');
+    var subject = 'Nevian contact form: ' + (data.company || data.firstName || 'New lead');
     var lines = [
       'Name: ' + (data.firstName || '') + ' ' + (data.lastName || ''),
       'Email: ' + (data.email || ''),

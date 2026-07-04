@@ -87,10 +87,10 @@ export const handler = async (event) => {
   }
 
   const fullName = `${firstName} ${lastName}`.trim();
-  const subject = `Nevian demo request: ${company || fullName}`;
+  const subject = `Nevian contact form: ${company || fullName}`;
 
   const textBody = [
-    'New Nevian demo request',
+    'New Nevian contact form submission',
     '------------------------',
     `Name:          ${fullName}`,
     `Email:         ${email}`,
@@ -119,7 +119,7 @@ export const handler = async (event) => {
   const htmlBody = `<!doctype html>
 <html><body style="margin:0;padding:24px;background:#f6f8fa;font-family:Inter,Arial,sans-serif;color:#0a0d0c;">
   <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:28px;">
-    <h2 style="margin:0 0 6px;color:#15a06b;font-size:20px;">New Nevian demo request</h2>
+    <h2 style="margin:0 0 6px;color:#15a06b;font-size:20px;">New contact form submission</h2>
     <p style="margin:0 0 20px;color:#6b7280;font-size:13px;">Submitted from the nevian.info contact form.</p>
     <table style="border-collapse:collapse;font-size:14px;line-height:1.5;width:100%;">${rows}</table>
     ${message ? `<h3 style="margin:24px 0 8px;font-size:15px;">Message</h3><p style="white-space:pre-wrap;margin:0;font-size:14px;line-height:1.55;">${escapeHtml(message)}</p>` : ''}

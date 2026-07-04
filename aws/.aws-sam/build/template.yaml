@@ -11,15 +11,22 @@ Parameters:
     Description: Mailbox that receives contact form submissions.
   SenderEmail:
     Type: String
-    Default: nevian.info@gmail.com
-    Description: 'SES "From" address. This identity must be verified in SES. In sandbox
-      mode, the recipient must be verified as well.
+    Default: noreply@nevian.info
+    Description: 'SES "From" address. Must be at a verified SES identity (this project
+      verifies the whole nevian.info domain, so any nevian.info address works).
 
       '
-  AllowedOrigin:
+  SenderName:
     Type: String
-    Default: https://nevian.info
-    Description: Origin allowed by CORS (your production site URL).
+    Default: Nevian Contact Form
+    Description: Human-readable "From" name shown in the recipient's inbox.
+  AllowedOrigins:
+    Type: CommaDelimitedList
+    Default: https://nevian.info,https://www.nevian.info,http://localhost:8080,http://127.0.0.1:8080
+    Description: 'Comma-separated origins allowed by CORS. Include your apex, www,
+      and any local dev origins you use for testing.
+
+      '
 Globals:
   Function:
     Runtime: nodejs20.x
@@ -40,8 +47,12 @@ Resources:
             Ref: RecipientEmail
           SENDER_EMAIL:
             Ref: SenderEmail
+          SENDER_NAME:
+            Ref: SenderName
           ALLOWED_ORIGIN:
-            Ref: AllowedOrigin
+            Fn::Select:
+            - 0
+            - Ref: AllowedOrigins
       Policies:
       - Statement:
         - Effect: Allow
@@ -62,7 +73,7 @@ Resources:
     Properties:
       CorsConfiguration:
         AllowOrigins:
-        - Ref: AllowedOrigin
+          Ref: AllowedOrigins
         AllowMethods:
         - POST
         - OPTIONS

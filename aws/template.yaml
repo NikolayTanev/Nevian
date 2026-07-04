@@ -12,15 +12,22 @@ Parameters:
 
   SenderEmail:
     Type: String
-    Default: nevian.info@gmail.com
+    Default: noreply@nevian.info
     Description: >
-      SES "From" address. This identity must be verified in SES. In sandbox
-      mode, the recipient must be verified as well.
+      SES "From" address. Must be at a verified SES identity (this project
+      verifies the whole nevian.info domain, so any nevian.info address works).
 
-  AllowedOrigin:
+  SenderName:
     Type: String
-    Default: https://nevian.info
-    Description: Origin allowed by CORS (your production site URL).
+    Default: Nevian Contact Form
+    Description: Human-readable "From" name shown in the recipient's inbox.
+
+  AllowedOrigins:
+    Type: CommaDelimitedList
+    Default: 'https://nevian.info,https://www.nevian.info,http://localhost:8080,http://127.0.0.1:8080'
+    Description: >
+      Comma-separated origins allowed by CORS. Include your apex, www,
+      and any local dev origins you use for testing.
 
 Globals:
   Function:
@@ -40,7 +47,10 @@ Resources:
         Variables:
           RECIPIENT_EMAIL: !Ref RecipientEmail
           SENDER_EMAIL: !Ref SenderEmail
-          ALLOWED_ORIGIN: !Ref AllowedOrigin
+          SENDER_NAME: !Ref SenderName
+          # Lambda receives the first origin as the primary CORS origin.
+          # For requests, API Gateway itself enforces the full list.
+          ALLOWED_ORIGIN: !Select [0, !Ref AllowedOrigins]
       Policies:
         - Statement:
             - Effect: Allow
@@ -58,16 +68,13 @@ Resources:
     Type: AWS::Serverless::HttpApi
     Properties:
       CorsConfiguration:
-        AllowOrigins:
-          - !Ref AllowedOrigin
+        AllowOrigins: !Ref AllowedOrigins
         AllowMethods:
           - POST
           - OPTIONS
         AllowHeaders:
           - Content-Type
         MaxAge: 3600
-      # Cheap access logging is off by default. Enable in the console if you
-      # need to debug live submissions.
 
 Outputs:
   ContactEndpoint:

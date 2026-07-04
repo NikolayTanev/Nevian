@@ -14,6 +14,7 @@ const ses = new SESClient({});
 const {
   RECIPIENT_EMAIL,
   SENDER_EMAIL,
+  SENDER_NAME = 'Nevian Contact Form',
   ALLOWED_ORIGIN = '*',
 } = process.env;
 
@@ -127,7 +128,7 @@ export const handler = async (event) => {
 
   try {
     await ses.send(new SendEmailCommand({
-      Source: SENDER_EMAIL,
+      Source: `${SENDER_NAME} <${SENDER_EMAIL}>`,
       Destination: { ToAddresses: [RECIPIENT_EMAIL] },
       ReplyToAddresses: [email],
       Message: {

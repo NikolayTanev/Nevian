@@ -815,6 +815,16 @@ img, svg { display: block; max-width: 100%; }
 .form-status.ok { color: var(--green); }
 .form-status.err { color: var(--red); }
 
+/* Honeypot. Never rendered visually, kept out of tab order. */
+.hp-field {
+  position: absolute !important;
+  left: -9999px; top: -9999px;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ── Final CTA ────────────────────────────────────────────── */
 .cta-band {
   position: relative; color: var(--text);

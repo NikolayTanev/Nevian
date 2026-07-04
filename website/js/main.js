@@ -209,11 +209,11 @@
         return;
       }
 
-      var action = form.getAttribute('action') || '';
-      var configured = action && action.indexOf('YOUR_FORM_ID') === -1 && action.indexOf('formspree.io') !== -1;
+      var endpoint = form.getAttribute('data-endpoint') || '';
+      var configured = endpoint && endpoint.indexOf('YOUR_AWS_API_ID') === -1;
 
       if (!configured) {
-        // No form backend configured yet. Open the visitor's email client.
+        // No AWS endpoint configured yet. Open the visitor's email client.
         setStatus('Opening your email app to send the request…', 'ok');
         mailtoFallback(data);
         return;
@@ -223,14 +223,23 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
       setStatus('Sending your request…', '');
 
-      fetch(action, { method: 'POST', body: fd, headers: { Accept: 'application/json' } })
+      fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
         .then(function (res) {
-          if (res.ok) {
-            form.reset();
-            setStatus('Thanks. We received your request and will get back to you shortly.', 'ok');
-          } else {
-            setStatus('Something went wrong. Please try again or email hello@nevian.info.', 'err');
-          }
+          return res.json().catch(function () { return {}; }).then(function (payload) {
+            if (res.ok) {
+              form.reset();
+              setStatus('Thanks. We received your request and will get back to you shortly.', 'ok');
+            } else {
+              setStatus(payload.error || 'Something went wrong. Please try again or email hello@nevian.info.', 'err');
+            }
+          });
         })
         .catch(function () {
           setStatus('Something went wrong. Please try again or email hello@nevian.info.', 'err');

@@ -10,7 +10,7 @@
 
   <!-- Open Graph / social -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Nevian — AI-powered IT support for lean teams" />
+  <meta property="og:title" content="Nevian: AI-powered IT support for lean teams" />
   <meta property="og:description" content="AI ticketing, endpoint visibility, and IT automation in one practical platform built for small and mid-sized businesses." />
   <meta property="og:url" content="https://nevian.info" />
   <meta property="og:image" content="https://nevian.info/assets/dashboard-preview.png" />
@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind (Play CDN) — tokens mirror the web-dashboard tailwind.config.js -->
+  <!-- Tailwind (Play CDN). Tokens mirror the web-dashboard tailwind.config.js -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -47,7 +47,7 @@
     };
   </script>
 
-  <link rel="stylesheet" href="css/styles.css?v=20260702" />
+  <link rel="stylesheet" href="css/styles.css?v=20260702m" />
 </head>
 <body>
   <!-- ===================== NAV ===================== -->
@@ -198,117 +198,200 @@
     </div>
   </div>
 
-  <!-- ===================== JOURNEY (animated user flow) ===================== -->
-  <section class="container journey">
+  <!-- ===================== JOURNEY (interactive ticket walkthrough) ===================== -->
+  <section class="container journey" id="how-it-works">
     <div class="section-head center reveal">
       <p class="eyebrow">A ticket's journey through Nevian</p>
       <h2 class="section-title mt-1">From a single chat message to a resolved ticket in minutes.</h2>
     </div>
-    <div class="journey-inner stagger reveal">
-      <span class="journey-line" aria-hidden="true"></span>
-      <div class="journey-step">
-        <span class="journey-pill">01 · User</span>
-        <div class="journey-title">Reports an issue in chat</div>
-        <p class="journey-text">"I'm locked out and I forgot my password."</p>
-      </div>
-      <div class="journey-step">
-        <span class="journey-pill">02 · AI</span>
-        <div class="journey-title">Triages the request</div>
-        <p class="journey-text">Reads context, checks the knowledge base, asks one clarifying question if needed.</p>
-      </div>
-      <div class="journey-step">
-        <span class="journey-pill">03 · Agent</span>
-        <div class="journey-title">Pulls device context</div>
-        <p class="journey-text">OS, hardware, disk, network, and installed apps are already attached.</p>
-      </div>
-      <div class="journey-step">
-        <span class="journey-pill">04 · Automation</span>
-        <div class="journey-title">Server agent acts safely</div>
-        <p class="journey-text">Unlocks the AD account &amp; resets the password through an outbound job queue.</p>
-      </div>
-      <div class="journey-step">
-        <span class="journey-pill">05 · Resolved</span>
-        <div class="journey-title">Posts back into the ticket</div>
-        <p class="journey-text">Ticket closes with a complete activity trail. The IT team only sees what needs them.</p>
-      </div>
-    </div>
-  </section>
-  <!-- ===================== OUTCOME BAR ===================== -->
-  <section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
-    <div class="container">
-      <p class="eyebrow reveal text-center mx-auto" style="display:block;">Built to remove the delays from everyday IT support</p>
-      <div class="cap-strip mt-3 reveal">
-        <div class="cap-cell">
-          <span class="cap-badge">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            AI triage
-          </span>
-          <div class="cap-title">Tickets classified in seconds</div>
-          <p class="cap-text">Category, priority, and next step decided before a technician opens the ticket.</p>
-        </div>
-        <div class="cap-cell">
-          <span class="cap-badge">
-            <span class="live-dot pulse" style="width:.5rem;height:.5rem;"></span>
-            Live presence
-          </span>
-          <div class="cap-title">Real-time fleet status</div>
-          <p class="cap-text">See which machines are online, offline, or stale — right when the ticket lands.</p>
-        </div>
-        <div class="cap-cell">
-          <span class="cap-badge">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            Endpoint inventory
-          </span>
-          <div class="cap-title">Every detail already attached</div>
-          <p class="cap-text">Hardware, OS, storage, and security posture arrive with the ticket.</p>
-        </div>
-        <div class="cap-cell">
-          <span class="cap-badge">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2 2.5 4.5V8c0 3 2 4.7 5.5 5.6 3.5-.9 5.5-2.6 5.5-5.6V4.5L8 2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-            Account recovery
-          </span>
-          <div class="cap-title">Secure server-side unlock</div>
-          <p class="cap-text">Lockouts and resets clear themselves through a controlled outbound job.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== PROBLEM ===================== -->
-  <section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="journey-card reveal" data-active="1">
+      <!-- LEFT · clickable feature pills. Only one is expanded at a time. -->
+      <div class="journey-list">
+        <button type="button" class="journey-item is-open" data-step="1" aria-expanded="true">
+          <span class="journey-item-head">
+            <span class="journey-item-toggle" aria-hidden="true"></span>
+            <span class="journey-item-title">Reports an issue in chat</span>
+          </span>
+          <div class="journey-item-body"><div class="journey-item-body-inner">
+            <p class="journey-item-text">The employee opens Nevian and types the problem in plain language. No forms, no dropdowns, no scripts to follow.</p>
+          </div></div>
+        </button>
+
+        <button type="button" class="journey-item" data-step="2" aria-expanded="false">
+          <span class="journey-item-head">
+            <span class="journey-item-toggle" aria-hidden="true"></span>
+            <span class="journey-item-title">AI triages the request</span>
+          </span>
+          <div class="journey-item-body"><div class="journey-item-body-inner">
+            <p class="journey-item-text">The assistant reads the message, checks the knowledge base, and picks the right category, priority, and next step in about a second.</p>
+          </div></div>
+        </button>
+
+        <button type="button" class="journey-item" data-step="3" aria-expanded="false">
+          <span class="journey-item-head">
+            <span class="journey-item-toggle" aria-hidden="true"></span>
+            <span class="journey-item-title">Pulls device context</span>
+          </span>
+          <div class="journey-item-body"><div class="journey-item-body-inner">
+            <p class="journey-item-text">The desk agent has already attached the user's OS, hardware, disk, network, and installed apps, so nobody has to ask.</p>
+          </div></div>
+        </button>
+
+        <button type="button" class="journey-item" data-step="4" aria-expanded="false">
+          <span class="journey-item-head">
+            <span class="journey-item-toggle" aria-hidden="true"></span>
+            <span class="journey-item-title">Server agent acts safely</span>
+          </span>
+          <div class="journey-item-body"><div class="journey-item-body-inner">
+            <p class="journey-item-text">For lockouts and resets, the server agent runs signed jobs inside your network. Outbound-only, audited, and never touches inbound ports.</p>
+          </div></div>
+        </button>
+
+        <button type="button" class="journey-item" data-step="5" aria-expanded="false">
+          <span class="journey-item-head">
+            <span class="journey-item-toggle" aria-hidden="true"></span>
+            <span class="journey-item-title">Posts back into the ticket</span>
+          </span>
+          <div class="journey-item-body"><div class="journey-item-body-inner">
+            <p class="journey-item-text">The ticket closes with a full activity trail. IT only sees the tickets that actually need a human. The rest already resolved themselves.</p>
+          </div></div>
+        </button>
+      </div>
+
+      <!-- RIGHT · visual scene changes to match the selected pill. -->
+      <div class="journey-visual" aria-hidden="true">
+        <span class="journey-visual-orb"></span>
+
+        <!-- Scene 1 · User writes a chat message -->
+        <div class="journey-scene is-active" data-scene="1">
+          <div class="jsc-chat">
+            <div class="jsc-chat-head">
+              <span class="jsc-chat-title">New ticket · Draft</span>
+              <span class="jsc-chat-meta">Just now</span>
+            </div>
+            <div class="jsc-chat-msg jsc-chat-msg-user">
+              <div class="jsc-chat-bubble">I'm locked out and I forgot my password.</div>
+              <span class="jsc-chat-avatar">JS</span>
+            </div>
+            <div class="jsc-chat-msg jsc-chat-msg-bot">
+              <span class="jsc-chat-avatar jsc-chat-avatar-bot">N</span>
+              <div class="jsc-chat-bubble jsc-chat-bubble-bot">
+                <span class="jsc-chat-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 2 · AI triaging the ticket -->
+        <div class="journey-scene" data-scene="2">
+          <div class="jsc-triage">
+            <div class="jsc-triage-head">
+              <span class="jsc-chat-title">TKT-0042</span>
+              <span class="jsc-badge"><span class="jsc-dot"></span>AI analyzing</span>
+            </div>
+            <div class="jsc-triage-row"><span class="jsc-triage-label">Category</span><span class="jsc-triage-chip">Account</span></div>
+            <div class="jsc-triage-row"><span class="jsc-triage-label">Priority</span><span class="jsc-triage-chip jsc-triage-chip-accent">High</span></div>
+            <div class="jsc-triage-row"><span class="jsc-triage-label">Confidence</span><span class="jsc-triage-chip">94%</span></div>
+            <div class="jsc-triage-row"><span class="jsc-triage-label">Next step</span><span class="jsc-triage-chip jsc-triage-chip-accent">Reset password + unlock</span></div>
+            <div class="jsc-triage-bar"><span></span></div>
+          </div>
+        </div>
+
+        <!-- Scene 3 · Device context -->
+        <div class="journey-scene" data-scene="3">
+          <div class="jsc-device">
+            <div class="jsc-device-head">
+              <div>
+                <div class="jsc-device-name">LATITUDE-5430-01</div>
+                <div class="jsc-device-sub">j.smith · Online</div>
+              </div>
+              <span class="jsc-badge jsc-badge-green"><span class="jsc-dot jsc-dot-green"></span>Live</span>
+            </div>
+            <div class="jsc-device-grid">
+              <div class="jsc-device-cell"><span class="jsc-device-label">Model</span>Dell Latitude 5430</div>
+              <div class="jsc-device-cell"><span class="jsc-device-label">OS</span>Windows 11 Pro</div>
+              <div class="jsc-device-cell"><span class="jsc-device-label">CPU</span>Core i5-1245U</div>
+              <div class="jsc-device-cell"><span class="jsc-device-label">Memory</span>16 GB DDR5</div>
+              <div class="jsc-device-cell"><span class="jsc-device-label">Secure Boot</span>Enabled</div>
+              <div class="jsc-device-cell"><span class="jsc-device-label">Disk C:</span>185 GB free</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 4 · Server agent runs signed jobs -->
+        <div class="journey-scene" data-scene="4">
+          <div class="jsc-actions">
+            <div class="jsc-actions-head">
+              <span class="jsc-chat-title">account_actions queue</span>
+              <span class="jsc-badge jsc-badge-green"><span class="jsc-dot jsc-dot-green"></span>Running</span>
+            </div>
+            <ol class="jsc-actions-list">
+              <li class="jsc-action is-done"><span class="jsc-action-num">1</span><span class="jsc-action-label">Resolve account "j.smith"</span><span class="jsc-action-ico jsc-action-ico-check" aria-hidden="true"></span></li>
+              <li class="jsc-action is-done"><span class="jsc-action-num">2</span><span class="jsc-action-label">Validate logon name</span><span class="jsc-action-ico jsc-action-ico-check" aria-hidden="true"></span></li>
+              <li class="jsc-action is-current"><span class="jsc-action-num">3</span><span class="jsc-action-label">Unlock account</span><span class="jsc-action-ico jsc-action-ico-spin" aria-hidden="true"></span></li>
+              <li class="jsc-action"><span class="jsc-action-num">4</span><span class="jsc-action-label">Reset password</span></li>
+              <li class="jsc-action"><span class="jsc-action-num">5</span><span class="jsc-action-label">Post result to ticket</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Scene 5 · Ticket resolved -->
+        <div class="journey-scene" data-scene="5">
+          <div class="jsc-resolved">
+            <div class="jsc-resolved-check" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none"><path d="M9 16.5l4.5 4.5L23 11" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="jsc-resolved-title">TKT-0042 · Resolved</div>
+            <div class="jsc-resolved-sub">Account unlocked · Password reset · Ticket closed</div>
+            <ul class="jsc-resolved-log">
+              <li><span class="jsc-resolved-time">14:22</span> User reported the issue</li>
+              <li><span class="jsc-resolved-time">14:22</span> AI triaged as <em>Account · High</em></li>
+              <li><span class="jsc-resolved-time">14:23</span> Server agent unlocked the account</li>
+              <li><span class="jsc-resolved-time">14:23</span> Password reset issued</li>
+              <li><span class="jsc-resolved-time">14:23</span> Ticket closed with audit trail</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ===================== OUTCOMES ===================== -->
+  <section class="section">
     <div class="container">
       <div class="section-head reveal">
-        <p class="eyebrow">The problem</p>
-        <h2 class="section-title mt-1">IT support breaks down when tickets arrive without context.</h2>
+        <p class="eyebrow">Built to remove the delays from everyday IT support</p>
+        <h2 class="section-title mt-1">Every ticket lands with context, so support moves without waiting.</h2>
         <p class="section-lead mt-2">
-          Employees just want help. IT teams need the device, the user, the symptoms, the history, and the right next step.
-          Without that context, every ticket turns into a back-and-forth conversation before real work can begin.
+          Employees just want help. IT teams get the device, the user, the symptoms, and the AI's recommended next
+          step already attached, so every ticket moves toward resolution instead of another round of clarifying
+          questions.
         </p>
       </div>
       <div class="pain-grid stagger reveal">
         <div class="pain">
           <span class="pain-num" aria-hidden="true"></span>
-          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-          <h3 class="pain-title">Too much manual triage</h3>
-          <p class="pain-text">Technicians spend time categorizing, prioritizing, and assigning tickets instead of resolving them.</p>
+          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <h3 class="pain-title">Tickets classified in seconds</h3>
+          <p class="pain-text">Category, priority, and next step decided by AI before a technician opens the ticket.</p>
         </div>
         <div class="pain">
           <span class="pain-num" aria-hidden="true"></span>
-          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5" stroke="currentColor" stroke-width="1.8"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-          <h3 class="pain-title">Missing device context</h3>
-          <p class="pain-text">Users rarely know their OS version, disk space, hardware model, uptime, installed software, or network details.</p>
+          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="16.5" r="1.6" fill="currentColor"/><path d="M8 13a5 5 0 0 1 8 0M5 10a9 9 0 0 1 14 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <h3 class="pain-title">Real-time fleet status</h3>
+          <p class="pain-text">See which machines are online, offline, or stale, the moment the ticket lands.</p>
         </div>
         <div class="pain">
           <span class="pain-num" aria-hidden="true"></span>
-          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="9" rx="1.8" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-          <h3 class="pain-title">Repetitive account issues</h3>
-          <p class="pain-text">Lockouts and forgotten passwords interrupt work, but they often follow a predictable process.</p>
+          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 9h8M8 13h6M8 17h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <h3 class="pain-title">Every device detail already attached</h3>
+          <p class="pain-text">Hardware, OS, storage, and security posture arrive with the ticket. No need to ask the user.</p>
         </div>
         <div class="pain">
           <span class="pain-num" aria-hidden="true"></span>
-          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16v4H4zM4 14h16v4H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 8h.01M8 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h3 class="pain-title">Bloated tools</h3>
-          <p class="pain-text">Traditional ITSM and RMM platforms can be expensive, slow to configure, and overbuilt for lean teams.</p>
+          <div class="pain-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 4 6v6c0 4 3.2 6.4 8 7.5 4.8-1.1 8-3.5 8-7.5V6l-8-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2.5 2.5L15 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="pain-title">Secure server-side unlock</h3>
+          <p class="pain-text">Lockouts and password resets clear themselves through a controlled outbound job.</p>
         </div>
       </div>
     </div>
@@ -321,7 +404,7 @@
         <p class="eyebrow">Two agents. One AI core. One command dashboard.</p>
         <h2 class="section-title mt-1">From user ticket to admin action, Nevian keeps the workflow moving.</h2>
         <p class="section-lead mt-2 mx-auto">
-          Two agents run quietly in the background — the desk agent captures live device context, the server agent
+          Two agents run quietly in the background. The desk agent captures live device context. The server agent
           runs signed actions like account unlocks and password resets. The AI ticket assistant coordinates them
           both and surfaces every result in the admin dashboard so IT can see, route, and resolve work faster.
         </p>
@@ -379,7 +462,7 @@
             </span>
           </div>
           <h3 class="layer-title">Server Agent</h3>
-          <p class="layer-text">Runs inside your network. Executes signed jobs from the AI — account unlocks, password resets, and other repetitive fixes — then reports the outcome back with an audit trail.</p>
+          <p class="layer-text">Runs inside your network. Executes signed jobs from the AI, like account unlocks, password resets, and other repetitive fixes, then reports the outcome back with an audit trail.</p>
           <ul class="layer-caps">
             <li>Account unlock</li>
             <li>Password reset</li>
@@ -491,42 +574,6 @@
       </div>
     </div>
   </section>
-  <!-- ===================== HOW IT WORKS ===================== -->
-  <section class="section" id="how-it-works" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-    <div class="container">
-      <div class="section-head center reveal">
-        <p class="eyebrow">How it works</p>
-        <h2 class="section-title mt-1">A support flow that starts with context and ends with action.</h2>
-      </div>
-      <div class="steps stagger reveal">
-        <div class="step">
-          <div class="step-num">1</div>
-          <h3 class="step-title">Deploy the agent</h3>
-          <p class="step-text">Install the Windows desk agent across employee machines. It runs quietly in the tray and collects regular snapshots of device health.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <h3 class="step-title">Users ask for help</h3>
-          <p class="step-text">Employees open a ticket from the web dashboard and describe the issue naturally. No complicated forms required.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h3 class="step-title">AI triages instantly</h3>
-          <p class="step-text">The assistant checks the conversation, knowledge base, and ticket context to troubleshoot, classify, or prepare an escalation.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <h3 class="step-title">Automation handles repeats</h3>
-          <p class="step-text">For lockouts and forgotten passwords, the server agent can securely process approved Active Directory actions.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">5</div>
-          <h3 class="step-title">Admins stay in control</h3>
-          <p class="step-text">IT reviews tickets, assigns owners, adjusts priority, inspects devices, and monitors the fleet from one dashboard.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- ===================== AI TICKETING ===================== -->
   <section class="section" id="ai-ticketing">
@@ -595,7 +642,7 @@
               <span class="badge badge-green">AI handling</span>
             </div>
             <div class="mock-msg" style="background: var(--accent); color: var(--on-accent); margin-left:auto; border-bottom-right-radius:.3rem;">I keep getting "account locked" when I sign in.</div>
-            <div class="mock-msg" style="background: var(--card-2); color: var(--text); border:1px solid var(--border); border-bottom-left-radius:.3rem;">Thanks — that looks like an account lockout. Please reply with your Windows username and I'll start recovery.</div>
+            <div class="mock-msg" style="background: var(--card-2); color: var(--text); border:1px solid var(--border); border-bottom-left-radius:.3rem;">Thanks. That looks like an account lockout. Please reply with your Windows username and I'll start recovery.</div>
             <div class="mock-msg" style="background: var(--accent); color: var(--on-accent); margin-left:auto; border-bottom-right-radius:.3rem;">j.smith</div>
             <div class="card card-pad mt-2" style="background: var(--card-2);">
               <div class="kv-row"><span class="k">Category</span><span class="v">Account</span></div>
@@ -609,7 +656,7 @@
     </div>
   </section>
   <!-- ===================== ENDPOINT AGENT ===================== -->
-  <section class="section" id="endpoint" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <section class="section" id="endpoint">
     <div class="container">
       <div class="split split-rev">
         <div class="split-media reveal">
@@ -645,7 +692,7 @@
           <p class="eyebrow reveal">Endpoint desk agent</p>
           <h2 class="section-title mt-1 reveal">Every ticket starts with the device details IT usually has to ask for.</h2>
           <p class="section-lead mt-2 reveal">
-            The Windows desk agent gives IT teams a current view of each enrolled machine — including hardware, OS,
+            The Windows desk agent gives IT teams a current view of each enrolled machine, including hardware, OS,
             storage, security posture, installed software, and network details.
           </p>
           <ul class="list-check reveal">
@@ -700,7 +747,7 @@
     </div>
   </section>
   <!-- ===================== ADMIN DASHBOARD ===================== -->
-  <section class="section" id="dashboard" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <section class="section" id="dashboard">
     <div class="container">
       <div class="section-head center reveal">
         <p class="eyebrow">Admin dashboard</p>
@@ -713,7 +760,7 @@
 
       <!-- Command center screenshot: drop your image at assets/command-center.png and update src below -->
       <div class="reveal mb-4">
-        <img src="assets/dashboard-preview.png" alt="Nevian admin command center — fleet size, ticket volume, and support pipeline overview" class="shadow-img" loading="lazy" />
+        <img src="assets/dashboard-preview.png" alt="Nevian admin command center: fleet size, ticket volume, and support pipeline overview" class="shadow-img" loading="lazy" />
       </div>
 
       <div class="frow-grid frow-3 stagger reveal">
@@ -764,78 +811,96 @@
   </section>
 
   <!-- ===================== DIFFERENTIATOR ===================== -->
-  <section class="section">
+  <section class="section" id="why">
     <div class="container">
       <div class="section-head center reveal">
         <p class="eyebrow">Why Nevian</p>
-        <h2 class="section-title mt-1">Help desk, endpoint context, and automation in one practical workflow.</h2>
+        <h2 class="section-title mt-1">Help desk, endpoint context, and automation in one workflow.</h2>
         <p class="section-lead mt-2 mx-auto">
           Most tools handle tickets, devices, or automation as separate problems. Nevian connects them so every
-          support request can start with better context and move toward the right action faster.
+          request starts with better context and moves toward the right action faster.
         </p>
       </div>
-      <div class="compare">
-        <div class="compare-col compare-them reveal">
-          <h3>Traditional help desk tools</h3>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Tickets often arrive with missing context</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>AI is limited to summaries or canned responses</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Endpoint data lives in another platform</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Password resets still become manual work</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Setup can feel heavy for small teams</div>
+
+      <div class="why-bento stagger reveal">
+
+        <!-- Hero tile · big statement (4×2) -->
+        <div class="wb-tile wb-tile-hero">
+          <div class="wb-tile-hero-art" aria-hidden="true">
+            <svg viewBox="0 0 120 120" fill="none">
+              <circle cx="60" cy="60" r="18" fill="currentColor" opacity="0.08"/>
+              <circle cx="60" cy="60" r="11" fill="currentColor" opacity="0.22"/>
+              <circle cx="60" cy="60" r="5"  fill="currentColor" opacity="0.95"/>
+              <circle cx="16" cy="22" r="4"  fill="currentColor" opacity="0.5"/>
+              <circle cx="22" cy="82" r="3"  fill="currentColor" opacity="0.35"/>
+              <circle cx="104" cy="30" r="4" fill="currentColor" opacity="0.45"/>
+              <circle cx="98" cy="94"  r="3" fill="currentColor" opacity="0.3"/>
+              <path d="M 20 26 L 55 55" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.35"/>
+              <path d="M 26 80 L 55 65" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.35"/>
+              <path d="M 100 32 L 66 56" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.35"/>
+              <path d="M 96 92 L 66 65"  stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.35"/>
+            </svg>
+          </div>
+          <h3 class="wb-title">
+            One workflow.<br>
+            <span class="wb-title-accent">Every layer connected.</span>
+          </h3>
+          <p class="wb-caption">
+            Tickets, endpoint context, AI, and secure automation are designed together, not stitched from four
+            different tools.
+          </p>
         </div>
-        <div class="compare-col compare-us reveal">
-          <h3>Nevian</h3>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Tickets are connected to real device data</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>AI troubleshoots, routes, escalates, and updates the ticket</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Admins see fleet health and ticket work together</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Server agent can process repeat account recovery</div>
-          <div class="compare-li"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Lightweight architecture designed for lean SMB IT teams</div>
+
+        <!-- Stat tile · big number (2×1) -->
+        <div class="wb-tile wb-tile-stat">
+          <div class="wb-stat-value">1.4<span>s</span></div>
+          <div class="wb-stat-label">Average AI triage on a real ticket</div>
+          <div class="wb-stat-bar" aria-hidden="true"><span></span></div>
+        </div>
+
+        <!-- Live tile · pulse chip (2×1) -->
+        <div class="wb-tile wb-tile-live">
+          <div class="wb-tile-head">
+            <span class="wb-badge"><span class="wb-live-dot"></span>Live</span>
+          </div>
+          <div class="wb-tile-title">Fleet visibility</div>
+          <p class="wb-tile-text">Every device online, offline, or stale, right beside the ticket queue.</p>
+        </div>
+
+        <!-- Automation tile (3×1) -->
+        <div class="wb-tile wb-tile-auto">
+          <div class="wb-tile-ico">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 4 6v6c0 4 3.2 6.4 8 7.5 4.8-1.1 8-3.5 8-7.5V6l-8-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2.5 2.5L15 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="wb-tile-title">Signed automation</div>
+          <p class="wb-tile-text">Account unlocks and password resets run inside your network. Signed, audited, outbound-only.</p>
+        </div>
+
+        <!-- Dashboard tile (3×1) -->
+        <div class="wb-tile wb-tile-dash">
+          <div class="wb-tile-ico">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="6" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="6" rx="1.4" stroke="currentColor" stroke-width="1.8"/></svg>
+          </div>
+          <div class="wb-tile-title">One command center</div>
+          <p class="wb-tile-text">Tickets, fleet, users, and alerts, all in one dashboard instead of four platforms.</p>
+        </div>
+
+        <!-- Deploy tile · full width (6×1) -->
+        <div class="wb-tile wb-tile-deploy">
+          <div class="wb-tile-ico wb-tile-ico-large">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 3L4 14h6l-1 7 9-11h-6l1-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="wb-tile-deploy-body">
+            <div class="wb-tile-title">Deployed in a day, not a quarter.</div>
+            <p class="wb-tile-text">A light Windows agent, a web dashboard, and a server agent. Built for lean SMB IT teams. No months-long migration project.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== USE CASES ===================== -->
-  <section class="section" id="use-cases" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-    <div class="container">
-      <div class="section-head center reveal">
-        <p class="eyebrow">Use cases</p>
-        <h2 class="section-title mt-1">Built for the support requests your team sees every week.</h2>
-      </div>
-      <div class="uc-grid stagger reveal">
-        <div class="uc">
-          <div class="uc-tag">#account</div>
-          <h3 class="uc-title">Password lockouts</h3>
-          <p class="uc-text">AI identifies the recovery request, confirms the username, and queues the server agent to unlock or reset when approved.</p>
-        </div>
-        <div class="uc">
-          <div class="uc-tag">#performance</div>
-          <h3 class="uc-title">Slow laptop reports</h3>
-          <p class="uc-text">Check uptime, CPU, memory, disk usage, installed software, and device model without asking the user to find it.</p>
-        </div>
-        <div class="uc">
-          <div class="uc-tag">#storage</div>
-          <h3 class="uc-title">Disk space issues</h3>
-          <p class="uc-text">The desk agent includes a TreeSize-style analyzer so storage problems can be diagnosed faster.</p>
-        </div>
-        <div class="uc">
-          <div class="uc-tag">#hardware</div>
-          <h3 class="uc-title">Hardware triage</h3>
-          <p class="uc-text">Serial number, model, BIOS, GPU, memory modules, battery state, and disk details are ready when IT reviews the ticket.</p>
-        </div>
-        <div class="uc">
-          <div class="uc-tag">#network</div>
-          <h3 class="uc-title">Network &amp; VPN problems</h3>
-          <p class="uc-text">Ticket context can include network adapters, IP, gateway, DNS, and connection status to cut first-response questions.</p>
-        </div>
-        <div class="uc">
-          <div class="uc-tag">#operations</div>
-          <h3 class="uc-title">IT workload management</h3>
-          <p class="uc-text">Filter tickets, assign work, change priority, tag issues, escalate support levels, and track activity.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- ===================== USE CASES removed. Content is already covered by
+       the Endpoint Agent, Server Agent, and Admin Dashboard sections above. -->
   <!-- ===================== SECURITY ===================== -->
   <section class="section" id="security">
     <div class="container">
@@ -850,7 +915,7 @@
         </div>
         <div class="reveal">
           <ul class="list-check" style="margin-top: 0;">
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Server agent uses outbound connections only — no inbound ports</li>
+            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Server agent uses outbound connections only. No inbound ports.</li>
             <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Account actions can start in dry-run mode</li>
             <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Optional allowlist restricts which accounts can be acted on</li>
             <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Password resets force a change at next sign-in</li>
@@ -864,7 +929,7 @@
   </section>
 
   <!-- ===================== CONTACT ===================== -->
-  <section class="section" id="contact" style="background: var(--surface); border-top: 1px solid var(--border);">
+  <section class="section" id="contact">
     <div class="container">
       <div class="contact-grid">
         <div class="reveal">
@@ -974,7 +1039,7 @@
             <img class="brand-mark" src="assets/logo.png" alt="" width="32" height="32" />
             <span class="brand-name">Nevian</span>
           </a>
-          <p class="footer-tag">AI-powered IT support for lean teams — ticketing, endpoint visibility, and automation in one practical platform.</p>
+          <p class="footer-tag">AI-powered IT support for lean teams. Ticketing, endpoint visibility, and automation in one practical platform.</p>
         </div>
         <div>
           <h4>Product</h4>
@@ -991,7 +1056,6 @@
             <a href="#contact">Contact</a>
             <a href="#contact">Book a Demo</a>
             <a href="#security">Security</a>
-            <a href="#use-cases">Use Cases</a>
           </div>
         </div>
         <div>
@@ -1014,6 +1078,6 @@
   </footer>
 
 
-  <script src="js/main.js?v=20260702" defer></script>
+  <script src="js/main.js?v=20260702m" defer></script>
 </body>
 </html>

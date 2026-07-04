@@ -1,4 +1,4 @@
-/* Nevian marketing site — interactions */
+/* Nevian marketing site: interactions */
 (function () {
   'use strict';
 
@@ -152,6 +152,27 @@
   }
   document.querySelectorAll('.seg').forEach(wireSeg);
 
+  /* ── Journey card · click a pill to expand it & swap the scene ─ */
+  document.querySelectorAll('.journey-card').forEach(function (card) {
+    var items = card.querySelectorAll('.journey-item');
+    var scenes = card.querySelectorAll('.journey-scene');
+    items.forEach(function (item) {
+      item.addEventListener('click', function () {
+        if (item.classList.contains('is-open')) return;
+        var step = item.getAttribute('data-step');
+        items.forEach(function (i) {
+          var open = i === item;
+          i.classList.toggle('is-open', open);
+          i.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        scenes.forEach(function (s) {
+          s.classList.toggle('is-active', s.getAttribute('data-scene') === step);
+        });
+        card.setAttribute('data-active', step);
+      });
+    });
+  });
+
   /* ── Contact form (works on static hosting) ───────────────── */
   var form = document.getElementById('contact-form');
   var status = document.getElementById('form-status');
@@ -161,7 +182,7 @@
     status.className = 'form-status' + (kind ? ' ' + kind : '');
   }
   function mailtoFallback(data) {
-    var subject = 'Nevian demo request — ' + (data.company || data.firstName || 'New lead');
+    var subject = 'Nevian demo request: ' + (data.company || data.firstName || 'New lead');
     var lines = [
       'Name: ' + (data.firstName || '') + ' ' + (data.lastName || ''),
       'Email: ' + (data.email || ''),
@@ -192,7 +213,7 @@
       var configured = action && action.indexOf('YOUR_FORM_ID') === -1 && action.indexOf('formspree.io') !== -1;
 
       if (!configured) {
-        // No form backend configured yet — open the visitor's email client.
+        // No form backend configured yet. Open the visitor's email client.
         setStatus('Opening your email app to send the request…', 'ok');
         mailtoFallback(data);
         return;

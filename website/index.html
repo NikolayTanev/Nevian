@@ -47,7 +47,7 @@
     };
   </script>
 
-  <link rel="stylesheet" href="css/styles.css?v=20260702m" />
+  <link rel="stylesheet" href="css/styles.css?v=20260702o" />
 </head>
 <body>
   <!-- ===================== NAV ===================== -->
@@ -948,12 +948,16 @@
         <div class="card card-pad reveal" style="box-shadow: var(--shadow-lg);">
           <!--
             CONTACT FORM
-            This form posts to Formspree so it works on a static GitHub Pages site with no backend.
-            TO ACTIVATE: create a free form at https://formspree.io, then replace YOUR_FORM_ID below
-            with your real form id (e.g. action="https://formspree.io/f/abcdwxyz").
-            Until then, submissions fall back to opening the visitor's email client.
+            Submissions POST as JSON to an AWS API Gateway endpoint that
+            invokes a Lambda function to send the message via SES.
+            See aws/README.md for one-time setup.
+
+            TO ACTIVATE: run the SAM deploy in aws/, then replace the
+            data-endpoint value below with the ContactEndpoint output URL.
+            Until then, submissions fall back to opening the visitor's
+            email client via mailto:.
           -->
-          <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+          <form id="contact-form" data-endpoint="https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/contact" novalidate>
             <div class="form-grid">
               <div class="field">
                 <label for="firstName">First name</label>
@@ -1006,6 +1010,14 @@
                 <label for="message">Message</label>
                 <textarea id="message" name="message" placeholder="Tell us a little about your current IT support setup…"></textarea>
               </div>
+            </div>
+            <!-- Honeypot: bots fill hidden fields. Kept out of the tab
+                 order and off-screen so keyboard/screen-reader users never
+                 see it. Any value here causes the Lambda to drop the
+                 submission silently. -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="hp-website">Website</label>
+              <input id="hp-website" name="website" type="text" tabindex="-1" autocomplete="off" />
             </div>
             <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Send Request</button>
             <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
@@ -1078,6 +1090,6 @@
   </footer>
 
 
-  <script src="js/main.js?v=20260702m" defer></script>
+  <script src="js/main.js?v=20260702o" defer></script>
 </body>
 </html>

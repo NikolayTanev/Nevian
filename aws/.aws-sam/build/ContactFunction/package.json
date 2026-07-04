@@ -1,0 +1,7 @@
+{
+  "name": "nevian-contact-lambda",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Nevian contact form Lambda. Node.js 20 + AWS SDK v3 SES."
+}

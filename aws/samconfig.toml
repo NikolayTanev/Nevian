@@ -1,0 +1,12 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "website-contact"
+region = "eu-central-1"
+resolve_s3 = true
+s3_prefix = "website-contact"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+disable_rollback = false
+image_repositories = []
+parameter_overrides = "RecipientEmail=\"nevian.info@gmail.com\" SenderEmail=\"nevian.info@gmail.com\" AllowedOrigin=\"https://nevian.info\""

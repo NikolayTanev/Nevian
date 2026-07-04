@@ -47,7 +47,7 @@
     };
   </script>
 
-  <link rel="stylesheet" href="css/styles.css?v=20260702o" />
+  <link rel="stylesheet" href="css/styles.css?v=20260702p" />
 </head>
 <body>
   <!-- ===================== NAV ===================== -->
@@ -941,7 +941,7 @@
           </p>
           <div class="mt-3" style="display:flex; flex-direction:column; gap:0.75rem;">
             <span class="sec-badge" style="align-self:flex-start;"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Usually replies within one business day</span>
-            <p class="form-note">Prefer email? Reach us at <a href="mailto:hello@nevian.info" style="color: var(--accent-deep); font-weight:600;">hello@nevian.info</a></p>
+            <p class="form-note">Prefer email? Reach us at <a href="mailto:nevian.info@gmail.com" style="color: var(--accent-deep); font-weight:600;">nevian.info@gmail.com</a></p>
           </div>
         </div>
 
@@ -1011,14 +1011,10 @@
                 <textarea id="message" name="message" placeholder="Tell us a little about your current IT support setup…"></textarea>
               </div>
             </div>
-            <!-- Honeypot: bots fill hidden fields. Kept out of the tab
-                 order and off-screen so keyboard/screen-reader users never
-                 see it. Any value here causes the Lambda to drop the
-                 submission silently. -->
-            <div class="hp-field" aria-hidden="true">
-              <label for="hp-website">Website</label>
-              <input id="hp-website" name="website" type="text" tabindex="-1" autocomplete="off" />
-            </div>
+            <!-- Honeypot. Never rendered to users. Bots fill hidden
+                 inputs, so any value here causes the Lambda to drop the
+                 submission silently. No label to avoid rendering leaks. -->
+            <input class="hp-input" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">Send Request</button>
             <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
           </form>
@@ -1075,7 +1071,7 @@
           <div class="footer-links">
             <a href="#how-it-works">How It Works</a>
             <a href="#solution">Platform</a>
-            <a href="mailto:hello@nevian.info">Support</a>
+            <a href="mailto:nevian.info@gmail.com">Support</a>
           </div>
         </div>
       </div>
@@ -1090,6 +1086,6 @@
   </footer>
 
 
-  <script src="js/main.js?v=20260702o" defer></script>
+  <script src="js/main.js?v=20260702p" defer></script>
 </body>
 </html>

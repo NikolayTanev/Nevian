@@ -141,7 +141,7 @@ export const handler = async (event) => {
   } catch (err) {
     console.error('SES SendEmail failed:', err);
     return respond(502, {
-      error: 'We could not deliver your message. Please email hello@nevian.info directly.',
+      error: 'We could not deliver your message. Please email nevian.info@gmail.com directly.',
     });
   }
 

@@ -815,14 +815,20 @@ img, svg { display: block; max-width: 100%; }
 .form-status.ok { color: var(--green); }
 .form-status.err { color: var(--red); }
 
-/* Honeypot. Never rendered visually, kept out of tab order. */
-.hp-field {
+/* Honeypot. A bare input with no label, positioned off-screen and
+   made invisible in every way we can think of, so it never leaks
+   into the visual form even if some stylesheet fails to load. */
+.hp-input {
   position: absolute !important;
-  left: -9999px; top: -9999px;
-  width: 1px; height: 1px;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* ── Final CTA ────────────────────────────────────────────── */

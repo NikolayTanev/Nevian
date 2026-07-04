@@ -193,7 +193,7 @@
       '',
       (data.message || '')
     ];
-    var href = 'mailto:hello@nevian.info?subject=' + encodeURIComponent(subject) +
+    var href = 'mailto:nevian.info@gmail.com?subject=' + encodeURIComponent(subject) +
                '&body=' + encodeURIComponent(lines.join('\n'));
     window.location.href = href;
   }
@@ -237,12 +237,12 @@
               form.reset();
               setStatus('Thanks. We received your request and will get back to you shortly.', 'ok');
             } else {
-              setStatus(payload.error || 'Something went wrong. Please try again or email hello@nevian.info.', 'err');
+              setStatus(payload.error || 'Something went wrong. Please try again or email nevian.info@gmail.com.', 'err');
             }
           });
         })
         .catch(function () {
-          setStatus('Something went wrong. Please try again or email hello@nevian.info.', 'err');
+          setStatus('Something went wrong. Please try again or email nevian.info@gmail.com.', 'err');
         })
         .finally(function () {
           if (btn) { btn.disabled = false; btn.textContent = 'Send Request'; }

@@ -1903,3 +1903,240 @@ img, svg { display: block; max-width: 100%; }
 
 /* Ensure the layer card sits above any decorative guides */
 .layer-flow > .layer { position: relative; z-index: 1; }
+
+/* ============================================================
+   Platform story block (NinjaOne-inspired structure, Nevian UI)
+   1. Growth 3-column intro
+   2. Platform architecture diagram
+   3. Big result stats
+   4. Capability 3x3 grid
+   ============================================================ */
+
+/* ── 1. Growth 3-column intro ──────────────────────────────── */
+.growth-grid {
+  display: grid; gap: 2.5rem 3rem; grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) { .growth-grid { grid-template-columns: repeat(3, 1fr); } }
+.growth-col { position: relative; padding-top: 1.5rem; }
+.growth-col::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 2.5rem; height: 3px; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+}
+.growth-col h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+.growth-col p { font-size: 0.95rem; color: var(--dim); line-height: 1.7; margin-top: 0.7rem; }
+
+/* ── 2. Platform architecture diagram ──────────────────────── */
+.platform {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background: var(--card);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+@media (min-width: 48rem) { .platform { padding: 2rem; } }
+
+/* Top row: three surface cards */
+.platform-top {
+  display: grid; gap: 1rem; grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) { .platform-top { grid-template-columns: repeat(3, 1fr); } }
+.platform-pillar {
+  position: relative;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+.platform-pillar .p-ico {
+  width: 2.75rem; height: 2.75rem; border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent-deep); background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  margin-bottom: 0.85rem;
+}
+[data-theme="dark"] .platform-pillar .p-ico { color: var(--accent-bright); }
+.platform-pillar .p-ico svg { width: 1.4rem; height: 1.4rem; }
+.platform-pillar h3 { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.platform-pillar p { font-size: 0.85rem; color: var(--dim); line-height: 1.5; margin-top: 0.4rem; }
+
+/* Dotted connectors between top cards and the device band */
+.platform-connectors {
+  display: none; grid-template-columns: repeat(3, 1fr);
+  height: 1.5rem;
+}
+@media (min-width: 48rem) { .platform-connectors { display: grid; } }
+.platform-connectors span {
+  justify-self: center; width: 2px; height: 100%;
+  background-image: linear-gradient(180deg, var(--accent-line) 55%, transparent 0);
+  background-size: 2px 6px; background-repeat: repeat-y;
+  opacity: 0.8;
+}
+
+/* Middle band: device types Nevian covers */
+.platform-band {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-xl);
+  padding: 1.4rem 1rem;
+  margin: 0.5rem 0;
+}
+.platform-devices {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 0.75rem; margin-bottom: 1rem;
+}
+.platform-device-ico {
+  width: 2.75rem; height: 2.75rem; border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--accent-deep);
+  box-shadow: var(--shadow-soft);
+}
+[data-theme="dark"] .platform-device-ico { color: var(--accent-bright); }
+.platform-device-ico svg { width: 1.4rem; height: 1.4rem; }
+.platform-device-labels {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 0.4rem 1.25rem;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent-deep);
+}
+[data-theme="dark"] .platform-device-labels { color: var(--accent-bright); }
+
+/* Bottom: dark platform console panel (fixed dark regardless of theme) */
+.platform-core {
+  position: relative;
+  background:
+    radial-gradient(ellipse 70% 120% at 50% 0%, rgba(52,192,138,.16), transparent 60%),
+    linear-gradient(180deg, #0f1a16, #0b1310);
+  border: 1px solid rgba(52,192,138,.22);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem 1.25rem 1.5rem;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+@media (min-width: 48rem) { .platform-core { padding: 2rem 1.75rem 1.6rem; } }
+.platform-core-title {
+  text-align: center;
+  font-size: clamp(1.1rem, 0.9rem + 1vw, 1.5rem); font-weight: 800;
+  letter-spacing: -0.01em; color: #eafaf2;
+  margin-bottom: 1.4rem;
+}
+.platform-core-title span { color: #46d39b; }
+.platform-modules {
+  display: grid; gap: 0.8rem; grid-template-columns: 1fr 1fr;
+}
+@media (min-width: 60rem) { .platform-modules { grid-template-columns: repeat(4, 1fr); } }
+.platform-module {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(52,192,138,.28);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1rem;
+  color: #dbeee6; font-size: 0.85rem; font-weight: 600; line-height: 1.3;
+  transition: background .2s ease, border-color .2s ease;
+}
+.platform-module:hover { background: rgba(52,192,138,.12); border-color: rgba(52,192,138,.5); }
+.platform-module svg { width: 1.1rem; height: 1.1rem; color: #46d39b; flex-shrink: 0; }
+.platform-core-foot {
+  display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+  margin-top: 1.5rem;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #8fb8a8;
+}
+.platform-core-foot::before,
+.platform-core-foot::after {
+  content: ''; height: 1px; flex: 1; max-width: 6rem;
+  background: linear-gradient(90deg, transparent, rgba(143,184,168,.5), transparent);
+}
+
+/* ── 3. Big result stats ───────────────────────────────────── */
+.result-grid {
+  display: grid; gap: 2rem; grid-template-columns: 1fr;
+  text-align: center;
+}
+@media (min-width: 48rem) { .result-grid { grid-template-columns: repeat(3, 1fr); text-align: left; } }
+.result { padding: 0 0.5rem; }
+.result-num {
+  font-size: clamp(3rem, 2rem + 4vw, 4.5rem); font-weight: 800;
+  line-height: 1; letter-spacing: -0.03em; color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.result-bar {
+  width: 3.5rem; height: 4px; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--accent), #3aa9c7);
+  margin: 1rem auto 1rem;
+}
+@media (min-width: 48rem) { .result-bar { margin: 1rem 0; } }
+.result-text { font-size: 0.95rem; color: var(--dim); line-height: 1.6; max-width: 18rem; margin: 0 auto; }
+@media (min-width: 48rem) { .result-text { margin: 0; } }
+
+/* ── 4. Capability 3x3 grid (bordered, expandable "+" cards) ── */
+.cap-grid {
+  display: grid; grid-template-columns: 1fr;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  background: var(--card);
+}
+@media (min-width: 40rem) { .cap-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 64rem) { .cap-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Inner separators drawn with a "gap" trick: each tile draws its own
+   top + left border, and negative margins pull the grid so the outer
+   edges sit flush with the rounded container. Simple and breakpoint-safe. */
+.cap-grid { gap: 1px; background: var(--border); }
+.cap-tile {
+  position: relative;
+  display: flex; flex-direction: column;
+  padding: 2rem 1.75rem;
+  min-height: 15rem;
+  background: var(--card);
+  transition: background .2s ease;
+  cursor: default;
+}
+.cap-tile:hover { background: var(--hover-fade); }
+
+.cap-tile-ico {
+  width: 3rem; height: 3rem; border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent-deep); background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  margin-bottom: auto;
+}
+[data-theme="dark"] .cap-tile-ico { color: var(--accent-bright); }
+.cap-tile-ico svg { width: 1.5rem; height: 1.5rem; }
+
+.cap-tile-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  margin-top: 1.5rem;
+}
+.cap-tile-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+.cap-tile-plus {
+  flex-shrink: 0; width: 1.5rem; height: 1.5rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent-deep);
+  transition: transform .3s ease;
+}
+[data-theme="dark"] .cap-tile-plus { color: var(--accent-bright); }
+.cap-tile-plus svg { width: 1.1rem; height: 1.1rem; }
+.cap-tile:hover .cap-tile-plus { transform: rotate(90deg); }
+
+/* Description occupies reserved space at all times, so revealing it
+   never changes the card height — it just fades in on hover. */
+.cap-tile-desc {
+  margin-top: 0.6rem;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.cap-tile-desc > span {
+  font-size: 0.88rem; color: var(--dim); line-height: 1.6;
+}
+@media (hover: hover) {
+  .cap-tile:hover .cap-tile-desc { opacity: 1; }
+}
+/* Touch devices: always show descriptions (no hover) */
+@media (hover: none) {
+  .cap-tile-desc { opacity: 1; }
+  .cap-tile-plus { display: none; }
+}

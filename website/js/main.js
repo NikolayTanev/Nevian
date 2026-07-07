@@ -57,12 +57,14 @@
     if (el.dataset.counted) return;
     el.dataset.counted = '1';
     var target = parseFloat(el.getAttribute('data-count')) || 0;
+    var prefix = el.getAttribute('data-prefix') || '';
+    var suffix = el.getAttribute('data-suffix') || '';
     var duration = 1200;
     var start = performance.now();
     function tick(now) {
       var p = Math.min((now - start) / duration, 1);
       var value = Math.round(easeOutCubic(p) * target);
-      el.textContent = String(value);
+      el.textContent = prefix + String(value) + suffix;
       if (p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);

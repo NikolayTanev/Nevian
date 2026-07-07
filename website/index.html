@@ -53,7 +53,7 @@
     };
   </script>
 
-  <link rel="stylesheet" href="css/styles.css?v=20260707c" />
+  <link rel="stylesheet" href="css/styles.css?v=20260707i" />
 </head>
 <body>
   <!-- ===================== NAV ===================== -->
@@ -97,32 +97,16 @@
   <!-- ===================== HERO ===================== -->
   <section class="hero">
     <span class="hero-orb" aria-hidden="true"></span>
-    <span class="hero-orb alt" aria-hidden="true"></span>
     <span class="hero-dots" aria-hidden="true"></span>
 
     <div class="container">
       <div class="hero-inner">
         <div class="hero-copy">
-          <span class="hero-badge reveal">
-            <span class="live-dot pulse"></span>
-            AI-powered IT support for lean teams
-          </span>
           <h1 class="reveal">
-            Resolve tickets faster with
-            <span class="grad">AI</span>,
-            <span class="rotator" aria-hidden="true"><span>
-              <i>endpoint context</i>
-              <i>device data</i>
-              <i>real automation</i>
-              <i>endpoint context</i>
-            </span></span>
-            <span class="sr-only">endpoint context</span>
-            &amp; flow.
+            Resolve tickets faster with <span class="grad">AI</span> and full endpoint context.
           </h1>
           <p class="hero-sub reveal">
-            Nevian helps small and mid-sized businesses modernize IT support with a lightweight Windows desk agent,
-            an AI ticket assistant, server-side automation, and a clean admin dashboard for fleet visibility, routing,
-            escalation, and resolution.
+            AI ticketing, endpoint visibility, and secure automation in one platform, so your team resolves issues faster and cuts the time and cost of everyday IT support.
           </p>
           <div class="hero-cta reveal">
             <a href="#contact" class="btn btn-primary btn-lg">Book a Demo</a>
@@ -139,68 +123,56 @@
         </div>
 
         <div class="hero-mock reveal reveal-right">
-          <span class="mock-tag t-1" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="none"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            AI triaged in 1.4s
-          </span>
-          <span class="mock-tag t-2" aria-hidden="true">
-            <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            Auto-routed
-          </span>
-
-          <!-- AI ticket chat -->
-          <div class="mock-card mock-chat">
-            <div class="mock-chat-head">
-              <span class="mock-chat-title">Ticket TKT-0042 · Account</span>
-              <span class="badge badge-yellow">Open</span>
+          <div class="mock-panel">
+            <div class="mock-panel-bar">
+              <span class="mock-traffic" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="mock-panel-title">Ticket TKT-0042</span>
+              <span class="badge badge-yellow">In progress</span>
             </div>
-            <div class="mock-msg mock-msg-user">I'm locked out and forgot my password.</div>
-            <div class="mock-msg mock-msg-bot">I can help with that. Please confirm your Windows username and I'll process it now.</div>
-            <span class="mock-status"><span class="live-dot pulse"></span>Account recovery queued</span>
-          </div>
-
-          <!-- Floating KPI card -->
-          <div class="mock-card mock-float">
-            <div class="mock-kpis">
-              <div class="mock-kpi"><div class="mock-kpi-val" data-count="14">0</div><div class="mock-kpi-label">Open tickets</div></div>
-              <div class="mock-kpi"><div class="mock-kpi-val" data-count="38">0</div><div class="mock-kpi-label">Online devices</div></div>
-              <div class="mock-kpi"><div class="mock-kpi-val" data-count="22">0</div><div class="mock-kpi-label">Auto-routed today</div></div>
-              <div class="mock-kpi"><div class="mock-kpi-val" data-count="9">0</div><div class="mock-kpi-label">Resolved by AI</div></div>
-            </div>
+            <div class="mock-chat" id="hero-chat" aria-hidden="true"></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== FLOW RIBBON ===================== -->
-  <div class="flow-ribbon" aria-hidden="true">
-    <div class="flow-track">
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 14h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Windows desk agent</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10v6H5L3 12V4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>AI ticket assistant</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 6.5h11" stroke="currentColor" stroke-width="1.4"/></svg>Admin dashboard</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2 2.5 4.5V8c0 3 2 4.7 5.5 5.6 3.5-.9 5.5-2.6 5.5-5.6V4.5L8 2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Account recovery server agent</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M2 8h12M9 4l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Auto-routing &amp; escalation</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6 11.5 13 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Resolved with context</span>
-      <span class="flow-sep"></span>
-      <!-- duplicated for seamless marquee -->
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 14h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Windows desk agent</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10v6H5L3 12V4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>AI ticket assistant</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 6.5h11" stroke="currentColor" stroke-width="1.4"/></svg>Admin dashboard</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2 2.5 4.5V8c0 3 2 4.7 5.5 5.6 3.5-.9 5.5-2.6 5.5-5.6V4.5L8 2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Account recovery server agent</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M2 8h12M9 4l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Auto-routing &amp; escalation</span>
-      <span class="flow-sep"></span>
-      <span class="flow-item"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6 11.5 13 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Resolved with context</span>
-      <span class="flow-sep"></span>
+  <!-- ===================== INTEGRATIONS STRIP ===================== -->
+  <div class="logo-strip">
+    <div class="container">
+      <div class="logo-marquee" aria-hidden="true">
+      <div class="logo-track">
+        <img class="logo-item" src="assets/integrations/microsoft-6.svg" alt="Microsoft" />
+        <img class="logo-item" src="assets/integrations/azure-2.svg" alt="Microsoft Azure" />
+        <img class="logo-item" src="assets/integrations/windows-darkblue-2012-svg.svg" alt="Windows" />
+        <img class="logo-item" src="assets/integrations/azure-active-directory.svg" alt="Microsoft Entra ID" />
+        <img class="logo-item" src="assets/integrations/servicenow.svg" alt="ServiceNow" />
+        <img class="logo-item" src="assets/integrations/powershell.svg" alt="PowerShell" />
+        <img class="logo-item" src="assets/integrations/windows-server.svg" alt="Windows Server" />
+        <img class="logo-item" src="assets/integrations/microsoft-6.svg" alt="Microsoft" />
+        <img class="logo-item" src="assets/integrations/azure-2.svg" alt="Microsoft Azure" />
+        <img class="logo-item" src="assets/integrations/windows-darkblue-2012-svg.svg" alt="Windows" />
+        <img class="logo-item" src="assets/integrations/azure-active-directory.svg" alt="Microsoft Entra ID" />
+        <img class="logo-item" src="assets/integrations/servicenow.svg" alt="ServiceNow" />
+        <img class="logo-item" src="assets/integrations/powershell.svg" alt="PowerShell" />
+        <img class="logo-item" src="assets/integrations/windows-server.svg" alt="Windows Server" />
+      </div>
+      <div class="logo-track">
+        <img class="logo-item" src="assets/integrations/microsoft-6.svg" alt="Microsoft" />
+        <img class="logo-item" src="assets/integrations/azure-2.svg" alt="Microsoft Azure" />
+        <img class="logo-item" src="assets/integrations/windows-darkblue-2012-svg.svg" alt="Windows" />
+        <img class="logo-item" src="assets/integrations/azure-active-directory.svg" alt="Microsoft Entra ID" />
+        <img class="logo-item" src="assets/integrations/servicenow.svg" alt="ServiceNow" />
+        <img class="logo-item" src="assets/integrations/powershell.svg" alt="PowerShell" />
+        <img class="logo-item" src="assets/integrations/windows-server.svg" alt="Windows Server" />
+        <img class="logo-item" src="assets/integrations/microsoft-6.svg" alt="Microsoft" />
+        <img class="logo-item" src="assets/integrations/azure-2.svg" alt="Microsoft Azure" />
+        <img class="logo-item" src="assets/integrations/windows-darkblue-2012-svg.svg" alt="Windows" />
+        <img class="logo-item" src="assets/integrations/azure-active-directory.svg" alt="Microsoft Entra ID" />
+        <img class="logo-item" src="assets/integrations/servicenow.svg" alt="ServiceNow" />
+        <img class="logo-item" src="assets/integrations/powershell.svg" alt="PowerShell" />
+        <img class="logo-item" src="assets/integrations/windows-server.svg" alt="Windows Server" />
+      </div>
+      </div>
     </div>
   </div>
 
@@ -1291,6 +1263,6 @@
   </footer>
 
 
-  <script src="js/main.js?v=20260707a" defer></script>
+  <script src="js/main.js?v=20260707h" defer></script>
 </body>
 </html>

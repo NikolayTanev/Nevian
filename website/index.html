@@ -53,7 +53,7 @@
     };
   </script>
 
-  <link rel="stylesheet" href="css/styles.css?v=20260707i" />
+  <link rel="stylesheet" href="css/styles.css?v=20260707q" />
 </head>
 <body>
   <!-- ===================== NAV ===================== -->
@@ -100,36 +100,111 @@
     <span class="hero-dots" aria-hidden="true"></span>
 
     <div class="container">
-      <div class="hero-inner">
-        <div class="hero-copy">
-          <h1 class="reveal">
-            Resolve tickets faster with <span class="grad">AI</span> and full endpoint context.
-          </h1>
-          <p class="hero-sub reveal">
-            AI ticketing, endpoint visibility, and secure automation in one platform, so your team resolves issues faster and cuts the time and cost of everyday IT support.
-          </p>
-          <div class="hero-cta reveal">
-            <a href="#contact" class="btn btn-primary btn-lg">Book a Demo</a>
-            <a href="#how-it-works" class="btn btn-ghost btn-lg">See How It Works
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="margin-left:.2rem;"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-          <ul class="hero-trust stagger reveal">
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Easy Windows agent rollout</li>
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>AI-guided troubleshooting</li>
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Live fleet visibility</li>
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Built for SMB IT teams</li>
-          </ul>
+      <div class="hero-head reveal">
+        <h1>Resolve tickets faster with <span class="grad">AI</span> and full endpoint context.</h1>
+        <div class="hero-cta">
+          <a href="#contact" class="btn btn-primary btn-lg">Book a Demo</a>
+          <a href="#how-it-works" class="btn btn-ghost btn-lg">See How It Works
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="margin-left:.2rem;"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
         </div>
+      </div>
 
-        <div class="hero-mock reveal reveal-right">
-          <div class="mock-panel">
-            <div class="mock-panel-bar">
-              <span class="mock-traffic" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="mock-panel-title">Ticket TKT-0042</span>
-              <span class="badge badge-yellow">In progress</span>
+      <!-- Interactive help-desk preview: click a ticket to see how it's handled -->
+      <div class="hero-app reveal reveal-scale">
+        <div class="app-bar">
+          <span class="app-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="app-bar-title">Nevian · Help desk</span>
+          <span class="app-bar-try">Try Nevian</span>
+        </div>
+        <div class="app-body">
+          <aside class="app-side" role="tablist" aria-label="Example tickets">
+            <div class="app-side-head">Your requests</div>
+
+            <button class="app-ticket is-active" role="tab" aria-selected="true" data-t="t1">
+              <span class="app-ticket-row"><span class="app-ticket-id">TKT-0042</span><span class="app-tag app-tag-green">Resolved</span></span>
+              <span class="app-ticket-title">I forgot my password</span>
+            </button>
+            <button class="app-ticket" role="tab" aria-selected="false" data-t="t2">
+              <span class="app-ticket-row"><span class="app-ticket-id">TKT-0043</span><span class="app-tag app-tag-green">Resolved</span></span>
+              <span class="app-ticket-title">Software request</span>
+            </button>
+            <button class="app-ticket" role="tab" aria-selected="false" data-t="t3">
+              <span class="app-ticket-row"><span class="app-ticket-id">TKT-0044</span><span class="app-tag app-tag-amber">Escalated</span></span>
+              <span class="app-ticket-title">Laptop keeps crashing</span>
+            </button>
+            <button class="app-ticket" role="tab" aria-selected="false" data-t="t4">
+              <span class="app-ticket-row"><span class="app-ticket-id">TKT-0045</span><span class="app-tag app-tag-green">Resolved</span></span>
+              <span class="app-ticket-title">VPN won't connect</span>
+            </button>
+          </aside>
+
+          <div class="app-main">
+            <div class="app-convos">
+            <!-- T1 · Password reset -->
+            <div class="app-convo is-active" data-panel="t1">
+              <div class="app-convo-head">
+                <span class="app-convo-title">Password reset</span>
+                <span class="app-tag app-tag-green">Resolved</span>
+              </div>
+              <div class="app-msgs">
+                <div class="amsg amsg-user">I'm locked out and forgot my password.</div>
+                <div class="amsg amsg-ai">I can reset it for you. What's the 6-digit code from your authenticator app?</div>
+                <div class="amsg amsg-user">482 913</div>
+                <div class="amsg amsg-ai">Verified. Here's a temporary password: <code>Tq7$kR2wze</code>. You'll set a new one at next sign-in.</div>
+                <div class="amsg-sys amsg-sys-green"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Resolved automatically in 1.4 seconds</div>
+              </div>
             </div>
-            <div class="mock-chat" id="hero-chat" aria-hidden="true"></div>
+
+            <!-- T2 · Software request -->
+            <div class="app-convo" data-panel="t2">
+              <div class="app-convo-head">
+                <span class="app-convo-title">Software request</span>
+                <span class="app-tag app-tag-green">Resolved</span>
+              </div>
+              <div class="app-msgs">
+                <div class="amsg amsg-user">I need Acrobat Pro installed for a project.</div>
+                <div class="amsg amsg-ai">You're covered under the company license. Which device should I install it on?</div>
+                <div class="amsg amsg-user">My work laptop, LATITUDE-5430-01.</div>
+                <div class="amsg amsg-ai">Installing now through the desk agent. I'll confirm when it's ready.</div>
+                <div class="amsg amsg-ai">All set. Acrobat Pro is installed and ready to use.</div>
+                <div class="amsg-sys amsg-sys-green"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Resolved automatically &middot; no waiting</div>
+              </div>
+            </div>
+
+            <!-- T3 · Escalation -->
+            <div class="app-convo" data-panel="t3">
+              <div class="app-convo-head">
+                <span class="app-convo-title">Laptop keeps crashing</span>
+                <span class="app-tag app-tag-amber">Escalated</span>
+              </div>
+              <div class="app-msgs">
+                <div class="amsg amsg-user">My laptop keeps crashing with a blue screen.</div>
+                <div class="amsg amsg-ai">I checked your device and I'm seeing repeated crashes after a recent graphics driver update.</div>
+                <div class="amsg amsg-ai">This one needs hands-on repair, so I've escalated it with your logs and full device context attached.</div>
+                <div class="amsg-sys amsg-sys-amber"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 5.5v3M8 11h.01M8 2 1.5 13.5h13z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Escalated to 2nd-level &middot; assigned to Alex R.</div>
+              </div>
+            </div>
+
+            <!-- T4 · VPN -->
+            <div class="app-convo" data-panel="t4">
+              <div class="app-convo-head">
+                <span class="app-convo-title">VPN won't connect</span>
+                <span class="app-tag app-tag-green">Resolved</span>
+              </div>
+              <div class="app-msgs">
+                <div class="amsg amsg-user">I can't connect to the VPN from home.</div>
+                <div class="amsg amsg-ai">Your VPN client is a few versions behind. Want me to update it on your laptop?</div>
+                <div class="amsg amsg-user">Yes, go ahead.</div>
+                <div class="amsg amsg-ai">Updated and reconnected. You're on the VPN now.</div>
+                <div class="amsg-sys amsg-sys-green"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Resolved automatically &middot; no waiting</div>
+              </div>
+            </div>
+            </div>
+            <div class="app-composer" aria-hidden="true">
+              <span class="app-composer-field">Message the help desk&hellip;</span>
+              <button class="app-composer-send" type="button" tabindex="-1" aria-label="Send"><svg viewBox="0 0 20 20" fill="none"><path d="M3 10h12M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
           </div>
         </div>
       </div>
@@ -1263,6 +1338,6 @@
   </footer>
 
 
-  <script src="js/main.js?v=20260707h" defer></script>
+  <script src="js/main.js?v=20260707m" defer></script>
 </body>
 </html>

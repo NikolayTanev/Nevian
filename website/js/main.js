@@ -252,111 +252,36 @@
     });
   }
 
-  /* ── Hero password-reset walkthrough (animated, looping) ──── */
-  var heroChat = document.getElementById('hero-chat');
-  if (heroChat) {
-    var chatTimers = [];
-    var chatPanel = heroChat.closest('.mock-panel');
-    var chatBadge = chatPanel ? chatPanel.querySelector('.mock-panel-bar .badge') : null;
-    var chatTitle = chatPanel ? chatPanel.querySelector('.mock-panel-title') : null;
-    function clearChatTimers() { chatTimers.forEach(clearTimeout); chatTimers = []; }
-    function chatBottom() { heroChat.scrollTop = heroChat.scrollHeight; }
-
-    function mkRow(who) {
-      var r = document.createElement('div');
-      r.className = 'mc-row mc-' + who;
-      heroChat.appendChild(r);
-      return r;
-    }
-    function reveal(r) {
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () { r.classList.add('in'); chatBottom(); });
+  /* ── Hero help-desk preview · hover to switch, click to try ─ */
+  var heroApp = document.querySelector('.hero-app');
+  if (heroApp) {
+    var appTickets = heroApp.querySelectorAll('.app-ticket');
+    var appPanels = heroApp.querySelectorAll('.app-convo');
+    function showTicket(id) {
+      appTickets.forEach(function (x) {
+        var on = x.getAttribute('data-t') === id;
+        x.classList.toggle('is-active', on);
+        x.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      appPanels.forEach(function (p) {
+        p.classList.toggle('is-active', p.getAttribute('data-panel') === id);
       });
     }
-    function mkBubble(who, html) {
-      var r = mkRow(who);
-      var b = document.createElement('div');
-      b.className = 'mc-bubble';
-      b.innerHTML = html;
-      r.appendChild(b);
-      reveal(r);
-      return r;
-    }
-    function mkTyping() {
-      var r = mkRow('bot');
-      r.innerHTML = '<div class="mc-typing"><i></i><i></i><i></i></div>';
-      reveal(r);
-      return r;
-    }
-    function mkDevices() {
-      var r = mkRow('user');
-      r.innerHTML = '<div class="mc-devices">' +
-        '<span class="mc-device" data-d="0">LATITUDE-5430-01</span>' +
-        '<span class="mc-device" data-d="1">FINANCE-WS-07</span></div>';
-      reveal(r);
-      return r;
-    }
-    function mkProcessing() {
-      var r = mkRow('bot');
-      r.innerHTML = '<div class="mc-processing"><span class="mc-spin"></span>Resetting on the domain controller\u2026</div>';
-      reveal(r);
-      return r;
-    }
-    function at(ms, fn) { chatTimers.push(setTimeout(fn, ms)); }
+    appTickets.forEach(function (tk) {
+      var id = tk.getAttribute('data-t');
+      tk.addEventListener('click', function () { showTicket(id); });
+    });
 
-    function playChat() {
-      clearChatTimers();
-      heroChat.innerHTML = '';
-      if (chatBadge) { chatBadge.className = 'badge badge-yellow'; chatBadge.textContent = 'In progress'; }
-      if (chatTitle) chatTitle.textContent = 'Ticket TKT-0042';
-
-      var t = 500;
-      at(t, function () { mkBubble('user', 'I forgot my password.'); });
-      var typ1; at(t += 800, function () {
-        typ1 = mkTyping();
-        if (chatTitle) chatTitle.textContent = 'Ticket TKT-0042 \u00b7 Password reset';
+    // Only the "Try Nevian" label navigates to the contact form
+    var tryBtn = heroApp.querySelector('.app-bar-try');
+    if (tryBtn) {
+      tryBtn.addEventListener('click', function () {
+        var target = document.querySelector('#contact');
+        if (!target) return;
+        var navH = document.querySelector('.nav') ? document.querySelector('.nav').offsetHeight : 0;
+        var y = target.getBoundingClientRect().top + window.pageYOffset - navH - 8;
+        window.scrollTo({ top: y, behavior: 'smooth' });
       });
-      at(t += 1100, function () { if (typ1) typ1.remove(); mkBubble('bot', 'Sure, what\u2019s the 6-digit code from your authenticator app?'); });
-      at(t += 1200, function () { mkBubble('user', '482 913'); });
-      var typ2; at(t += 800, function () { typ2 = mkTyping(); });
-      at(t += 1100, function () { if (typ2) typ2.remove(); mkBubble('bot', 'Verified. Which device should I reset it on?'); });
-      var devRow; at(t += 900, function () { devRow = mkDevices(); });
-      at(t += 1200, function () { var s = devRow && devRow.querySelector('[data-d="0"]'); if (s) s.classList.add('is-selected'); chatBottom(); });
-      var proc; at(t += 900, function () { proc = mkProcessing(); });
-      var typ3; at(t += 2000, function () { if (proc) proc.remove(); typ3 = mkTyping(); });
-      at(t += 1100, function () { if (typ3) typ3.remove(); mkResultRow(); });
-      at(t += 1000, function () { mkResolved(); });
-      at(t += 5000, playChat);
-    }
-
-    function mkResolved() {
-      if (chatBadge) { chatBadge.className = 'badge badge-green'; chatBadge.textContent = 'Resolved'; }
-      var r = mkRow('sys');
-      r.innerHTML = '<div class="mc-resolved"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10.5 3.5 3.5L16 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ticket marked as resolved</div>';
-      reveal(r);
-      return r;
-    }
-
-    function mkResultRow() {
-      var r = mkBubble('bot',
-        '<span class="mc-result-head"><svg viewBox="0 0 16 16" fill="none"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Password reset complete</span>' +
-        '<span class="mc-pass">Tq7$kR2wze</span>' +
-        '<span class="mc-note">Temporary password sent. The user sets a new one at next sign-in.</span>'
-      );
-      var b = r.querySelector('.mc-bubble');
-      if (b) b.classList.add('mc-result');
-    }
-
-    if ('IntersectionObserver' in window) {
-      var chatStarted = false;
-      var chatIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting && !chatStarted) { chatStarted = true; playChat(); }
-        });
-      }, { threshold: 0.3 });
-      chatIO.observe(heroChat);
-    } else {
-      playChat();
     }
   }
 })();

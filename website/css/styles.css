@@ -384,7 +384,7 @@ img, svg { display: block; max-width: 100%; }
 [data-theme="dark"] .app-bar-try { color: var(--accent-bright); }
 .hero-app:hover .app-bar-try { opacity: 1; pointer-events: auto; }
 
-.app-body { display: grid; grid-template-columns: 15rem 1fr; height: 27rem; }
+.app-body { display: grid; grid-template-columns: 15rem 1fr; height: 30rem; }
 
 .app-side {
   border-right: 1px solid var(--border); background: var(--surface);

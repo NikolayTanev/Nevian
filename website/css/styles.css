@@ -309,9 +309,13 @@ img, svg { display: block; max-width: 100%; }
 /* ── Hero (light, flowy) ──────────────────────────────────── */
 .hero {
   position: relative; color: var(--text);
-  background:
-    radial-gradient(ellipse 70% 60% at 15% 12%, rgba(21,160,107,.10), transparent 62%),
-    linear-gradient(180deg, #f7fbf9 0%, #ffffff 55%, var(--surface) 100%);
+  background-color: var(--surface);
+  background-image: url("../assets/AI_Assets/Marble_rail_with_ticket_token_202607082229.jpeg?v=2");
+  background-repeat: no-repeat;
+  /* Anchored to the top, shifted right (~200px). Increase toward 400-800px to push further right. */
+  background-position: calc(50% + 200px) top;
+  /* Fixed width so it does not stretch as the window widens; sides stay white on very wide screens. */
+  background-size: 1600px auto;
   overflow: hidden; isolation: isolate;
 }
 [data-theme="dark"] .hero {
@@ -1143,6 +1147,16 @@ img, svg { display: block; max-width: 100%; }
   background:
     radial-gradient(ellipse 70% 90% at 80% 20%, rgba(21, 160, 107, .10), transparent 70%),
     linear-gradient(180deg, var(--surface), var(--card));
+}
+/* Frosted-glass render behind the scenes: softly blurred, no color overlay. */
+.journey-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    url("../assets/AI_Assets/Frosted_glass_card_on_ring_202607082251.jpeg") center / cover no-repeat;
+  opacity: 0.9;
+  pointer-events: none;
 }
 .journey-visual-orb {
   position: absolute;

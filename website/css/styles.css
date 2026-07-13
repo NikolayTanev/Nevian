@@ -863,7 +863,10 @@ img, svg { display: block; max-width: 100%; }
 /* ── Reusable green feature panel (shares the CTA treatment) ── */
 .green-panel {
   position: relative; color: #eafaf2;
-  background: linear-gradient(135deg, #0c3d2c 0%, #0a2e22 55%, #08251b 100%);
+  background:
+    radial-gradient(120% 90% at 12% 0%, rgba(52,192,138,.28), transparent 55%),
+    radial-gradient(110% 120% at 100% 100%, rgba(20,120,140,.30), transparent 55%),
+    linear-gradient(135deg, #0c3d2c 0%, #0a2e22 55%, #08251b 100%);
   border: 1px solid rgba(52,192,138,.25);
   border-radius: var(--radius-2xl); padding: 3rem;
   overflow: hidden; isolation: isolate;
@@ -871,6 +874,24 @@ img, svg { display: block; max-width: 100%; }
 @media (min-width: 48rem) { .green-panel { padding: 3.25rem; } }
 @media (max-width: 40rem) { .green-panel { padding: 2.25rem 1.5rem; } }
 .green-panel > * { position: relative; z-index: 1; }
+
+/* Animated ribbon background layer. The WebGL canvas (or the static
+   SVG fallback) fills the panel and is faded at top/bottom so it reads
+   as ambient depth behind the content. */
+.ribbon-bg {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; overflow: hidden;
+  border-radius: inherit;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+}
+.ribbon-bg canvas,
+.ribbon-fallback {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+}
+/* When the live WebGL ribbon is running, drop the static fallback. */
+.ribbon-bg.is-live .ribbon-fallback { display: none; }
 .green-panel-art {
   position: absolute; top: 0; right: 0; bottom: 0;
   width: 42%; max-width: 26rem; height: 100%;
@@ -891,7 +912,7 @@ img, svg { display: block; max-width: 100%; }
 .green-panel .list-check svg { color: #46d39b; }
 .green-panel .growth-col h3 { color: #ffffff; }
 .green-panel .growth-col p { color: #b9d6c9; }
-.green-panel .growth-col::before { background: linear-gradient(90deg, #34c08a, #6ee7b0); }
+
 
 /* Green variant of the Why-Nevian hero bento tile */
 .wb-tile-hero.wb-tile-green {
@@ -1657,108 +1678,235 @@ img, svg { display: block; max-width: 100%; }
 .frow-title { font-size: 0.97rem; font-weight: 700; color: var(--text); line-height: 1.3; }
 .frow-text { font-size: 0.86rem; color: var(--dim); line-height: 1.55; margin-top: 0.3rem; }
 
-/* ── Layer flow (Solution section) ──────────────────────────
-   Hub-and-spoke topology on desktop:
-     [Desk Agent]    ─┐
-                       ├──▶ [AI Ticket Assistant] ──▶ [Admin Dashboard]
-     [Server Agent]  ─┘
-   Two compact supporting agents on the left both feed the AI
-   core in the middle, which then reports out to the admin
-   dashboard on the right. On mobile everything stacks. */
-.layer-flow {
+/* ── Node flow (Solution section) ───────────────────────────
+   Stripe-style infrastructure topology: managed fleet, external
+   integrations and data stores group through gateway nodes
+   (Agent Gateway, Integration Hub, Data Pipeline, Orchestration)
+   before they reach the Nevian core in the middle. Orthogonal
+   dotted traces connect everything; the HTML nodes and the SVG
+   share one coordinate space so endpoints line up. On mobile it
+   collapses to a stacked, wrapped list. */
+/* Solution section: title on the left, diagram on the right, sized to
+   sit within a single viewport on desktop. Stacks on smaller screens. */
+.solution-layout { display: grid; gap: 2rem; }
+.solution-head { margin-bottom: 0; }
+@media (min-width: 64rem) {
+  #solution { min-height: 100vh; display: flex; align-items: center; padding: 2rem 0; }
+  #solution > .container { width: 100%; }
+  .solution-layout {
+    grid-template-columns: minmax(16rem, 20rem) 1fr;
+    align-items: center;
+    gap: 2.5rem;
+  }
+  .solution-head { max-width: none; }
+}
+
+.node-flow {
   position: relative;
-  display: grid; gap: 1.5rem;
-  grid-template-columns: 1fr;
   isolation: isolate;
 }
-/* Mobile: only cards; connectors are decorative and would
-   break the vertical read. */
-.layer-flow > .flow-connect { display: none; }
 
-@media (min-width: 72rem) {
-  .layer-flow {
-    /* 5 cols × 2 rows.
-       Col 1: agent cards (stacked, compact)
-       Col 2: Y-merge connector (spans both rows)
-       Col 3: AI ticket assistant (spans both rows, featured)
-       Col 4: straight connector (spans both rows)
-       Col 5: admin dashboard (spans both rows) */
-    grid-template-columns:
-      minmax(0, 0.9fr)
-      minmax(5rem, 8rem)
-      minmax(0, 1.15fr)
-      minmax(5rem, 8rem)
-      minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    column-gap: 0.5rem;
-    row-gap: 1rem;
-    padding: 0.5rem 0.25rem;
-    align-items: stretch;
-  }
-  .layer-flow > .layer-endpoint { grid-column: 1; grid-row: 1; }
-  .layer-flow > .layer-server   { grid-column: 1; grid-row: 2; }
-  .layer-flow > .flow-connect-1 { grid-column: 2; grid-row: 1 / span 2; }
-  .layer-flow > .layer-ai       { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
-  .layer-flow > .flow-connect-2 { grid-column: 4; grid-row: 1 / span 2; }
-  .layer-flow > .layer-command  { grid-column: 5; grid-row: 1 / span 2; align-self: center; }
+/* Mobile: no absolute canvas. Core first, then wrap the nodes
+   into a tidy centered cluster. Traces are hidden. */
+.node-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  align-items: center;
+}
+.node-lines { display: none; }
+.node-flow > .node,
+.node-flow > .node-bus,
+.node-flow > .node-grid,
+.node-flow > .node-io {
+  position: static;   /* inline left/top are ignored while static */
+  transform: none;
+}
 
-  .layer-flow > .flow-connect { display: block; }
+/* Small buzzword node: icon tile + label, nothing else. */
+.node {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.85rem 0.5rem 0.55rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  white-space: nowrap;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.node:hover {
+  border-color: var(--accent-line);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+.node-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.1rem; height: 2.1rem; flex-shrink: 0;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+  border: 1px solid var(--accent-line);
+}
+[data-theme="dark"] .node-ico { color: var(--accent-bright); }
+.node-ico svg { width: 1.15rem; height: 1.15rem; }
+.node-label {
+  font-size: 0.92rem; font-weight: 600; color: var(--text);
+  letter-spacing: -0.01em;
+}
 
-  /* Compact "supporting agent" styling. smaller viz, tighter
-     padding, floating glyphs hidden. Full-content cards would
-     otherwise dwarf the AI core. */
-  .layer-flow > .layer-endpoint,
-  .layer-flow > .layer-server {
-    padding: 1.15rem 1.1rem 1rem;
-  }
-  .layer-flow > .layer-endpoint .layer-viz,
-  .layer-flow > .layer-server .layer-viz {
-    height: 4.5rem;
-    margin-bottom: 0.85rem;
-  }
-  .layer-flow > .layer-endpoint .layer-viz-glyph,
-  .layer-flow > .layer-server .layer-viz-glyph { display: none; }
-  .layer-flow > .layer-endpoint .layer-ico,
-  .layer-flow > .layer-server .layer-ico {
-    width: 2.5rem; height: 2.5rem;
-  }
-  .layer-flow > .layer-endpoint .layer-ico svg,
-  .layer-flow > .layer-server .layer-ico svg {
-    width: 1.2rem; height: 1.2rem;
-  }
-  .layer-flow > .layer-endpoint .layer-title,
-  .layer-flow > .layer-server .layer-title { font-size: 1rem; }
-  .layer-flow > .layer-endpoint .layer-text,
-  .layer-flow > .layer-server .layer-text {
-    font-size: 0.82rem;
-    line-height: 1.5;
-    margin-top: 0.4rem;
-  }
-  .layer-flow > .layer-endpoint .layer-caps,
-  .layer-flow > .layer-server .layer-caps {
-    margin: 0.75rem 0;
-    gap: 0.3rem;
-  }
-  .layer-flow > .layer-endpoint .layer-caps li,
-  .layer-flow > .layer-server .layer-caps li {
-    font-size: 0.68rem;
-    padding: 0.2rem 0.55rem;
-  }
-  .layer-flow > .layer-endpoint .layer-foot,
-  .layer-flow > .layer-server .layer-foot {
-    font-size: 0.75rem;
-    padding-top: 0.7rem;
-  }
+/* ── Cross-fade swap: stacks its children and cycles them, so a
+   node can hint at several possible stacks (Stripe-style). ──── */
+.swap {
+  position: relative;
+  display: inline-grid;
+  text-align: center;
+}
+.swap > * {
+  grid-area: 1 / 1;
+  opacity: 0;
+  animation: node-swap 9s ease-in-out infinite;
+}
+.swap > *:nth-child(1) { animation-delay: 0s; }
+.swap > *:nth-child(2) { animation-delay: -3s; }
+.swap > *:nth-child(3) { animation-delay: -6s; }
+/* Second cadence, phase-shifted so groups don't move in lockstep. */
+.swap-2 > *:nth-child(1) { animation-delay: -1.5s; }
+.swap-2 > *:nth-child(2) { animation-delay: -4.5s; }
+.swap-2 > *:nth-child(3) { animation-delay: -7.5s; }
+@keyframes node-swap {
+  0%   { opacity: 0; transform: translateY(4px); }
+  4%   { opacity: 1; transform: translateY(0); }
+  30%  { opacity: 1; transform: translateY(0); }
+  36%  { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
 
-  /* AI card sits above the connectors with an accent halo. no
-     translate this time (it's already tall from spanning 2 rows). */
-  .layer-flow > .layer-featured {
+/* Fleet bus bar (top): a rounded container holding source cells,
+   the way Stripe groups upstream systems on one bar. */
+.node-bus {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 0.35rem;
+  padding: 0.4rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.bus-cell {
+  padding: 0.45rem 0.8rem;
+  border-radius: var(--radius);
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  font-size: 0.82rem; font-weight: 600; color: var(--dim);
+  white-space: nowrap;
+}
+
+/* Integrations grid (left): a small tile cluster of connected
+   systems that funnel into the Integration Hub. */
+.node-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem;
+  padding: 0.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.grid-cell {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.3rem; height: 2.3rem;
+  border-radius: var(--radius);
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--dim);
+}
+.grid-cell svg { width: 1.2rem; height: 1.2rem; }
+
+/* I/O endpoint (right): a plain square tile, no label — the
+   downstream warehouse / BI target. */
+.node-io {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 3.4rem; height: 3.4rem;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  border: 1px solid var(--border-2);
+  box-shadow: var(--shadow-soft);
+  color: var(--dim);
+}
+.node-io svg { width: 1.7rem; height: 1.7rem; }
+
+/* Center chip: the logo only. A neutral rounded tile with a
+   subtle notched-pin ring, no colored glow. */
+.node-chip {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 6rem; height: 6rem;
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  border: 1px solid var(--border-2);
+  box-shadow: var(--shadow);
+}
+.node-chip-logo { width: 3.1rem; height: 3.1rem; object-fit: contain; }
+/* Mobile: the chip is a full-width banner tile at the top. */
+.node-flow > .node-chip { order: -1; align-self: center; }
+
+@media (min-width: 62rem) {
+  /* Desktop: absolute canvas with a fixed aspect ratio so the
+     percentage-positioned nodes and SVG traces coincide. */
+  .node-flow {
+    display: block;
+    aspect-ratio: 1000 / 560;
+    width: 100%;
+    padding: 0;
+  }
+  .node-lines {
+    display: block;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    overflow: visible; pointer-events: none;
+    z-index: 0;
+  }
+  .node-lines .trace {
+    fill: none;
+    stroke: var(--border-2);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.75;
+  }
+  .node-lines .spark {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 3px var(--accent-soft));
+  }
+  .node-flow > .node,
+  .node-flow > .node-bus,
+  .node-flow > .node-grid,
+  .node-flow > .node-io {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+  /* Keep the fleet bus on a single row (no wrapping) on desktop. */
+  .node-flow > .node-bus {
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  .node-flow > .node-chip {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
     z-index: 2;
-    box-shadow:
-      0 0 0 1px var(--accent-line),
-      0 1.75rem 3rem -1.25rem rgba(21, 160, 107, .22),
-      var(--shadow);
   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .node-lines .spark { display: none; }
+  .swap > * { animation: none; }
+  /* Show only the first variant when motion is reduced. */
+  .swap > *:nth-child(1) { opacity: 1; }
 }
 
 /* ── Connectors: SVG lines with animated dots ──────────────── */
@@ -1991,12 +2139,19 @@ img, svg { display: block; max-width: 100%; }
   display: grid; gap: 2.5rem 3rem; grid-template-columns: 1fr;
 }
 @media (min-width: 48rem) { .growth-grid { grid-template-columns: repeat(3, 1fr); } }
-.growth-col { position: relative; padding-top: 1.5rem; }
-.growth-col::before {
-  content: ''; position: absolute; top: 0; left: 0;
-  width: 2.5rem; height: 3px; border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+/* Clean text columns over the ribbon — no card fill. An icon tile
+   anchors each one; the ribbon behind is the visual, not the cards. */
+.growth-col { position: relative; }
+.growth-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.9rem; height: 2.9rem; margin-bottom: 1.1rem;
+  border-radius: var(--radius-lg);
+  color: #6ee7b0;
+  background: linear-gradient(160deg, rgba(70,211,155,.22), rgba(70,211,155,.06));
+  border: 1px solid rgba(110, 231, 176, .35);
+  box-shadow: 0 6px 18px -8px rgba(70, 211, 155, .5);
 }
+.growth-ico svg { width: 1.5rem; height: 1.5rem; }
 .growth-col h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
 .growth-col p { font-size: 0.95rem; color: var(--dim); line-height: 1.7; margin-top: 0.7rem; }
 
@@ -2122,6 +2277,37 @@ img, svg { display: block; max-width: 100%; }
   background: linear-gradient(90deg, transparent, rgba(79,117,102,.4), transparent);
 }
 
+/* ── Stripe-style scale band: dark section, animated ribbon
+   behind, heading top-left, big gradient stats along the bottom. */
+.scale-section {
+  position: relative; overflow: hidden;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+/* Concentrate the ribbon into a thin central band: fast fade to the
+   background on the left/right AND top/bottom, so only a slim strip
+   through the center shows lines and the rest is clean background. */
+.scale-section .ribbon-bg {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 28%, #000 72%, transparent 100%),
+    linear-gradient(to bottom, transparent 6%, #000 26%, #000 74%, transparent 94%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 28%, #000 72%, transparent 100%),
+    linear-gradient(to bottom, transparent 6%, #000 26%, #000 74%, transparent 94%);
+  mask-composite: intersect;
+}
+.scale-inner {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  gap: 3.5rem;
+}
+@media (min-width: 64rem) {
+  .scale-inner { justify-content: space-between; gap: 9rem; min-height: 30rem; }
+}
+.scale-head { max-width: 42rem; }
+
 /* ── 3. Big result stats ───────────────────────────────────── */
 .result-grid {
   display: grid; gap: 2rem; grid-template-columns: 1fr;
@@ -2134,6 +2320,16 @@ img, svg { display: block; max-width: 100%; }
   line-height: 1; letter-spacing: -0.03em; color: var(--text);
   font-variant-numeric: tabular-nums;
 }
+/* Scale-band stats: bigger, left-aligned, multi-color gradient text. */
+.scale-section .result-grid { text-align: left; }
+.scale-section .result { padding: 0; }
+.scale-section .result-num {
+  font-size: clamp(3.2rem, 2.2rem + 4.6vw, 5rem);
+  background: linear-gradient(95deg, #0e8f5d 0%, #17a06b 28%, #2f7fd0 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+.scale-section .result-text { max-width: 20rem; margin: 0.9rem 0 0; }
 .result-bar {
   width: 3.5rem; height: 4px; border-radius: var(--radius-pill);
   background: linear-gradient(90deg, var(--accent-deep), var(--accent-bright));
@@ -2213,3 +2409,10 @@ img, svg { display: block; max-width: 100%; }
   .cap-tile-desc { opacity: 1; }
   .cap-tile-plus { display: none; }
 }
+
+/* ── Deferred sections ──────────────────────────────────────
+   Temporarily hidden on the homepage; slated to move to a
+   separate page. Find them in the markup via [data-deferred]
+   or the "DEFERRED:" comments. Remove this rule (and the
+   `hidden` / `deferred-section` markers) to bring one back. */
+.deferred-section { display: none !important; }

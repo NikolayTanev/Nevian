@@ -369,17 +369,42 @@ img, svg { display: block; max-width: 100%; }
 /* ── Interactive help-desk preview ────────────────────────── */
 .hero-app {
   max-width: 62rem; margin: 0 auto 4.5rem;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius-2xl);
-  box-shadow: 0 1rem 2.5rem rgba(15, 23, 42, .08), 0 0.4rem 0.9rem rgba(15, 23, 42, .05);
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .6),
+    0 1rem 2.5rem rgba(15, 23, 42, .08),
+    0 0.4rem 0.9rem rgba(15, 23, 42, .05);
   overflow: hidden;
+  /* One continuous frosted glass slab: the chrome bar, the side
+     borders and the bottom strip are all the same glass surface
+     (Stripe/Zenflow style). The content panel floats inside it. */
+  background:
+    linear-gradient(120deg, rgba(52, 192, 138, .10), rgba(43, 127, 212, .08)),
+    linear-gradient(180deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .40));
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+          backdrop-filter: blur(16px) saturate(160%);
 }
+[data-theme="dark"] .hero-app {
+  border-color: rgba(255, 255, 255, .08);
+  background:
+    linear-gradient(120deg, rgba(52, 192, 138, .12), rgba(43, 127, 212, .10)),
+    linear-gradient(180deg, rgba(34, 42, 39, .6), rgba(20, 25, 23, .42));
+}
+/* The chrome bar is transparent — it's just the top of the one
+   continuous glass slab (.hero-app), holding the dots + title. */
 .app-bar {
+  position: relative; z-index: 1;
   display: flex; align-items: center; gap: 0.75rem;
-  padding: 0.8rem 1.1rem; border-bottom: 1px solid var(--border); background: var(--card-2);
+  padding: 0.85rem 1.1rem;
+  background: transparent;
 }
-.app-dots { display: inline-flex; gap: 0.4rem; }
-.app-dots i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--border-2); }
+.app-dots { display: inline-flex; gap: 0.45rem; }
+.app-dots i {
+  width: 0.62rem; height: 0.62rem; border-radius: 50%;
+  background: rgba(150, 160, 168, .5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25), 0 1px 1px rgba(0, 0, 0, .08);
+}
 .app-bar-title { font-size: 0.85rem; font-weight: 700; color: var(--text); }
 .app-bar-try {
   margin-left: auto; font-size: 0.82rem; font-weight: 700; color: var(--accent-deep);
@@ -388,7 +413,15 @@ img, svg { display: block; max-width: 100%; }
 [data-theme="dark"] .app-bar-try { color: var(--accent-bright); }
 .hero-app:hover .app-bar-try { opacity: 1; pointer-events: auto; }
 
-.app-body { display: grid; grid-template-columns: 15rem 1fr; height: 30rem; }
+.app-body {
+  display: grid; grid-template-columns: 15rem 1fr; height: 30rem;
+  /* Inset the content so the glass frame shows on the sides + bottom. */
+  margin: 0 0.6rem 0.5rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--border), 0 6px 16px -10px rgba(15, 23, 42, .18);
+}
 
 .app-side {
   border-right: 1px solid var(--border); background: var(--surface);
@@ -2304,7 +2337,7 @@ img, svg { display: block; max-width: 100%; }
   gap: 3.5rem;
 }
 @media (min-width: 64rem) {
-  .scale-inner { justify-content: space-between; gap: 9rem; min-height: 30rem; }
+  .scale-inner { justify-content: space-between; gap: 9rem; min-height: 42rem; }
 }
 .scale-head { max-width: 42rem; }
 
@@ -2416,3 +2449,78 @@ img, svg { display: block; max-width: 100%; }
    or the "DEFERRED:" comments. Remove this rule (and the
    `hidden` / `deferred-section` markers) to bring one back. */
 .deferred-section { display: none !important; }
+
+/* ── Stripe-style product cards ─────────────────────────────
+   Flat neutral tiles, sharp-ish corners, a title top-left, a
+   faint expand glyph top-right, and a product visual below.
+   No borders-glow, no tags — just like the reference. */
+.sc-grid {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 60rem) {
+  .sc-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.sc-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  border-radius: 0.75rem;
+  background: var(--bg);
+  padding: 1.75rem 1.75rem 0;
+  overflow: hidden;
+  box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, .07);
+}
+[data-theme="dark"] .sc-card {
+  background: var(--card-2);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, .35);
+}
+
+/* Wide card: title + open space on the left, the mockup contained on
+   the right, so nothing stretches edge to edge. The left column is
+   deliberately roomy — a natural home for a graphic later. */
+@media (min-width: 60rem) {
+  .sc-card-wide {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 2.5rem;
+    align-items: center;
+    padding: 2.5rem;
+    min-height: 22rem;
+  }
+  .sc-card-wide .sc-title { align-self: start; }
+  .sc-card-wide .sc-visual {
+    margin-top: 0; justify-self: end;
+    width: 100%; max-width: 30rem;
+  }
+
+  /* Bottom two cards: the mockup bleeds off an edge and is clipped by
+     the card, so it looks like it's peeking in. */
+  #endpoint, #automation { height: 18rem; }
+  /* Left card: device panel rises up from the bottom (lower part
+     clipped), with clear breathing room under the title. */
+  #endpoint .sc-visual { margin-top: 2.25rem; }
+  /* Right card: queue slides out past the right edge. */
+  #automation .sc-visual { margin-right: -3.5rem; }
+}
+
+/* Stage wraps the whole card grid; one continuous flowing-line field
+   sits behind ALL the cards so the lines read as unbroken from card to
+   card. The cards use a translucent fill so the field shows through. */
+.sc-stage { position: relative; }
+.sc-fx {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+.sc-fx canvas { position: absolute; inset: 0; }
+.sc-stage > .sc-grid { position: relative; z-index: 1; }
+
+.sc-title {
+  position: relative; z-index: 1;
+  font-size: 1.35rem; font-weight: 600; line-height: 1.3;
+  letter-spacing: -0.01em; color: var(--text);
+}
+
+/* Product visual sits below the title and bleeds to the bottom edge. */
+.sc-visual { position: relative; z-index: 1; margin-top: 1.75rem; }

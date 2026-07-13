@@ -824,161 +824,95 @@
     </div>
   </section>
 
-  <!-- ===================== AI TICKETING ===================== -->
-  <section class="section" id="ai-ticketing">
+  <!-- ===================== PRODUCT CARDS (Stripe-style grid) ===================== -->
+  <section class="section" id="product">
     <div class="container">
       <div class="section-head reveal">
-        <p class="eyebrow">AI ticketing</p>
-        <h2 class="section-title mt-1">AI that helps users and protects your IT team from noise.</h2>
+        <p class="eyebrow">The platform</p>
+        <h2 class="section-title mt-1">One AI assistant, backed by two secure agents.</h2>
       </div>
 
-      <div class="split">
-        <div>
-          <div class="frow-grid stagger reveal">
-            <div class="frow">
-              <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5h14v10H8l-3 3V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-              <div>
-                <h3 class="frow-title">Plain-language tickets</h3>
-                <p class="frow-text">Users explain the issue the way they would to a technician. The assistant turns it into structured support context.</p>
-              </div>
-            </div>
-            <div class="frow">
-              <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3v3M15 3v3M4 8h16M6 8v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-              <div>
-                <h3 class="frow-title">Safe troubleshooting</h3>
-                <p class="frow-text">Suggests user-level fixes like restarting apps, reconnecting VPN, clearing cache, or checking basic settings.</p>
-              </div>
-            </div>
-            <div class="frow">
-              <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h9M13 12l-3-3m3 3-3 3M17 6v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <div>
-                <h3 class="frow-title">Routing &amp; escalation</h3>
-                <p class="frow-text">When admin rights, hardware, or infrastructure are involved, it escalates with category, priority, reason, and steps attempted.</p>
-              </div>
-            </div>
-            <div class="frow">
-              <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 4h9l3 3v13H6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 11h6M9 14h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-              <div>
-                <h3 class="frow-title">Knowledge base aware</h3>
-                <p class="frow-text">Published articles can override generic AI advice so users get company-approved instructions first.</p>
-              </div>
-            </div>
-            <div class="frow">
-              <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="1.8" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="11" r="2" stroke="currentColor" stroke-width="1.8"/><path d="m21 15-5-4-8 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-              <div>
-                <h3 class="frow-title">Screenshot-aware</h3>
-                <p class="frow-text">Users attach screenshots so the assistant can read visible errors, labels, and UI state before responding.</p>
-              </div>
-            </div>
-            <div class="frow">
-              <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="9" rx="1.8" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-              <div>
-                <h3 class="frow-title">Account recovery</h3>
-                <p class="frow-text">For lockouts and forgotten passwords, the AI can trigger the secure server agent instead of routing to a human.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- One continuous line field: each card renders its own window
+           into the same field, so lines align across cards but only
+           show inside the cards (gaps stay empty). -->
+      <div class="sc-stage">
+      <div class="sc-grid reveal stagger">
 
-        <div class="split-media reveal">
-          <div class="card mock-chat" style="box-shadow: var(--shadow-lg);">
-            <div class="mock-chat-head" style="border-color: var(--border);">
-              <span class="mock-chat-title" style="color: var(--text);">Ticket TKT-0042 · Account</span>
-              <span class="badge badge-green">AI handling</span>
-            </div>
-            <div class="mock-msg" style="background: var(--accent); color: var(--on-accent); margin-left:auto; border-bottom-right-radius:.3rem;">I keep getting "account locked" when I sign in.</div>
-            <div class="mock-msg" style="background: var(--card-2); color: var(--text); border:1px solid var(--border); border-bottom-left-radius:.3rem;">Thanks. That looks like an account lockout. Please reply with your Windows username and I'll start recovery.</div>
-            <div class="mock-msg" style="background: var(--accent); color: var(--on-accent); margin-left:auto; border-bottom-right-radius:.3rem;">j.smith</div>
-            <div class="card card-pad mt-2" style="background: var(--card-2);">
-              <div class="kv-row"><span class="k">Category</span><span class="v">Account</span></div>
-              <div class="kv-row"><span class="k">Priority</span><span class="v">High</span></div>
-              <div class="kv-row"><span class="k">Action</span><span class="v">Reset password + unlock</span></div>
-              <div class="kv-row"><span class="k">Status</span><span class="v" style="color: var(--accent-deep);">Processing…</span></div>
+        <!-- Card 1 · AI ticketing (wide) -->
+        <article class="sc-card sc-card-wide" id="ai-ticketing">
+          <div class="sc-fx" data-cardfx aria-hidden="true"></div>
+          <h3 class="sc-title">Turn plain-language tickets<br>into resolved work.</h3>
+          <div class="sc-visual">
+            <div class="card mock-chat" style="box-shadow: var(--shadow-lg);">
+              <div class="mock-chat-head" style="border-color: var(--border);">
+                <span class="mock-chat-title" style="color: var(--text);">Ticket TKT-0042 · Account</span>
+                <span class="badge badge-green">AI handling</span>
+              </div>
+              <div class="mock-msg" style="background: var(--accent); color: var(--on-accent); margin-left:auto; border-bottom-right-radius:.3rem;">I keep getting "account locked" when I sign in.</div>
+              <div class="mock-msg" style="background: var(--card-2); color: var(--text); border:1px solid var(--border); border-bottom-left-radius:.3rem;">Thanks. That looks like an account lockout. Please reply with your Windows username and I'll start recovery.</div>
+              <div class="mock-msg" style="background: var(--accent); color: var(--on-accent); margin-left:auto; border-bottom-right-radius:.3rem;">j.smith</div>
+              <div class="card card-pad mt-2" style="background: var(--card-2);">
+                <div class="kv-row"><span class="k">Category</span><span class="v">Account</span></div>
+                <div class="kv-row"><span class="k">Priority</span><span class="v">High</span></div>
+                <div class="kv-row"><span class="k">Action</span><span class="v">Reset password + unlock</span></div>
+                <div class="kv-row"><span class="k">Status</span><span class="v" style="color: var(--accent-deep);">Processing…</span></div>
+              </div>
             </div>
           </div>
-        </div>
+        </article>
+
+        <!-- Card 2 · Endpoint desk agent -->
+        <article class="sc-card" id="endpoint">
+          <div class="sc-fx" data-cardfx aria-hidden="true"></div>
+          <h3 class="sc-title">Every ticket starts with<br>full device context.</h3>
+          <div class="sc-visual">
+            <div class="card device-card">
+              <div class="device-tabs">
+                <span class="device-tab active">Overview</span>
+                <span class="device-tab">System Info</span>
+                <span class="device-tab">Storage</span>
+                <span class="device-tab">Software</span>
+                <span class="device-tab">Network</span>
+              </div>
+              <div class="card-pad" style="padding-top: 1rem;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 0.5rem;">
+                  <span style="font-weight:700; font-family:'Consolas',monospace;">LATITUDE-5430-01</span>
+                  <span class="live-indicator"><span class="live-dot pulse"></span>Online</span>
+                </div>
+                <div class="kv-row"><span class="k">User</span><span class="v">j.smith</span></div>
+                <div class="kv-row"><span class="k">Model</span><span class="v">Dell Latitude 5430</span></div>
+                <div class="kv-row"><span class="k">OS</span><span class="v">Windows 11 Pro</span></div>
+                <div class="kv-row"><span class="k">CPU</span><span class="v">Core i5-1245U</span></div>
+                <div class="kv-row"><span class="k">Secure Boot</span><span class="v" style="color: var(--accent-deep);">Enabled</span></div>
+                <div style="margin-top: 0.9rem;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--dim); margin-bottom:0.35rem;"><span>Disk C:</span><span>61% used · 185 GB free</span></div>
+                  <div class="usage-bar"><div class="usage-fill" style="width:61%;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 · Server agent automation -->
+        <article class="sc-card" id="automation">
+          <div class="sc-fx" data-cardfx aria-hidden="true"></div>
+          <h3 class="sc-title">Automate the repeat requests<br>that slow help desks down.</h3>
+          <div class="sc-visual">
+            <div class="card card-pad" style="box-shadow: var(--shadow-lg);">
+              <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+                <span class="badge badge-soft">account_actions queue</span>
+                <span class="live-indicator" style="margin-left:auto;"><span class="live-dot pulse"></span>Agent connected</span>
+              </div>
+              <div class="kv-row"><span class="k">1 · Resolve account</span><span class="v">"Test User" → testuser</span></div>
+              <div class="kv-row"><span class="k">2 · Validate logon name</span><span class="v" style="color: var(--accent-deep);">Passed</span></div>
+              <div class="kv-row"><span class="k">3 · Unlock account</span><span class="v" style="color: var(--accent-deep);">Done</span></div>
+              <div class="kv-row"><span class="k">4 · Reset password</span><span class="v" style="color: var(--accent-deep);">Done</span></div>
+              <div class="kv-row"><span class="k">5 · Post to ticket</span><span class="v">Resolved</span></div>
+            </div>
+          </div>
+        </article>
+
       </div>
-    </div>
-  </section>
-  <!-- ===================== ENDPOINT AGENT ===================== -->
-  <section class="section" id="endpoint">
-    <div class="container">
-      <div class="split split-rev">
-        <div class="split-media reveal">
-          <div class="card device-card">
-            <div class="device-tabs">
-              <span class="device-tab active">Overview</span>
-              <span class="device-tab">System Info</span>
-              <span class="device-tab">Storage</span>
-              <span class="device-tab">Software</span>
-              <span class="device-tab">Network</span>
-            </div>
-            <div class="card-pad" style="padding-top: 1rem;">
-              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 0.5rem;">
-                <span style="font-weight:700; font-family:'Consolas',monospace;">LATITUDE-5430-01</span>
-                <span class="live-indicator"><span class="live-dot pulse"></span>Online</span>
-              </div>
-              <div class="kv-row"><span class="k">User</span><span class="v">j.smith</span></div>
-              <div class="kv-row"><span class="k">Model</span><span class="v">Dell Latitude 5430</span></div>
-              <div class="kv-row"><span class="k">OS</span><span class="v">Windows 11 Pro</span></div>
-              <div class="kv-row"><span class="k">CPU</span><span class="v">Core i5-1245U</span></div>
-              <div class="kv-row"><span class="k">Memory</span><span class="v">16 GB DDR5</span></div>
-              <div class="kv-row"><span class="k">Secure Boot</span><span class="v" style="color: var(--accent-deep);">Enabled</span></div>
-              <div class="kv-row"><span class="k">TPM</span><span class="v">2.0</span></div>
-              <div style="margin-top: 0.9rem;">
-                <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--dim); margin-bottom:0.35rem;"><span>Disk C:</span><span>61% used · 185 GB free</span></div>
-                <div class="usage-bar"><div class="usage-fill" style="width:61%;"></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <p class="eyebrow reveal">Endpoint desk agent</p>
-          <h2 class="section-title mt-1 reveal">Every ticket starts with the device details IT usually has to ask for.</h2>
-          <ul class="list-check reveal">
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Runs from the Windows system tray with background telemetry</li>
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Hostname, domain, current user, OS build, uptime, hardware model</li>
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>CPU, memory, disk, network adapters, BIOS, TPM, Secure Boot, GPU, USB</li>
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Installed program inventory for faster diagnosis</li>
-            <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Built-in TreeSize-style analyzer to find disk usage problems instantly</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SERVER AGENT / AUTOMATION ===================== -->
-  <section class="section" id="automation">
-    <div class="container">
-      <div class="split">
-        <div>
-          <p class="eyebrow reveal">Server agent automation</p>
-          <h2 class="section-title mt-1 reveal">Automate the repeat requests that slow down every help desk.</h2>
-          <div class="sec-badges reveal">
-            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1 2 3.5V8c0 3 2 5 6 6.5C12 13 14 11 14 8V3.5L8 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Outbound-only</span>
-            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1 2 3.5V8c0 3 2 5 6 6.5C12 13 14 11 14 8V3.5L8 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>No inbound firewall changes</span>
-            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1 2 3.5V8c0 3 2 5 6 6.5C12 13 14 11 14 8V3.5L8 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Dry-run validation</span>
-            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1 2 3.5V8c0 3 2 5 6 6.5C12 13 14 11 14 8V3.5L8 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Allowlist support</span>
-            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1 2 3.5V8c0 3 2 5 6 6.5C12 13 14 11 14 8V3.5L8 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Temporary passwords not persisted</span>
-            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1 2 3.5V8c0 3 2 5 6 6.5C12 13 14 11 14 8V3.5L8 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Change at next sign-in</span>
-          </div>
-        </div>
-
-        <div class="split-media reveal">
-          <div class="card card-pad" style="box-shadow: var(--shadow-lg);">
-            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
-              <span class="badge badge-soft">account_actions queue</span>
-              <span class="live-indicator" style="margin-left:auto;"><span class="live-dot pulse"></span>Agent connected</span>
-            </div>
-            <div class="kv-row"><span class="k">1 · Resolve account</span><span class="v">"Test User" → testuser</span></div>
-            <div class="kv-row"><span class="k">2 · Validate logon name</span><span class="v" style="color: var(--accent-deep);">Passed</span></div>
-            <div class="kv-row"><span class="k">3 · Lock state</span><span class="v">Locked</span></div>
-            <div class="kv-row"><span class="k">4 · Unlock account</span><span class="v" style="color: var(--accent-deep);">Done</span></div>
-            <div class="kv-row"><span class="k">5 · Reset password</span><span class="v" style="color: var(--accent-deep);">Done</span></div>
-            <div class="kv-row"><span class="k">6 · Post to ticket</span><span class="v">Resolved</span></div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -1338,5 +1272,6 @@
 
   <script src="js/main.js?v=20260707m" defer></script>
   <script type="module" src="js/ribbon/index.js?v=1"></script>
+  <script type="module" src="js/cardfx/index.js?v=1"></script>
 </body>
 </html>

@@ -17,6 +17,8 @@ import { buildWavesPx } from './particles.js';
 
 // Shared clock so every card samples the same wave at the same moment.
 const EPOCH = performance.now();
+// Cap to ~30fps — the flow is slow and several canvases run at once.
+const FRAME_MS = 1000 / 30;
 
 function hexToRgb(hex) {
   const h = hex.replace('#', '');
@@ -125,7 +127,7 @@ export class CardGraphic {
   _init() {
     const THREE = this.THREE;
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     this.renderer.setSize(this.cardW, this.cardH, false);
     this.renderer.setClearColor(0x000000, 0);
     const c = this.renderer.domElement;
@@ -145,7 +147,7 @@ export class CardGraphic {
     // corners once the shader tilts everything.
     const margin = 60 + FIELD.amp + FIELD.slope * (this.stageW / 2);
     // Fine sampling so the waved lines stay smooth (no visible kinks).
-    const data = buildWavesPx(cols, { stageW: this.stageW, stageH: this.stageH, lineGap: FIELD.lineGap, dx: 14, margin });
+    const data = buildWavesPx(cols, { stageW: this.stageW, stageH: this.stageH, lineGap: FIELD.lineGap, dx: 20, margin });
 
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(data.position, 3));
@@ -206,7 +208,10 @@ export class CardGraphic {
       this._io.observe(this.el);
     }
     if ('ResizeObserver' in window) {
-      this._ro = new ResizeObserver(() => this._resize());
+      this._ro = new ResizeObserver(() => {
+        clearTimeout(this._resizeT);
+        this._resizeT = setTimeout(() => this._resize(), 150);
+      });
       this._ro.observe(this.stageEl);
     }
   }
@@ -226,6 +231,7 @@ export class CardGraphic {
   _start() {
     if (this._running || this.reduced) return;
     this._running = true;
+    this._lastTs = 0;
     this._raf = requestAnimationFrame(this._tick);
   }
 
@@ -234,9 +240,11 @@ export class CardGraphic {
     if (this._raf) cancelAnimationFrame(this._raf);
   }
 
-  _tick = () => {
+  _tick = (ts) => {
     if (!this._running) return;
     this._raf = requestAnimationFrame(this._tick);
+    if (ts - this._lastTs < FRAME_MS) return; // throttle to ~30fps
+    this._lastTs = ts;
     this.material.uniforms.uTime.value = (performance.now() - EPOCH) / 1000;
     this._render();
   };

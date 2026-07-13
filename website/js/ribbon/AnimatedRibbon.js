@@ -33,12 +33,16 @@ const DEFAULTS = {
   glowStrength: 0.5,    // base line opacity
   mouseInteraction: true,
   additive: true,       // additive glow (dark bg) vs normal blend (light bg)
-  vertsPerLine: 200,    // 150–250
+  vertsPerLine: 150,    // 150–250
   height: 1.5,          // world band height
   waist: 0.34,          // center pinch
   layers: 3,            // depth layers (speed + z separation)
   depth: 0.6,
 };
+
+// Cap the decorative effects to ~30fps — the motion is slow, and this
+// roughly halves the CPU/GPU cost of running several canvases at once.
+const FRAME_MS = 1000 / 30;
 
 export class AnimatedRibbon {
   constructor(THREE, container, options = {}) {
@@ -49,9 +53,10 @@ export class AnimatedRibbon {
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Adaptive quality: start high, drop if the first second is choppy.
-    this.pixelRatioCap = 1.75;
+    this.pixelRatioCap = 1.25;
     this._fpsSamples = [];
     this._quality = 1;
+    this._acc = 0;
 
     this._pointer = { x: 0, y: 0 };
     this._pointerTarget = { x: 0, y: 0 };
@@ -238,7 +243,11 @@ export class AnimatedRibbon {
     if (!this._running) return;
     this._raf = requestAnimationFrame(this._tick);
 
-    const dt = Math.min(0.05, (ts - this._lastTs) / 1000); // clamp big gaps
+    // Throttle to ~30fps.
+    const elapsed = ts - this._lastTs;
+    if (elapsed < FRAME_MS) return;
+
+    const dt = Math.min(0.05, elapsed / 1000); // clamp big gaps
     this._lastTs = ts;
     this._time += dt;
 

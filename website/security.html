@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security &amp; Automation · Nevian</title>
+  <meta name="description" content="How Nevian automates account recovery safely: a server agent that runs signed, outbound-only jobs inside your network, with dry-run, allowlists, and a full audit trail." />
+  <meta name="theme-color" content="#f6f8fa" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Security &amp; Automation · Nevian" />
+  <meta property="og:description" content="Controlled, audited automation. Outbound-only, signed jobs with visibility at every step." />
+  <meta property="og:url" content="https://nevian.info/security.html" />
+  <meta property="og:image" content="https://nevian.info/assets/landing-share.png?v=1" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/logo.png" />
+  <link rel="apple-touch-icon" href="/assets/logo.png" />
+  <link rel="canonical" href="https://nevian.info/security.html" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['selector', '[data-theme="dark"]'],
+      theme: { extend: { fontFamily: { sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif'] } } }
+    };
+  </script>
+  <link rel="stylesheet" href="css/styles.css?v=20260714a" />
+</head>
+<body>
+  <!-- ===================== NAV ===================== -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand" aria-label="Nevian home">
+        <img class="brand-mark" src="assets/logo.png" alt="" width="32" height="32" />
+        <span class="brand-name">Nevian</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <div class="nav-dropdown" data-dropdown>
+          <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+            Product
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="nav-dropdown-menu" role="menu">
+            <a class="nav-dropdown-item" role="menuitem" href="ai-ticketing.html">
+              <span class="ndi-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5h14v10H8l-3 3V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9h6M9 12h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              <span class="ndi-text"><span class="ndi-title">AI Ticketing</span><span class="ndi-sub">Plain-language intake, AI triage, auto-resolution</span></span>
+            </a>
+            <a class="nav-dropdown-item" role="menuitem" href="endpoint.html">
+              <span class="ndi-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="10" rx="1.4" stroke="currentColor" stroke-width="1.8"/><path d="M2 19h20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              <span class="ndi-text"><span class="ndi-title">Endpoint Agent</span><span class="ndi-sub">Live device context on every ticket</span></span>
+            </a>
+            <a class="nav-dropdown-item" role="menuitem" href="dashboard.html">
+              <span class="ndi-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="6" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="6" rx="1.4" stroke="currentColor" stroke-width="1.8"/></svg></span>
+              <span class="ndi-text"><span class="ndi-title">Admin Dashboard</span><span class="ndi-sub">One command center for IT</span></span>
+            </a>
+            <a class="nav-dropdown-item" role="menuitem" href="security.html" aria-current="page">
+              <span class="ndi-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 7 7 8 4-1 7-3.5 7-8V6l-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="ndi-text"><span class="ndi-title">Security &amp; Automation</span><span class="ndi-sub">Controlled, audited server-side jobs</span></span>
+            </a>
+          </div>
+        </div>
+        <a class="nav-link" href="index.html#how-it-works">How It Works</a>
+        <a class="nav-link" href="index.html#contact">Contact</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="index.html#contact" class="btn btn-primary btn-nav hidden sm:inline-flex">Book a Demo</a>
+        <button id="nav-toggle" class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="container">
+      <div id="mobile-menu" class="mobile-menu">
+        <div class="mobile-group">
+          <span class="mobile-group-label">Product</span>
+          <a class="nav-link" href="ai-ticketing.html">AI Ticketing</a>
+          <a class="nav-link" href="endpoint.html">Endpoint Agent</a>
+          <a class="nav-link" href="dashboard.html">Admin Dashboard</a>
+          <a class="nav-link" href="security.html">Security &amp; Automation</a>
+        </div>
+        <a class="nav-link" href="index.html#how-it-works">How It Works</a>
+        <a class="nav-link" href="index.html#contact">Contact</a>
+        <a href="index.html#contact" class="btn btn-primary btn-nav btn-block mt-1">Book a Demo</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+  <!-- ===================== SUB-HERO ===================== -->
+  <section class="subhero">
+    <span class="subhero-dots" aria-hidden="true"></span>
+    <div class="container">
+      <div class="subhero-inner reveal">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span aria-current="page">Security &amp; Automation</span>
+        </nav>
+        <p class="eyebrow">Security &amp; control</p>
+        <h1 class="mt-1">Automation with visibility and control.</h1>
+        <p class="subhero-lead">
+          The parts of support that can be automated, lockouts and password resets, run through a server
+          agent inside your network. Every job is signed, outbound-only, and written back to the ticket,
+          so nothing happens without a record.
+        </p>
+        <div class="subhero-cta">
+          <a href="index.html#contact" class="btn btn-primary btn-lg">Book a Demo</a>
+          <a href="ai-ticketing.html" class="btn btn-ghost btn-lg">See what triggers a job</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW THE SERVER AGENT RUNS ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2 class="section-title">How a job runs, safely.</h2>
+        <p class="section-lead mt-2">The server agent pulls approved work over an outbound connection and reports each step back. It never opens an inbound port.</p>
+      </div>
+
+      <div class="split">
+        <div class="reveal">
+          <div class="steps stagger">
+            <div class="step">
+              <span class="step-num" aria-hidden="true"></span>
+              <div>
+                <h3 class="step-title">The AI proposes an approved action</h3>
+                <p class="step-text">Only actions your policy allows, like an account unlock or password reset, are queued.</p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num" aria-hidden="true"></span>
+              <div>
+                <h3 class="step-title">The agent picks it up outbound</h3>
+                <p class="step-text">The server agent reaches out to the queue. No inbound ports, no exposed listeners.</p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num" aria-hidden="true"></span>
+              <div>
+                <h3 class="step-title">It runs inside your network</h3>
+                <p class="step-text">Signed jobs execute against your directory, optionally restricted to an allowlist.</p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num" aria-hidden="true"></span>
+              <div>
+                <h3 class="step-title">The result posts to the ticket</h3>
+                <p class="step-text">Every action becomes a visible, auditable record on the ticket it belongs to.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal reveal-scale">
+          <div class="card card-pad" style="box-shadow: var(--shadow-lg);">
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+              <span class="badge badge-soft">account_actions queue</span>
+              <span class="live-indicator" style="margin-left:auto;"><span class="live-dot pulse"></span>Agent connected</span>
+            </div>
+            <div class="kv-row"><span class="k">1 · Resolve account</span><span class="v">"Test User" → testuser</span></div>
+            <div class="kv-row"><span class="k">2 · Validate logon name</span><span class="v" style="color: var(--accent-deep);">Passed</span></div>
+            <div class="kv-row"><span class="k">3 · Unlock account</span><span class="v" style="color: var(--accent-deep);">Done</span></div>
+            <div class="kv-row"><span class="k">4 · Reset password</span><span class="v" style="color: var(--accent-deep);">Done</span></div>
+            <div class="kv-row"><span class="k">5 · Post to ticket</span><span class="v">Resolved</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECURITY CONTROLS (green panel) ===================== -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="lightpanel reveal">
+        <div class="split">
+          <div>
+            <p class="eyebrow reveal">Controls, not promises</p>
+            <h2 class="section-title mt-1 reveal">Guardrails on every automated action.</h2>
+            <p class="section-lead mt-2 reveal">
+              Automation is only useful if you can trust it. These controls keep the server agent inside
+              clear boundaries and make every action reviewable.
+            </p>
+          </div>
+          <div class="reveal">
+            <ul class="list-check" style="margin-top: 0;">
+              <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Outbound connections only. No inbound ports.</li>
+              <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Account actions can start in dry-run mode.</li>
+              <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Optional allowlist restricts which accounts can be acted on.</li>
+              <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Password resets force a change at next sign-in.</li>
+              <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Temporary passwords are delivered once, never persisted in logs.</li>
+              <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Ticket updates create a visible record of every action.</li>
+              <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Admin-only controls protect ticket management and device actions.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PRINCIPLES ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head center reveal">
+        <h2 class="section-title">The principles behind it.</h2>
+      </div>
+      <div class="frow-grid frow-3 stagger reveal">
+        <div class="frow">
+          <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 7 7 8 4-1 7-3.5 7-8V6l-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3 class="frow-title">Least exposure</h3>
+            <p class="frow-text">Outbound-only by design. The agent never opens your network to inbound traffic.</p>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 4-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div>
+            <h3 class="frow-title">Everything auditable</h3>
+            <p class="frow-text">Each automated step is written back to the ticket as a visible, permanent record.</p>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div>
+            <h3 class="frow-title">Bounded by policy</h3>
+            <p class="frow-text">Dry-run mode and allowlists let you introduce automation at the pace you're comfortable with.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== EXPLORE THE PLATFORM ===================== -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head center reveal">
+        <h2 class="section-title">Explore the rest of the platform.</h2>
+      </div>
+      <div class="frow-grid frow-3 stagger reveal">
+        <a class="frow" href="ai-ticketing.html">
+          <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5h14v10H8l-3 3V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9h6M9 12h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div>
+            <h3 class="frow-title">AI Ticketing <svg class="frow-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></h3>
+            <p class="frow-text">What decides an action is safe to automate.</p>
+          </div>
+        </a>
+        <a class="frow" href="endpoint.html">
+          <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="10" rx="1.4" stroke="currentColor" stroke-width="1.8"/><path d="M2 19h20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+          <div>
+            <h3 class="frow-title">Endpoint Agent <svg class="frow-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></h3>
+            <p class="frow-text">The context that makes safe automation possible.</p>
+          </div>
+        </a>
+        <a class="frow" href="dashboard.html">
+          <div class="frow-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="6" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="6" rx="1.4" stroke="currentColor" stroke-width="1.8"/></svg></div>
+          <div>
+            <h3 class="frow-title">Admin Dashboard <svg class="frow-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></h3>
+            <p class="frow-text">Where you set policy and review the audit trail.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="closer reveal">
+        <div class="closer-inner">
+          <p class="eyebrow">Ready when you are</p>
+          <h2 class="mt-1">Automate the busywork without giving up control.</h2>
+          <p class="closer-lead">We'll walk through the server agent, dry-run mode, and the audit trail so you can see exactly where the guardrails are.</p>
+          <div class="closer-cta">
+            <a href="index.html#contact" class="btn btn-primary btn-lg">Book a Demo</a>
+            <a href="index.html#contact" class="btn btn-ghost btn-lg">Contact Sales</a>
+          </div>
+          <div class="closer-trust">
+            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Outbound-only</span>
+            <span class="sec-badge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3 3 7-7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Full audit trail</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand" aria-label="Nevian home">
+            <img class="brand-mark" src="assets/logo.png" alt="" width="32" height="32" />
+            <span class="brand-name">Nevian</span>
+          </a>
+          <p class="footer-tag">AI-powered IT support for lean teams. Ticketing, endpoint visibility, and automation in one practical platform.</p>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <div class="footer-links">
+            <a href="ai-ticketing.html">AI Ticketing</a>
+            <a href="endpoint.html">Endpoint Agent</a>
+            <a href="dashboard.html">Admin Dashboard</a>
+            <a href="security.html">Security &amp; Automation</a>
+          </div>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <div class="footer-links">
+            <a href="index.html#contact">Contact</a>
+            <a href="index.html#contact">Book a Demo</a>
+            <a href="security.html">Security</a>
+          </div>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <div class="footer-links">
+            <a href="index.html#how-it-works">How It Works</a>
+            <a href="index.html#solution">Platform</a>
+            <a href="mailto:nevian.info@gmail.com">Support</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> Nevian · nevian.info. All rights reserved.</span>
+        <span style="display:flex; gap:1.25rem;">
+          <a href="index.html#contact" style="color: var(--muted);">Contact</a>
+          <a href="mailto:nevian.info@gmail.com" style="color: var(--muted);">Support</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=20260714a" defer></script>
+</body>
+</html>

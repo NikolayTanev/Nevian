@@ -47,6 +47,7 @@
   --shadow-soft: 0 0.25rem 1rem rgba(15, 23, 42, .05);
 
   --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Hanken Grotesk', 'Inter', 'Segoe UI', system-ui, sans-serif;
   
 }
 
@@ -354,11 +355,8 @@ img, svg { display: block; max-width: 100%; }
   margin: 0 auto 1.1rem; color: var(--text);
   max-width: 22ch;
 }
-.hero h1 .grad {
-  background: linear-gradient(100deg, var(--accent-deep), var(--accent-bright));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-[data-theme="dark"] .hero h1 .grad { background-image: linear-gradient(100deg, #46d39b, #5fd6a6); }
+.hero h1 .grad { color: var(--accent-deep); }
+[data-theme="dark"] .hero h1 .grad { color: var(--accent-bright); }
 
 .hero-sub {
   font-size: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
@@ -408,10 +406,9 @@ img, svg { display: block; max-width: 100%; }
 .app-bar-title { font-size: 0.85rem; font-weight: 700; color: var(--text); }
 .app-bar-try {
   margin-left: auto; font-size: 0.82rem; font-weight: 700; color: var(--accent-deep);
-  opacity: 0; pointer-events: none; cursor: pointer; transition: opacity .18s ease;
+  cursor: pointer;
 }
 [data-theme="dark"] .app-bar-try { color: var(--accent-bright); }
-.hero-app:hover .app-bar-try { opacity: 1; pointer-events: auto; }
 
 .app-body {
   display: grid; grid-template-columns: 15rem 1fr; height: 30rem;
@@ -1025,6 +1022,7 @@ img, svg { display: block; max-width: 100%; }
   animation: marquee 46s linear infinite;
 }
 .logo-marquee:hover .logo-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .logo-track { animation: none; } }
 .logo-item {
   flex-shrink: 0;
   height: 1.55rem; width: auto;
@@ -2358,10 +2356,9 @@ img, svg { display: block; max-width: 100%; }
 .scale-section .result { padding: 0; }
 .scale-section .result-num {
   font-size: clamp(3.2rem, 2.2rem + 4.6vw, 5rem);
-  background: linear-gradient(95deg, #0e8f5d 0%, #17a06b 28%, #2f7fd0 100%);
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent;
+  color: var(--accent-deep);
 }
+[data-theme="dark"] .scale-section .result-num { color: var(--accent-bright); }
 .scale-section .result-text { max-width: 20rem; margin: 0.9rem 0 0; }
 .result-bar {
   width: 3.5rem; height: 4px; border-radius: var(--radius-pill);
@@ -2524,3 +2521,269 @@ img, svg { display: block; max-width: 100%; }
 
 /* Product visual sits below the title and bleeds to the bottom edge. */
 .sc-visual { position: relative; z-index: 1; margin-top: 1.75rem; }
+
+/* ============================================================
+   DETAIL PAGES: shared additions
+   Nav dropdown, sub-page hero, breadcrumb, and cross-page nav.
+   All built on the existing tokens + components above.
+   ============================================================ */
+
+/* ── Nav: Product dropdown (desktop) ──────────────────────── */
+.nav-dropdown { position: relative; }
+.nav-dropdown-trigger {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-family: inherit; font-size: 0.9rem; font-weight: 500; color: var(--dim);
+  background: none; border: none; cursor: pointer;
+  padding: 0.5rem 0.8rem; border-radius: var(--radius);
+  transition: color .14s, background .14s;
+}
+.nav-dropdown-trigger svg { width: 0.85rem; height: 0.85rem; transition: transform .2s ease; }
+.nav-dropdown-trigger:hover,
+.nav-dropdown.open .nav-dropdown-trigger { color: var(--text); background: var(--hover-fade); }
+.nav-dropdown.open .nav-dropdown-trigger svg { transform: rotate(180deg); }
+
+.nav-dropdown-menu {
+  position: absolute; top: calc(100% + 0.5rem); left: 0;
+  min-width: 17rem;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow);
+  padding: 0.4rem; display: grid; gap: 0.1rem;
+  opacity: 0; visibility: hidden; transform: translateY(-0.4rem);
+  transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  z-index: 55;
+}
+.nav-dropdown.open .nav-dropdown-menu { opacity: 1; visibility: visible; transform: none; }
+@media (hover: hover) {
+  .nav-dropdown:hover .nav-dropdown-menu { opacity: 1; visibility: visible; transform: none; }
+  .nav-dropdown:hover .nav-dropdown-trigger { color: var(--text); background: var(--hover-fade); }
+  .nav-dropdown:hover .nav-dropdown-trigger svg { transform: rotate(180deg); }
+}
+.nav-dropdown-item {
+  display: flex; align-items: flex-start; gap: 0.7rem;
+  padding: 0.6rem 0.7rem; border-radius: var(--radius); color: var(--text);
+  transition: background .14s ease;
+}
+.nav-dropdown-item:hover { background: var(--hover); }
+.nav-dropdown-item[aria-current="page"] { background: var(--accent-soft); }
+.ndi-ico {
+  flex-shrink: 0; width: 2rem; height: 2rem; border-radius: var(--radius);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-deep); border: 1px solid var(--accent-line);
+}
+[data-theme="dark"] .ndi-ico { color: var(--accent-bright); }
+.ndi-ico svg { width: 1.1rem; height: 1.1rem; }
+.ndi-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.ndi-title { font-size: 0.9rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+.ndi-sub { font-size: 0.78rem; color: var(--dim); line-height: 1.35; }
+
+/* ── Nav: mobile grouped links ────────────────────────────── */
+.mobile-group { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.35rem 0 0.5rem; }
+.mobile-group-label {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); padding: 0.5rem 0.8rem 0.25rem;
+}
+
+/* ── Sub-page hero ────────────────────────────────────────── */
+.subhero {
+  position: relative; overflow: hidden; isolation: isolate;
+  padding: 3rem 0 2.5rem;
+  background:
+    radial-gradient(ellipse 60% 70% at 85% 0%, var(--accent-soft), transparent 60%),
+    var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 64rem) { .subhero { padding: 4.5rem 0 3.5rem; } }
+[data-theme="dark"] .subhero {
+  background:
+    radial-gradient(ellipse 60% 70% at 85% 0%, rgba(52,192,138,.12), transparent 60%),
+    var(--surface);
+}
+.subhero-dots {
+  position: absolute; inset: 0; z-index: -1; opacity: .3; pointer-events: none;
+  background-image: radial-gradient(rgba(20,30,45,.10) 1px, transparent 1px);
+  background-size: 1.75rem 1.75rem;
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 80% 10%, #000 10%, transparent 75%);
+          mask-image: radial-gradient(ellipse 60% 60% at 80% 10%, #000 10%, transparent 75%);
+}
+[data-theme="dark"] .subhero-dots { background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px); }
+.subhero-inner { max-width: 48rem; }
+.breadcrumb {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;
+  font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem;
+}
+.breadcrumb a { color: var(--dim); transition: color .14s; }
+.breadcrumb a:hover { color: var(--accent-deep); }
+[data-theme="dark"] .breadcrumb a:hover { color: var(--accent-bright); }
+.breadcrumb svg { width: 0.85rem; height: 0.85rem; opacity: .55; }
+.breadcrumb [aria-current="page"] { color: var(--text); font-weight: 600; }
+.subhero h1 {
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3.1rem);
+  font-weight: 800; line-height: 1.08; letter-spacing: -0.025em;
+  color: var(--text); max-width: 18ch;
+  text-wrap: balance;
+}
+.subhero-lead {
+  margin-top: 1.1rem; font-size: clamp(1rem, 0.95rem + 0.3vw, 1.18rem);
+  color: var(--dim); line-height: 1.65; max-width: 44rem;
+  text-wrap: pretty;
+}
+.subhero-cta { margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+
+/* ── Cross-page "explore" nav (anchor frows) ──────────────── */
+a.frow { text-decoration: none; }
+a.frow .frow-title { display: inline-flex; align-items: center; gap: 0.4rem; }
+a.frow .frow-arrow {
+  width: 0.9rem; height: 0.9rem; color: var(--accent-deep);
+  transition: transform .2s ease; flex-shrink: 0;
+}
+[data-theme="dark"] a.frow .frow-arrow { color: var(--accent-bright); }
+a.frow:hover .frow-arrow { transform: translateX(0.2rem); }
+
+/* ── Simple numbered step list (reused across detail pages) ── */
+.steps { display: grid; gap: 1rem; grid-template-columns: 1fr; counter-reset: step; }
+@media (min-width: 48rem) { .steps.steps-2 { grid-template-columns: repeat(2, 1fr); } }
+.step {
+  position: relative; display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-xl);
+  padding: 1.35rem 1.5rem; box-shadow: var(--shadow-soft);
+}
+.step-num {
+  counter-increment: step;
+  width: 2.25rem; height: 2.25rem; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--accent-line);
+  color: var(--accent-deep); font-weight: 800; font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+.step-num::before { content: counter(step); }
+[data-theme="dark"] .step-num { color: var(--accent-bright); }
+.step-title { font-size: 1.02rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+.step-text { font-size: 0.92rem; color: var(--dim); line-height: 1.6; margin-top: 0.35rem; }
+
+/* ── Key-value spec card (reuses .kv-row) ─────────────────── */
+.spec-grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; }
+@media (min-width: 64rem) { .spec-grid { grid-template-columns: 1fr 1fr; } }
+
+/* ============================================================
+   CLOSER: light persuasion end-cap / CTA
+   Replaces the dark-green .cta-band. Sits on the site's light
+   surface with a soft emerald wash, hairline border, and the
+   standard button + reassurance-chip vocabulary.
+   ============================================================ */
+.closer {
+  position: relative; overflow: hidden; isolation: isolate;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background:
+    radial-gradient(ellipse 75% 90% at 50% -20%, var(--accent-soft), transparent 62%),
+    var(--card);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(2.75rem, 2rem + 3vw, 4.5rem) 1.5rem;
+}
+@media (min-width: 48rem) { .closer { padding-left: 3rem; padding-right: 3rem; } }
+[data-theme="dark"] .closer {
+  background:
+    radial-gradient(ellipse 75% 90% at 50% -20%, rgba(52,192,138,.14), transparent 62%),
+    var(--card);
+}
+/* faint dotted texture, masked to the top like the sub-hero */
+.closer::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; opacity: .5; pointer-events: none;
+  background-image: radial-gradient(rgba(20,30,45,.10) 1px, transparent 1px);
+  background-size: 1.75rem 1.75rem;
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 0%, #000 10%, transparent 72%);
+          mask-image: radial-gradient(ellipse 60% 55% at 50% 0%, #000 10%, transparent 72%);
+}
+[data-theme="dark"] .closer::before { background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px); }
+
+.closer-inner { position: relative; z-index: 1; }
+.closer h2 {
+  font-size: clamp(1.8rem, 1.3rem + 2vw, 2.75rem);
+  font-weight: 800; letter-spacing: -0.02em; line-height: 1.12;
+  color: var(--text); max-width: 22ch; margin: 0 auto;
+  text-wrap: balance;
+}
+.closer-lead {
+  margin: 1.1rem auto 0; max-width: 40rem;
+  color: var(--dim); font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem); line-height: 1.65;
+  text-wrap: pretty;
+}
+.closer-cta { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+.closer-trust {
+  margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center;
+}
+
+/* ============================================================
+   LIGHTPANEL: light replacement for the dark-green feature band
+   Same soft-emerald-on-card treatment as .closer, but holds a
+   left-aligned .split (heading + supporting list) instead of a
+   centered CTA. Child content uses the default light-theme colors.
+   ============================================================ */
+.lightpanel {
+  position: relative; overflow: hidden; isolation: isolate;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  background:
+    radial-gradient(ellipse 55% 100% at 100% 0%, var(--accent-soft), transparent 58%),
+    var(--card);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(2rem, 1.5rem + 3vw, 3.25rem);
+}
+[data-theme="dark"] .lightpanel {
+  background:
+    radial-gradient(ellipse 55% 100% at 100% 0%, rgba(52,192,138,.13), transparent 58%),
+    var(--card);
+}
+
+/* ============================================================
+   FORM CONTROLS: custom select chevron + textarea resize grip
+   Replaces the browser-default black arrow (which also sat too
+   far right) and the black resize grip with grey, on-brand ones.
+   ============================================================ */
+.field select {
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%235a6573' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 0.95rem;
+}
+[data-theme="dark"] .field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23899189' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+/* IE/legacy: hide the native select arrow */
+.field select::-ms-expand { display: none; }
+
+/* Grey, custom resize grip (the browser default renders dark) */
+.field textarea {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M11 4 4 11M11 8 8 11' stroke='%239aa3af' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.4rem bottom 0.4rem;
+}
+.field textarea::-webkit-resizer { background: transparent; }
+
+/* ============================================================
+   DISPLAY TYPEFACE: Hanken Grotesk for marketing headings.
+   Body copy, UI labels, and the product-UI mockups stay on Inter
+   (matching the real dashboard), so the display face reads as a
+   deliberate marketing voice rather than a blanket swap.
+   ============================================================ */
+.hero h1,
+.subhero h1,
+.section-title,
+.closer h2,
+.wb-title,
+.wb-tile-title,
+.wb-stat-value,
+.frow-title,
+.card-title,
+.step-title,
+.cap-tile-title,
+.platform-pillar h3,
+.platform-core-title,
+.growth-col h3,
+.result-num,
+.stat-value {
+  font-family: var(--font-display);
+}

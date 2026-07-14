@@ -59,6 +59,10 @@
     var target = parseFloat(el.getAttribute('data-count')) || 0;
     var prefix = el.getAttribute('data-prefix') || '';
     var suffix = el.getAttribute('data-suffix') || '';
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = prefix + String(target) + suffix;
+      return;
+    }
     var duration = 1200;
     var start = performance.now();
     function tick(now) {
@@ -257,19 +261,33 @@
   if (heroApp) {
     var appTickets = heroApp.querySelectorAll('.app-ticket');
     var appPanels = heroApp.querySelectorAll('.app-convo');
-    function showTicket(id) {
+    var ticketList = Array.prototype.slice.call(appTickets);
+    function showTicket(id, focusTab) {
       appTickets.forEach(function (x) {
         var on = x.getAttribute('data-t') === id;
         x.classList.toggle('is-active', on);
         x.setAttribute('aria-selected', on ? 'true' : 'false');
+        x.tabIndex = on ? 0 : -1;
+        if (on && focusTab) x.focus();
       });
       appPanels.forEach(function (p) {
         p.classList.toggle('is-active', p.getAttribute('data-panel') === id);
       });
     }
-    appTickets.forEach(function (tk) {
+    ticketList.forEach(function (tk, i) {
       var id = tk.getAttribute('data-t');
       tk.addEventListener('click', function () { showTicket(id); });
+      // Standard tablist keyboard model: arrows move + activate, Home/End jump.
+      tk.addEventListener('keydown', function (e) {
+        var next = -1;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (i + 1) % ticketList.length;
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = (i - 1 + ticketList.length) % ticketList.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = ticketList.length - 1;
+        else return;
+        e.preventDefault();
+        showTicket(ticketList[next].getAttribute('data-t'), true);
+      });
     });
 
     // Only the "Try Nevian" label navigates to the contact form
@@ -284,4 +302,31 @@
       });
     }
   }
+
+  /* ── Nav "Product" dropdown (click/keyboard; hover is CSS) ── */
+  document.querySelectorAll('[data-dropdown]').forEach(function (dd) {
+    var trigger = dd.querySelector('.nav-dropdown-trigger');
+    if (!trigger) return;
+    function close() {
+      dd.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+    function open() {
+      dd.classList.add('open');
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (dd.classList.contains('open')) { close(); } else { open(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (dd.classList.contains('open') && !dd.contains(e.target)) close();
+    });
+    dd.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && dd.classList.contains('open')) {
+        close();
+        trigger.focus();
+      }
+    });
+  });
 })();

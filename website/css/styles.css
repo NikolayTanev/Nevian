@@ -2544,7 +2544,7 @@ img, svg { display: block; max-width: 100%; }
 
 .nav-dropdown-menu {
   position: absolute; top: calc(100% + 0.5rem); left: 0;
-  min-width: 17rem;
+  min-width: 15rem;
   background: var(--card); border: 1px solid var(--border);
   border-radius: var(--radius-lg); box-shadow: var(--shadow);
   padding: 0.4rem; display: grid; gap: 0.1rem;
@@ -2559,22 +2559,42 @@ img, svg { display: block; max-width: 100%; }
   .nav-dropdown:hover .nav-dropdown-trigger svg { transform: rotate(180deg); }
 }
 .nav-dropdown-item {
-  display: flex; align-items: flex-start; gap: 0.7rem;
-  padding: 0.6rem 0.7rem; border-radius: var(--radius); color: var(--text);
-  transition: background .14s ease;
+  position: relative;
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.62rem 0.8rem; border-radius: var(--radius);
+  color: var(--dim); font-size: 0.92rem; font-weight: 600; line-height: 1.3;
+  transition: background .16s ease, color .16s ease;
 }
-.nav-dropdown-item:hover { background: var(--hover); }
-.nav-dropdown-item[aria-current="page"] { background: var(--accent-soft); }
+.nav-dropdown-item:hover { background: var(--hover-fade); color: var(--text); }
+.nav-dropdown-item[aria-current="page"] { color: var(--accent-deep); }
+[data-theme="dark"] .nav-dropdown-item[aria-current="page"] { color: var(--accent-bright); }
+
+/* Small line icon (no filled tile) — gives the menu backbone without the
+   templated mega-menu chip. Muted by default, accent on hover/active. */
 .ndi-ico {
-  flex-shrink: 0; width: 2rem; height: 2rem; border-radius: var(--radius);
+  flex-shrink: 0; width: 1.2rem; height: 1.2rem;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--accent-soft); color: var(--accent-deep); border: 1px solid var(--accent-line);
+  background: none; border: none; color: var(--muted);
+  transition: color .16s ease;
 }
-[data-theme="dark"] .ndi-ico { color: var(--accent-bright); }
-.ndi-ico svg { width: 1.1rem; height: 1.1rem; }
-.ndi-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
-.ndi-title { font-size: 0.9rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-.ndi-sub { font-size: 0.78rem; color: var(--dim); line-height: 1.35; }
+.ndi-ico svg { width: 1.2rem; height: 1.2rem; }
+.nav-dropdown-item:hover .ndi-ico,
+.nav-dropdown-item[aria-current="page"] .ndi-ico { color: var(--accent-deep); }
+[data-theme="dark"] .nav-dropdown-item:hover .ndi-ico,
+[data-theme="dark"] .nav-dropdown-item[aria-current="page"] .ndi-ico { color: var(--accent-bright); }
+.ndi-sub { display: none; }
+.ndi-title { font: inherit; color: inherit; }
+
+/* Arrow slides in on hover for a touch of life. */
+.nav-dropdown-item::after {
+  content: ''; margin-left: auto; width: 0.95rem; height: 0.95rem; flex-shrink: 0;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3 8h9M9 5l3 3-3 3' stroke='%230e8f5d' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  opacity: 0; transform: translateX(-0.3rem);
+  transition: opacity .16s ease, transform .16s ease;
+}
+.nav-dropdown-item:hover::after,
+.nav-dropdown-item:focus-visible::after { opacity: 1; transform: none; }
 
 /* ── Nav: mobile grouped links ────────────────────────────── */
 .mobile-group { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.35rem 0 0.5rem; }

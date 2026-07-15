@@ -89,7 +89,7 @@ export default function Hero() {
           </h1>
           <p>Resolve routine work instantly while your team keeps full visibility and control.</p>
           <div className="hero-actions">
-            <a href="#contact" className="hero-button hero-button-primary">Book a demo</a>
+            <a href="/contact.html" className="hero-button hero-button-primary">Book a demo</a>
             <a href="#how" className="hero-button hero-button-secondary">
               See How It Works <IconArrow className="h-4 w-4" />
             </a>
@@ -107,7 +107,7 @@ export default function Hero() {
                 <i />
               </span>
               <span className="hero-demo-title"><img src="/assets/logo.png" alt="" /> Nevian <i /> Help desk</span>
-              <a href="#contact" className="hero-demo-link">Open workspace <IconArrow className="h-3.5 w-3.5" /></a>
+              <a href="/contact.html" className="hero-demo-link">Open workspace <IconArrow className="h-3.5 w-3.5" /></a>
             </div>
 
             {/* body */}

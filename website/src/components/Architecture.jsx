@@ -1,4 +1,12 @@
+import { useEffect, useRef, useState } from 'react';
 import { useReveal } from '../hooks/useReveal.js';
+
+const tabVariants = [
+  ['Workstations', 'User devices', 'Endpoints'],
+  ['Servers', 'Server fleet', 'Infrastructure'],
+  ['Domain Controllers', 'Identity services', 'Active Directory'],
+  ['M365 Tenant', 'Cloud workspace', 'Microsoft 365'],
+];
 
 function LineIcon({ type }) {
   const paths = {
@@ -22,11 +30,26 @@ function LineIcon({ type }) {
   );
 }
 
-function DiagramNode({ className, icon, children, delay = 0 }) {
+function NodeTooltip({ children }) {
   return (
-    <div className={`architecture-node ${className}`} style={{ '--node-delay': `${delay}ms` }}>
+    <div className="architecture-node-tooltip" aria-hidden="true">
+      <span>What it does</span>
+      <p>{children}</p>
+    </div>
+  );
+}
+
+function DiagramNode({ className, icon, children, description, delay = 0 }) {
+  return (
+    <div
+      className={`architecture-node ${className}`}
+      style={{ '--node-delay': `${delay}ms` }}
+      tabIndex={0}
+      aria-label={`${children}. ${description}`}
+    >
       <span className="architecture-node-icon"><LineIcon type={icon} /></span>
       <strong>{children}</strong>
+      <NodeTooltip>{description}</NodeTooltip>
     </div>
   );
 }
@@ -61,6 +84,46 @@ function FlowLines() {
 
 export default function Architecture() {
   const [ref, shown] = useReveal({ threshold: 0.12 });
+  const [tabLabels, setTabLabels] = useState(() => tabVariants.map(([label]) => label));
+  const [tabMotion, setTabMotion] = useState({ index: -1, phase: '' });
+  const variantIndexesRef = useRef(tabVariants.map(() => 0));
+
+  useEffect(() => {
+    if (!shown || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    let tabIndex = 0;
+    let swapTimer = 0;
+    let settleTimer = 0;
+
+    const interval = window.setInterval(() => {
+      const switchingIndex = tabIndex;
+      setTabMotion({ index: switchingIndex, phase: 'out' });
+
+      swapTimer = window.setTimeout(() => {
+        variantIndexesRef.current[switchingIndex] =
+          (variantIndexesRef.current[switchingIndex] + 1) % tabVariants[switchingIndex].length;
+
+        setTabLabels((current) => current.map((label, index) => (
+          index === switchingIndex
+            ? tabVariants[index][variantIndexesRef.current[index]]
+            : label
+        )));
+        setTabMotion({ index: switchingIndex, phase: 'in' });
+
+        settleTimer = window.setTimeout(() => {
+          setTabMotion({ index: -1, phase: '' });
+        }, 380);
+
+        tabIndex = (tabIndex + 1) % tabVariants.length;
+      }, 210);
+    }, 2900);
+
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(swapTimer);
+      window.clearTimeout(settleTimer);
+    };
+  }, [shown]);
 
   return (
     <section id="features" className={`architecture-section ${shown ? 'is-visible' : ''}`}>
@@ -73,33 +136,55 @@ export default function Architecture() {
           <FlowLines />
 
           <div className="architecture-tabs architecture-node" style={{ '--node-delay': '80ms' }}>
-            <span>Workstations</span>
-            <span>Servers</span>
-            <span>Domain Controllers</span>
-            <span>M365 Tenant</span>
-          </div>
-
-          <div className="architecture-source-grid architecture-node" style={{ '--node-delay': '180ms' }}>
-            {['shield', 'network', 'archive', 'cloud'].map((type) => (
-              <span key={type}><LineIcon type={type} /></span>
+            {tabLabels.map((label, index) => (
+              <span
+                className={`architecture-tab ${tabMotion.index === index ? `is-${tabMotion.phase}` : ''}`}
+                key={index}
+              >
+                <span className="architecture-tab-text">{label}</span>
+              </span>
             ))}
           </div>
 
-          <DiagramNode className="architecture-gateway" icon="gateway" delay={240}>Agent Gateway</DiagramNode>
-          <DiagramNode className="architecture-event" icon="event" delay={300}>Event Stream</DiagramNode>
-          <DiagramNode className="architecture-hub" icon="hub" delay={360}>Integration Hub</DiagramNode>
+          <div
+            className="architecture-source-grid architecture-node"
+            style={{ '--node-delay': '180ms' }}
+            tabIndex={0}
+            aria-label="Connected systems. Identity, monitoring, ticketing, and cloud tools connect here."
+          >
+            {['shield', 'network', 'archive', 'cloud'].map((type) => (
+              <span key={type}><LineIcon type={type} /></span>
+            ))}
+            <NodeTooltip>Identity, monitoring, ticketing, and cloud tools connect here.</NodeTooltip>
+          </div>
 
-          <div className="architecture-core architecture-node" style={{ '--node-delay': '420ms' }}>
+          <DiagramNode className="architecture-gateway" icon="gateway" delay={240} description="Securely carries device context and approved jobs between your environment and Nevian.">Agent Gateway</DiagramNode>
+          <DiagramNode className="architecture-event" icon="event" delay={300} description="Routes live support signals and operational events to the right workflow in real time.">Event Stream</DiagramNode>
+          <DiagramNode className="architecture-hub" icon="hub" delay={360} description="Connects the tools your IT team already uses without replacing the existing stack.">Integration Hub</DiagramNode>
+
+          <div
+            className="architecture-core architecture-node"
+            style={{ '--node-delay': '420ms' }}
+            tabIndex={0}
+            aria-label="Nevian core. Correlates context, policy, and intent before choosing the next safe action."
+          >
             <img src="/assets/logo.png" alt="Nevian" />
+            <NodeTooltip>Correlates context, policy, and intent before choosing the next safe action.</NodeTooltip>
           </div>
 
-          <div className="architecture-database architecture-node" style={{ '--node-delay': '480ms' }}>
+          <div
+            className="architecture-database architecture-node"
+            style={{ '--node-delay': '480ms' }}
+            tabIndex={0}
+            aria-label="Audit store. Keeps workflow state, results, and audit history visible."
+          >
             <LineIcon type="database" />
+            <NodeTooltip>Keeps workflow state, results, and audit history visible.</NodeTooltip>
           </div>
 
-          <DiagramNode className="architecture-orchestration" icon="orchestration" delay={520}>Orchestration</DiagramNode>
-          <DiagramNode className="architecture-desk" icon="monitor" delay={590}>Desk Agent</DiagramNode>
-          <DiagramNode className="architecture-server" icon="lock" delay={650}>Server Agent</DiagramNode>
+          <DiagramNode className="architecture-orchestration" icon="orchestration" delay={520} description="Coordinates approved actions, dependencies, retries, and the complete audit trail.">Orchestration</DiagramNode>
+          <DiagramNode className="architecture-desk" icon="monitor" delay={590} description="Collects live endpoint context and executes signed fixes on user devices.">Desk Agent</DiagramNode>
+          <DiagramNode className="architecture-server" icon="lock" delay={650} description="Runs controlled server-side automation without opening inbound access.">Server Agent</DiagramNode>
         </div>
 
         <div className="architecture-mobile-flow" aria-label="Nevian workflow">

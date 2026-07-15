@@ -51,7 +51,7 @@ const steps = [
 const STEP_SPACING = 17.4;
 const STEP_ANCHOR = 40;
 const LINE_X = 39.35;
-const CENTER_Y = 49;
+const CENTER_Y = STEP_ANCHOR;
 const BASE_BULGE = 3.1;
 const CURVE_HALF_HEIGHT = 20;
 const CURVE_OUTER_CONTROL = 14;
@@ -139,11 +139,13 @@ function curveXAtY(y, samples) {
 function createTickPaths(center, bulge, travel) {
   const samples = createCurveSamples(center, bulge);
   const stepRows = steps.map((_, index) => STEP_ANCHOR + index * STEP_SPACING - travel);
+  const finalStepY = stepRows[stepRows.length - 1];
   const segments = [];
 
   for (let sourceY = -20; sourceY <= 220; sourceY += 2.3) {
     const y = sourceY - travel;
     if (y < -2 || y > 102) continue;
+    if (y > finalStepY) continue;
     if (stepRows.some((stepY) => Math.abs(stepY - y) < .9)) continue;
     const right = curveXAtY(y, samples) - .78;
     segments.push(`M ${right - 1.55} ${y} H ${right}`);
@@ -175,7 +177,7 @@ export default function Journey() {
       const selectedFloat = progress * (steps.length - 1);
       const travel = selectedFloat * STEP_SPACING;
       const wave = Math.sin(selectedFloat * Math.PI);
-      const center = CENTER_Y + wave * .8;
+      const center = CENTER_Y;
       const bulge = BASE_BULGE + Math.abs(wave) * .55;
       const curvePath = createCurvePath(center, bulge);
       const curveSamples = createCurveSamples(center, bulge);
@@ -184,8 +186,8 @@ export default function Journey() {
       const tickPath = createTickPaths(center, bulge, travel);
       let nextIndex = activeIndexRef.current;
 
-      while (selectedFloat > nextIndex + .58 && nextIndex < steps.length - 1) nextIndex += 1;
-      while (selectedFloat < nextIndex - .58 && nextIndex > 0) nextIndex -= 1;
+      while (selectedFloat >= nextIndex + 1 && nextIndex < steps.length - 1) nextIndex += 1;
+      while (selectedFloat <= nextIndex - 1 && nextIndex > 0) nextIndex -= 1;
 
       labelsRef.current.style.transform = `translate3d(0, -${travel}vh, 0)`;
       labelItemsRef.current.forEach((label, index) => {

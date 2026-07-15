@@ -1,113 +1,106 @@
-import { useEffect, useRef, useState } from 'react';
-import { IconChevron, IconMenu, IconClose, IconChat, IconDevice, IconGrid, IconShield } from './Icons.jsx';
+import { useEffect, useState } from 'react';
+import { IconMenu, IconClose } from './Icons.jsx';
 
-const solutions = [
-  { title: 'AI Ticketing', desc: 'Plain-language intake & triage', Icon: IconChat, href: '#features' },
-  { title: 'Endpoint Agent', desc: 'Live device context on every ticket', Icon: IconDevice, href: '#features' },
-  { title: 'Admin Dashboard', desc: 'One command center for IT', Icon: IconGrid, href: '#features' },
-  { title: 'Security & Automation', desc: 'Signed, audited outbound jobs', Icon: IconShield, href: '#features' },
+const navigation = [
+  { label: 'Home', href: '/#top', key: 'home' },
+  { label: 'Workflow', href: '/#how', key: 'workflow' },
+  { label: 'Platform', href: '/#features', key: 'platform' },
+  { label: 'Process', href: '/process.html', key: 'process' },
+  { label: 'Contact', href: '/contact.html', key: 'contact' },
 ];
 
-export default function Nav({ onDropdownChange }) {
-  const [open, setOpen] = useState(false); // dropdown
+const trackedSections = [
+  { id: 'top', key: 'home' },
+  { id: 'how', key: 'workflow' },
+  { id: 'features', key: 'platform' },
+];
+
+export default function Nav({ current = 'home' }) {
   const [mobile, setMobile] = useState(false);
-  const closeTimer = useRef(null);
+  const [active, setActive] = useState(current);
 
   useEffect(() => {
-    onDropdownChange?.(open);
-  }, [open, onDropdownChange]);
+    if (current !== 'home') {
+      setActive(current);
+      return undefined;
+    }
 
-  const enter = () => {
-    clearTimeout(closeTimer.current);
-    setOpen(true);
-  };
-  const leave = () => {
-    // small grace period so crossing the gap doesn't flicker
-    closeTimer.current = setTimeout(() => setOpen(false), 90);
-  };
+    let frame = 0;
 
-  const links = (
-    <>
-      <a href="#how" className="site-nav-mobile-link">
-        How it works
-      </a>
-      <a href="#features" className="site-nav-mobile-link">
-        Features
-      </a>
-      <a href="#contact" className="site-nav-mobile-link">
-        Contact
-      </a>
-    </>
-  );
+    const updateActiveSection = () => {
+      frame = 0;
+      const navHeight = document.querySelector('.site-nav')?.getBoundingClientRect().height || 72;
+      const probe = window.scrollY + navHeight + Math.min(190, window.innerHeight * .28);
+      let next = 'home';
+
+      trackedSections.forEach(({ id, key }) => {
+        const section = document.getElementById(id);
+        const sectionTop = section ? section.getBoundingClientRect().top + window.scrollY : Infinity;
+        if (sectionTop <= probe) next = key;
+      });
+
+      setActive((value) => (value === next ? value : next));
+    };
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+
+    return () => {
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [current]);
+
+  const navigate = (event, href) => {
+    setMobile(false);
+
+    const hash = href.startsWith('/#') ? href.slice(1) : '';
+    const onHomepage = window.location.pathname === '/' || window.location.pathname.endsWith('/index.html');
+    if (!hash || !onHomepage) return;
+
+    const target = document.querySelector(hash);
+    if (!target) return;
+
+    event.preventDefault();
+    window.requestAnimationFrame(() => {
+      const navHeight = document.querySelector('.site-nav')?.getBoundingClientRect().height || 72;
+      const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight;
+      window.history.pushState(null, '', hash);
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+    });
+  };
 
   return (
     <header className="site-nav sticky top-0 z-50">
       <div className="site-nav-inner wrap flex h-[4.5rem] items-center gap-4">
-        <a href="#top" className="site-nav-brand flex items-center gap-2.5 font-display text-lg font-extrabold">
+        <a href="/#top" className="site-nav-brand flex items-center gap-2.5 font-display text-lg font-extrabold">
           <img src="/assets/logo.png" alt="Nevian" className="h-8 w-8 object-contain" />
           <span>Nevian</span>
         </a>
 
-        {/* Desktop links */}
-        <nav className="ml-2 hidden items-center gap-1 lg:flex" aria-label="Primary">
-          <a href="#how" className="site-nav-link is-current">
-            How it works
-          </a>
-
-          <div className="relative" onMouseEnter={enter} onMouseLeave={leave}>
-            <button
-              className="site-nav-link flex items-center gap-1.5"
-              aria-expanded={open}
-              aria-haspopup="true"
-              onClick={() => setOpen((v) => !v)}
+        <nav className="ml-2 hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
+          {navigation.map(({ label, href, key }) => (
+            <a
+              key={label}
+              href={href}
+              onClick={(event) => navigate(event, href)}
+              className={`site-nav-link ${active === key ? 'is-current' : ''}`}
+              aria-current={active === key ? 'location' : undefined}
             >
-              Solutions
-              <IconChevron className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-            </button>
-
-            {/* Menu */}
-            <div
-              className={`absolute left-1/2 top-full w-72 -translate-x-1/2 pt-3 transition ${
-                open ? 'visible opacity-100' : 'invisible opacity-0'
-              }`}
-            >
-              {/* invisible bridge fills the gap so hover stays alive */}
-              <div
-                className={`site-nav-dropdown grid gap-1 rounded-2xl p-2 transition-transform duration-200 ${
-                  open ? 'translate-y-0 scale-100' : '-translate-y-2 scale-95'
-                }`}
-              >
-                {solutions.map(({ title, desc, Icon, href }) => (
-                  <a
-                    key={title}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    className="site-nav-dropdown-item group flex items-start gap-3 rounded-xl p-2.5 transition"
-                  >
-                    <span className="site-nav-dropdown-icon mt-0.5 transition">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="site-nav-dropdown-title block text-sm font-bold">{title}</span>
-                      <span className="site-nav-dropdown-desc block text-xs">{desc}</span>
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <a href="#features" className="site-nav-link">
-            Features
-          </a>
-          <a href="#contact" className="site-nav-link">
-            Contact
-          </a>
+              {label}
+            </a>
+          ))}
         </nav>
 
         <div className="site-nav-spacer" />
 
-        <a href="#contact" className="site-nav-cta hidden text-sm sm:inline-flex">
+        <a href="/contact.html" className="site-nav-cta hidden text-sm sm:inline-flex">
           Book a demo
         </a>
 
@@ -115,31 +108,31 @@ export default function Nav({ onDropdownChange }) {
           className="site-nav-toggle inline-flex h-10 w-10 items-center justify-center rounded-xl lg:hidden"
           aria-label="Toggle menu"
           aria-expanded={mobile}
-          onClick={() => setMobile((v) => !v)}
+          aria-controls="site-mobile-navigation"
+          onClick={() => setMobile((value) => !value)}
         >
           {mobile ? <IconClose className="h-5 w-5" /> : <IconMenu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {mobile && (
-        <div className="wrap lg:hidden">
-          <div className="site-nav-mobile-menu mt-2 flex flex-col gap-1 rounded-2xl p-3">
-            <div className="flex flex-col" onClick={() => setMobile(false)}>
-              {links}
-            </div>
-            <div className="site-nav-mobile-solutions mt-1 border-t pt-2">
-              <span className="site-nav-mobile-label px-4 text-xs font-bold uppercase tracking-wider">Solutions</span>
-              {solutions.map(({ title, href }) => (
-                <a key={title} href={href} onClick={() => setMobile(false)} className="site-nav-mobile-link block rounded-lg px-4 py-2 text-sm font-medium">
-                  {title}
-                </a>
-              ))}
-            </div>
-            <a href="#contact" onClick={() => setMobile(false)} className="site-nav-cta mt-2 flex w-full">
+        <div className="wrap lg:hidden" id="site-mobile-navigation">
+          <nav className="site-nav-mobile-menu mt-2 flex flex-col gap-1 rounded-2xl p-3" aria-label="Mobile navigation">
+            {navigation.map(({ label, href, key }) => (
+              <a
+                key={label}
+                href={href}
+                onClick={(event) => navigate(event, href)}
+                className={`site-nav-mobile-link ${active === key ? 'is-current' : ''}`}
+                aria-current={active === key ? 'location' : undefined}
+              >
+                {label}
+              </a>
+            ))}
+            <a href="/contact.html" onClick={() => setMobile(false)} className="site-nav-cta mt-2 flex w-full">
               Book a demo
             </a>
-          </div>
+          </nav>
         </div>
       )}
     </header>

@@ -27,7 +27,7 @@ export default function Showcase() {
                 </li>
               ))}
             </ul>
-            <a href="#contact" className="btn btn-primary mt-8 text-base">Book a demo</a>
+            <a href="/contact.html" className="btn btn-primary mt-8 text-base">Book a demo</a>
           </div>
 
           <div className="relative">

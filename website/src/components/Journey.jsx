@@ -103,11 +103,21 @@ function createCurveSamples(center, bulge) {
   return samples;
 }
 
-function createMarkerClip(center, bulge) {
-  const gap = .52;
+function createLeftCurveClip(center, bulge, gap = 0) {
   const boundary = createCurveSamples(center, bulge).map(({ x, y }) => `${x - gap}% ${y}%`);
   boundary.push('0% 100%', '0% 0%');
   return `polygon(${boundary.join(', ')})`;
+}
+
+function createMarkerClip(center, bulge) {
+  return createLeftCurveClip(center, bulge, .52);
+}
+
+function createLeftHighlightPath(samples) {
+  const bandWidth = 7.2;
+  const curveEdge = samples.map(({ x, y }) => `${x} ${y}`);
+  const softEdge = [...samples].reverse().map(({ x, y }) => `${x - bandWidth} ${y}`);
+  return `M ${curveEdge.join(' L ')} L ${softEdge.join(' L ')} Z`;
 }
 
 function curveXAtY(y, samples) {
@@ -146,16 +156,12 @@ export default function Journey() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const trackRef = useRef(null);
+  const highlightPathRef = useRef(null);
   const markerMaskRef = useRef(null);
   const labelsRef = useRef(null);
   const labelItemsRef = useRef([]);
   const minorTicksRef = useRef(null);
   const pathRef = useRef(null);
-  const ghostPathRef = useRef(null);
-  const mistRef = useRef(null);
-  const contentRef = useRef(null);
-  const leftGlowRef = useRef(null);
-  const rightGlowRef = useRef(null);
 
   useEffect(() => {
     const desktop = window.matchMedia('(min-width: 1024px)');
@@ -170,13 +176,16 @@ export default function Journey() {
       const travel = selectedFloat * STEP_SPACING;
       const wave = Math.sin(selectedFloat * Math.PI);
       const center = CENTER_Y + wave * .8;
-      const centerOffset = center - CENTER_Y;
       const bulge = BASE_BULGE + Math.abs(wave) * .55;
       const curvePath = createCurvePath(center, bulge);
       const curveSamples = createCurveSamples(center, bulge);
+      const highlightPath = createLeftHighlightPath(curveSamples);
       const markerClip = createMarkerClip(center, bulge);
       const tickPath = createTickPaths(center, bulge, travel);
-      const nextIndex = Math.round(selectedFloat);
+      let nextIndex = activeIndexRef.current;
+
+      while (selectedFloat > nextIndex + .58 && nextIndex < steps.length - 1) nextIndex += 1;
+      while (selectedFloat < nextIndex - .58 && nextIndex > 0) nextIndex -= 1;
 
       labelsRef.current.style.transform = `translate3d(0, -${travel}vh, 0)`;
       labelItemsRef.current.forEach((label, index) => {
@@ -187,13 +196,9 @@ export default function Journey() {
       });
       minorTicksRef.current.setAttribute('d', tickPath);
       pathRef.current.setAttribute('d', curvePath);
-      ghostPathRef.current.setAttribute('d', curvePath);
+      highlightPathRef.current.setAttribute('d', highlightPath);
       markerMaskRef.current.style.clipPath = markerClip;
       markerMaskRef.current.style.webkitClipPath = markerClip;
-      mistRef.current.style.transform = `translate3d(0, ${centerOffset}vh, 0)`;
-      contentRef.current.style.transform = `translate3d(0, ${wave * 6}px, 0)`;
-      leftGlowRef.current.style.transform = `translate3d(${wave * -0.7}vw, ${wave * -0.8}vh, 0)`;
-      rightGlowRef.current.style.transform = `translate3d(${wave * -1.1}vw, 0, 0) scale(${1 + Math.abs(wave) * 0.025})`;
 
       if (nextIndex !== activeIndexRef.current) {
         activeIndexRef.current = nextIndex;
@@ -204,7 +209,7 @@ export default function Journey() {
     const tick = (time) => {
       const elapsed = Math.min(48, time - lastTime);
       const delta = target - current;
-      const easing = reduceMotion ? 1 : 1 - Math.exp(-elapsed / 32);
+      const easing = reduceMotion ? 1 : 1 - Math.exp(-elapsed / 26);
       lastTime = time;
       current += delta * easing;
 
@@ -265,6 +270,7 @@ export default function Journey() {
 
   const activeStep = steps[activeIndex];
   const initialPath = createCurvePath(CENTER_Y, BASE_BULGE);
+  const initialHighlightPath = createLeftHighlightPath(createCurveSamples(CENTER_Y, BASE_BULGE));
   const initialMarkerClip = createMarkerClip(CENTER_Y, BASE_BULGE);
   const initialTickPath = createTickPaths(CENTER_Y, BASE_BULGE, 0);
 
@@ -273,15 +279,11 @@ export default function Journey() {
       <div ref={trackRef} className="nevian-journey-track">
         <div className="nevian-journey-stage">
           <div className="nevian-journey-base" />
-          <div ref={leftGlowRef} className="nevian-journey-glow nevian-journey-glow-left" />
-          <div ref={rightGlowRef} className="nevian-journey-glow nevian-journey-glow-right" />
           <div className="nevian-journey-grid nevian-journey-grid-top" />
           <div className="nevian-journey-grid nevian-journey-grid-bottom" />
           <div className="nevian-journey-vignette" />
 
           <div className="nevian-journey-desktop">
-            <div ref={mistRef} className="nevian-journey-mist" />
-
             <svg className="nevian-journey-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               <defs>
                 <linearGradient id="nevianLineGradient" x1="0" x2="0" y1="0" y2="1">
@@ -292,8 +294,19 @@ export default function Journey() {
                   <stop offset="1" stopColor="#34383e" stopOpacity=".14" />
                 </linearGradient>
               </defs>
-              <path ref={ghostPathRef} className="nevian-journey-path nevian-journey-path-ghost" d={initialPath} />
               <path ref={pathRef} className="nevian-journey-path" d={initialPath} />
+            </svg>
+
+            <svg className="nevian-journey-highlight" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <radialGradient id="nevianLeftHighlightGradient" cx="100%" cy="50%" r="76%" fx="100%" fy="50%">
+                  <stop offset="0" stopColor="#54dc93" stopOpacity=".2" />
+                  <stop offset=".34" stopColor="#35bc7b" stopOpacity=".115" />
+                  <stop offset=".72" stopColor="#17895a" stopOpacity=".025" />
+                  <stop offset="1" stopColor="#17895a" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <path ref={highlightPathRef} d={initialHighlightPath} />
             </svg>
 
             <svg className="nevian-journey-ticks" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -311,6 +324,7 @@ export default function Journey() {
                     key={step.key}
                     ref={(node) => { labelItemsRef.current[index] = node; }}
                     className={`nevian-journey-label ${index === activeIndex ? 'is-active' : ''}`}
+                    aria-current={index === activeIndex ? 'step' : undefined}
                     style={{ top: `${STEP_ANCHOR + index * STEP_SPACING}%` }}
                   >
                     <span>{step.key}</span>
@@ -319,7 +333,7 @@ export default function Journey() {
               </div>
             </div>
 
-            <article ref={contentRef} className="nevian-journey-copy">
+            <article className="nevian-journey-copy">
               <div key={activeIndex} className="nevian-journey-copy-enter">
                 <div className="nevian-journey-brand">
                   <span className="nevian-journey-brand-mark">

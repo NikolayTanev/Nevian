@@ -958,11 +958,11 @@
   position: absolute;
   z-index: 5;
   right: 0;
-  bottom: -88px;
+  bottom: -138px;
   left: 0;
-  height: 90px;
+  height: 140px;
   pointer-events: none;
-  background: linear-gradient(180deg, #07090d 0%, rgba(7, 9, 13, .92) 42%, rgba(7, 9, 13, 0) 100%);
+  background: linear-gradient(180deg, #07090d 0%, rgba(7, 9, 13, .94) 34%, rgba(7, 9, 13, .48) 68%, rgba(7, 9, 13, 0) 100%);
 }
 
 .integrations-band p {
@@ -1027,6 +1027,20 @@
   background: #07090d;
 }
 
+.nevian-journey-stage::before {
+  content: '';
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: clamp(145px, 19vh, 225px);
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, #07090d 0%, rgba(7, 9, 13, .94) 28%, rgba(7, 9, 13, .48) 65%, rgba(7, 9, 13, 0) 100%) 0 0 / 58% 100% no-repeat,
+    linear-gradient(180deg, rgba(7, 9, 13, .78) 0%, rgba(7, 9, 13, .4) 48%, rgba(7, 9, 13, 0) 100%);
+}
+
 .nevian-journey-stage::after {
   content: '';
   position: absolute;
@@ -1040,7 +1054,6 @@
 }
 
 .nevian-journey-base,
-.nevian-journey-glow,
 .nevian-journey-grid,
 .nevian-journey-vignette,
 .nevian-journey-grain {
@@ -1051,40 +1064,14 @@
 
 .nevian-journey-base {
   z-index: -8;
-  background:
-    radial-gradient(circle at 45% 51%, rgba(18, 29, 27, .38), transparent 28%),
-    linear-gradient(93deg, #07090d 0%, #090c10 42%, #07090d 71%, #0d1913 100%);
-}
-
-.nevian-journey-glow {
-  z-index: -6;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-}
-
-.nevian-journey-glow-left {
-  inset: -8%;
-  width: auto;
-  opacity: .88;
-  background:
-    radial-gradient(ellipse 24% 42% at 38% 50%, rgba(38, 184, 119, .2), rgba(23, 143, 92, .09) 38%, transparent 76%),
-    radial-gradient(ellipse 31% 52% at 41% 52%, rgba(141, 255, 106, .07), transparent 78%);
-}
-
-.nevian-journey-glow-right {
-  inset: -23% -12% -17% 61%;
-  opacity: .92;
-  background:
-    radial-gradient(ellipse at 92% 52%, rgba(141, 255, 106, .79), rgba(23, 179, 120, .48) 25%, rgba(15, 125, 83, .25) 48%, transparent 74%),
-    radial-gradient(ellipse at 72% 48%, rgba(21, 160, 107, .2), transparent 65%),
-    linear-gradient(90deg, transparent 7%, rgba(21, 160, 107, .12) 58%, rgba(141, 255, 106, .25) 100%);
+  background: linear-gradient(93deg, #07090d 0%, #090b0e 43%, #07090d 72%, #080a0d 100%);
 }
 
 .nevian-journey-grid {
   z-index: -3;
   left: auto;
   width: 48%;
-  opacity: .62;
+  opacity: .48;
   background-image: url('/assets/rounded-tile-field.svg');
   background-repeat: no-repeat;
   background-position: center;
@@ -1121,7 +1108,7 @@
 
 .nevian-journey-grain {
   z-index: 9;
-  opacity: .34;
+  opacity: .26;
   background-image:
     url('/assets/static-grain.svg'),
     url('/assets/static-grain.svg');
@@ -1164,19 +1151,18 @@
   vector-effect: non-scaling-stroke;
 }
 
-.nevian-journey-path-ghost {
-  stroke: rgba(141, 255, 106, .085);
-  stroke-width: 12;
+.nevian-journey-highlight {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.nevian-journey-mist {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 20% 34% at 34% 49%, rgba(23, 179, 120, .1), rgba(141, 255, 106, .035) 42%, transparent 82%);
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
+.nevian-journey-highlight path {
+  fill: url(#nevianLeftHighlightGradient);
 }
 
 .nevian-journey-labels {
@@ -1194,7 +1180,7 @@
   font-size: clamp(1rem, 1.45vw, 1.8rem);
   line-height: 1;
   transform: translateY(-50%);
-  transition: color .24s ease;
+  transition: color .28s ease;
   will-change: transform;
 }
 
@@ -1207,6 +1193,14 @@
   border: 1px solid rgba(123, 134, 135, .24);
   border-radius: 999px;
   background: linear-gradient(145deg, rgba(16, 21, 23, .58), rgba(7, 8, 12, .13));
+  transition:
+    opacity .3s ease,
+    transform .3s ease,
+    color .3s ease,
+    text-shadow .3s ease,
+    border-color .3s ease,
+    background-color .3s ease,
+    box-shadow .3s ease;
 }
 
 .nevian-journey-label::after {
@@ -1217,6 +1211,18 @@
   width: 4.35vw;
   height: 1px;
   background: linear-gradient(90deg, rgba(184, 192, 190, .54), rgba(141, 255, 106, .26));
+  transition: opacity .3s ease;
+}
+
+.nevian-journey-label:not(.is-active) span {
+  opacity: .46;
+  color: rgba(235, 239, 238, .48);
+  text-shadow: 0 0 1.4px rgba(235, 239, 238, .34);
+  transform: scale(.985);
+}
+
+.nevian-journey-label:not(.is-active)::after {
+  opacity: .38;
 }
 
 .nevian-journey-label.is-active {
@@ -1225,7 +1231,15 @@
 
 .nevian-journey-label.is-active span {
   border-color: rgba(141, 255, 106, .32);
+  color: #fff;
   background: linear-gradient(145deg, rgba(22, 34, 29, .74), rgba(8, 12, 12, .32));
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .2), inset 0 1px rgba(255, 255, 255, .025);
+  text-shadow: none;
+  transform: scale(1);
+}
+
+.nevian-journey-label.is-active::after {
+  opacity: .9;
 }
 
 .nevian-journey-ticks {
@@ -1255,7 +1269,6 @@
   top: 18%;
   left: 59%;
   width: min(36.5vw, 680px);
-  will-change: transform;
 }
 
 .nevian-journey-copy-enter {
@@ -1263,7 +1276,7 @@
 }
 
 @keyframes nevian-copy-enter {
-  from { opacity: .42; transform: translate3d(0, 8px, 0); }
+  from { opacity: .36; transform: translate3d(0, 7px, 0); }
   to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
@@ -1487,6 +1500,10 @@
 }
 
 @media (min-width: 1024px) and (max-height: 760px) {
+  .nevian-journey-stage::before {
+    height: clamp(105px, 16vh, 132px);
+  }
+
   .nevian-journey-copy {
     top: 12%;
   }

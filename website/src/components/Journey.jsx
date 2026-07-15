@@ -61,6 +61,12 @@ function clamp(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
 
+function workflowIndexFromHash(hash = window.location.hash) {
+  const match = hash.match(/^#workflow-(report|triage|context|automate|resolve)$/i);
+  if (!match) return -1;
+  return steps.findIndex((step) => step.key.toLowerCase() === match[1].toLowerCase());
+}
+
 function createCurvePath(center, bulge) {
   const upper = center - CURVE_HALF_HEIGHT;
   const lower = center + CURVE_HALF_HEIGHT;
@@ -172,6 +178,7 @@ export default function Journey() {
     let target = 0;
     let frame = 0;
     let lastTime = performance.now();
+    let lastBroadcastIndex = -1;
 
     const updateVisuals = (progress) => {
       const selectedFloat = progress * (steps.length - 1);
@@ -205,6 +212,13 @@ export default function Journey() {
       if (nextIndex !== activeIndexRef.current) {
         activeIndexRef.current = nextIndex;
         setActiveIndex(nextIndex);
+      }
+
+      if (nextIndex !== lastBroadcastIndex) {
+        lastBroadcastIndex = nextIndex;
+        window.dispatchEvent(new CustomEvent('nevian:workflow-active', {
+          detail: { index: nextIndex, slug: steps[nextIndex].key.toLowerCase() },
+        }));
       }
     };
 
@@ -257,16 +271,57 @@ export default function Journey() {
       updateVisuals(current);
     };
 
+    const scrollToStep = (index, behavior = 'smooth') => {
+      if (!Number.isInteger(index) || index < 0 || index >= steps.length) return;
+
+      window.requestAnimationFrame(() => {
+        if (desktop.matches) {
+          const track = trackRef.current;
+          if (!track) return;
+          const trackTop = track.getBoundingClientRect().top + window.scrollY;
+          const total = Math.max(1, track.offsetHeight - window.innerHeight);
+          const progress = index / (steps.length - 1);
+          window.scrollTo({ top: trackTop + total * progress, behavior });
+          return;
+        }
+
+        const mobileStep = document.getElementById(`workflow-mobile-${steps[index].key.toLowerCase()}`);
+        if (!mobileStep) return;
+        const navHeight = document.querySelector('.site-nav')?.getBoundingClientRect().height || 72;
+        const top = mobileStep.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+        window.scrollTo({ top: Math.max(0, top), behavior });
+      });
+    };
+
+    const onStepRequest = (event) => {
+      const index = Number(event.detail?.index);
+      scrollToStep(index);
+    };
+
+    const onWorkflowHash = () => {
+      const index = workflowIndexFromHash();
+      if (index >= 0) scrollToStep(index);
+    };
+
     target = desktop.matches ? readProgress() : 0;
     current = target;
     updateVisuals(current);
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
+    window.addEventListener('nevian:workflow-step', onStepRequest);
+    window.addEventListener('hashchange', onWorkflowHash);
+
+    const initialIndex = workflowIndexFromHash();
+    if (initialIndex >= 0) {
+      window.requestAnimationFrame(() => scrollToStep(initialIndex, 'auto'));
+    }
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('nevian:workflow-step', onStepRequest);
+      window.removeEventListener('hashchange', onWorkflowHash);
     };
   }, []);
 
@@ -377,7 +432,7 @@ export default function Journey() {
 
             <div className="nevian-journey-mobile-list">
               {steps.map((step, index) => (
-                <article key={step.key}>
+                <article key={step.key} id={`workflow-mobile-${step.key.toLowerCase()}`}>
                   <div className="nevian-journey-mobile-number">{String(index + 1).padStart(2, '0')}</div>
                   <div>
                     <span>{step.key}</span>

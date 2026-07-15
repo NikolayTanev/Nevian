@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Nav from './Nav.jsx';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
@@ -14,6 +14,11 @@ const details = [
 export default function ContactPage() {
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState({ message: '', kind: '' });
+
+  useEffect(() => {
+    document.documentElement.classList.add('contact-route');
+    return () => document.documentElement.classList.remove('contact-route');
+  }, []);
 
   const openEmailFallback = (data) => {
     const subject = `Nevian contact: ${data.company || data.firstName || 'New request'}`;

@@ -3,6 +3,7 @@ import Hero from './components/Hero.jsx';
 import Journey from './components/Journey.jsx';
 import Architecture from './components/Architecture.jsx';
 import Integrations from './components/Integrations.jsx';
+import PasswordResetDemo from './components/PasswordResetDemo.jsx';
 import Footer from './components/Footer.jsx';
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
         <Integrations />
         <Journey />
         <Architecture />
+        <PasswordResetDemo />
       </main>
       <Footer />
     </>

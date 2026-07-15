@@ -1,78 +1,54 @@
-# Nevian — Marketing Site
+# NevianMain
 
-A standalone, static marketing/landing site for **Nevian**, built to be hosted on
-GitHub Pages at **nevian.info**. It is fully independent of the desk agent and web
-dashboard — it only borrows their visual design language (emerald accents, hairline
-borders, glass segmented controls, pulsing live dots) re-themed with rounded corners
-and rem-based sizing for responsiveness.
+Nevian marketing site — rebuilt from scratch with **React + Vite + Tailwind CSS**.
 
 ## Stack
 
-- Static HTML + CSS + a small vanilla JS file. No build step required.
-- **Tailwind CSS** via the Play CDN, configured with the same color tokens as the
-  web-dashboard (`tailwind.config.js`) so utility classes map to CSS variables.
-- A custom `css/styles.css` design system ported from the dashboard `theme.css`.
-- Light/Dark theme toggle (persisted to `localStorage`), applied before first paint.
+- **Vite** dev server + build
+- **React 18**
+- **Tailwind CSS 3** (design tokens in `tailwind.config.js`)
+- No other runtime dependencies. Only external request is Google Fonts.
 
-## File layout
+## Getting started
+
+```bash
+npm install
+npm run dev      # start the dev server (http://localhost:5173)
+npm run build    # production build → dist/
+npm run preview  # preview the production build
+```
+
+## Structure
 
 ```
-website/
-  index.html            the full landing page
-  CNAME                 custom domain for GitHub Pages (nevian.info)
-  .nojekyll             tell GitHub Pages to serve files as-is
-  css/styles.css        design tokens + ported components (rem + rounded)
-  js/main.js            theme toggle, mobile nav, scroll reveal, seg control, contact form
-  assets/
-    logo.svg            inline brand mark (currentColor)
-    favicon.svg         favicon
-    dashboard-preview.png  real admin dashboard screenshot used in the page
+NevianMain/
+  index.html                 Vite entry
+  public/logo.svg            brand mark
+  src/
+    main.jsx                 React bootstrap
+    index.css                Tailwind layers + component classes
+    App.jsx                  page composition + nav focus scrim
+    hooks/useReveal.js       scroll-reveal helper
+    components/
+      Nav.jsx                floating nav + Solutions dropdown (hover bridge)
+      Hero.jsx               headline + interactive help-desk preview
+      Journey.jsx            scroll-driven keyword walkthrough
+      Features.jsx           feature grid + stats
+      Contact.jsx            contact form (AWS endpoint + mailto fallback)
+      Footer.jsx             footer
+      Icons.jsx              inline SVG icon set
 ```
 
 ## Contact form
 
-The form is wired for **Formspree** so it works without a backend on GitHub Pages.
+`Contact.jsx` POSTs to the Nevian AWS endpoint. If that call fails
+(network/CORS), it falls back to opening the visitor's email client
+pre-filled to `nevian.info@gmail.com`. A hidden honeypot field drops bots.
 
-1. Create a free form at <https://formspree.io> (use the `hello@nevian.info` inbox).
-2. In `index.html`, find the `#contact-form` and replace `YOUR_FORM_ID` in the
-   `action="https://formspree.io/f/YOUR_FORM_ID"` attribute with your real form id.
+## Notes
 
-Until a form id is set, the **Send Request** button falls back to opening the
-visitor's email client with the message pre-filled to `hello@nevian.info`.
-
-## Publish to GitHub Pages (nevian.info)
-
-1. Push this `website/` content to a repository. The simplest setup is to put these
-   files at the **root** of a repo (e.g. `nevian-site`). If you keep them in a
-   subfolder, point Pages at that folder or use a Pages build action.
-2. In the repo: **Settings → Pages**.
-   - **Source:** Deploy from a branch.
-   - **Branch:** `main` and the folder containing `index.html` (`/root` or `/website`).
-3. Under **Custom domain**, enter `nevian.info`. The included `CNAME` file already
-   sets this; GitHub will verify it.
-4. Configure DNS at your domain registrar:
-   - **Apex (`nevian.info`)** — add four `A` records to GitHub Pages:
-     - `185.199.108.153`
-     - `185.199.109.153`
-     - `185.199.110.153`
-     - `185.199.111.153`
-   - (Optional) **`www`** — add a `CNAME` record pointing to `<your-user>.github.io`.
-5. Wait for DNS to propagate, then enable **Enforce HTTPS** in the Pages settings.
-
-## Local preview
-
-Just open `index.html` in a browser, or serve the folder:
-
-```bash
-# Python
-python -m http.server 8080
-# then visit http://localhost:8080
+- The journey section pins on desktop (`lg:`) and the active keyword advances
+  as you scroll; on mobile it collapses to a normal card you can tap through.
+- The Solutions dropdown blurs the rest of the page via a `backdrop-filter`
+  scrim so nothing is ever hidden — only softened.
 ```
-
-## Customizing
-
-- **Colors / theme:** edit the CSS variables at the top of `css/styles.css`
-  (`:root` for light, `[data-theme="dark"]` for dark).
-- **Copy:** all text lives directly in `index.html`, section by section.
-- **Email address:** replace `hello@nevian.info` in `index.html` and `js/main.js`
-  if you use a different inbox.

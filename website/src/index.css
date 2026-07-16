@@ -1930,15 +1930,6 @@
   height: 100%;
 }
 
-.nevian-journey-mobile-highlight {
-  position: absolute;
-  z-index: 0;
-  inset: 4% 7% 4% 0;
-  opacity: .82;
-  background: linear-gradient(90deg, rgba(15, 77, 49, 0), rgba(21, 111, 68, .075) 46%, rgba(38, 146, 87, .14) 100%);
-  clip-path: polygon(0 0, 94% 0, 94% 31%, 74% 46%, 69% 50%, 74% 54%, 94% 69%, 94% 100%, 0 100%);
-}
-
 .nevian-journey-mobile-line,
 .nevian-journey-mobile-ticks,
 .nevian-journey-mobile-labels {
@@ -1962,6 +1953,11 @@
   vector-effect: non-scaling-stroke;
 }
 
+.nevian-journey-mobile-line .nevian-journey-mobile-highlight-shape {
+  fill: url(#nevianMobileHighlightGradient);
+  stroke: none;
+}
+
 .nevian-journey-mobile-ticks {
   z-index: 1;
   pointer-events: none;
@@ -1979,7 +1975,7 @@
 .nevian-journey-mobile-labels {
   z-index: 2;
   pointer-events: none;
-  will-change: transform;
+  transition: transform .46s cubic-bezier(.22, 1, .36, 1);
 }
 
 .nevian-journey-mobile-label {
@@ -1992,8 +1988,7 @@
   color: rgba(227, 235, 231, .52);
   opacity: .5;
   transform: translate3d(0, -50%, 0);
-  transition: opacity .16s linear;
-  will-change: transform;
+  transition: opacity .24s ease, transform .46s cubic-bezier(.22, 1, .36, 1);
 }
 
 .nevian-journey-mobile-label > span {
@@ -2193,7 +2188,9 @@
 
   .nevian-journey-grid {
     width: 66%;
-    opacity: .16;
+    opacity: .09;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .nevian-journey-grid-bottom {
@@ -2201,9 +2198,7 @@
   }
 
   .nevian-journey-grain {
-    opacity: .12;
-    background-image: url('/assets/static-grain.svg');
-    background-size: 221px 213px;
+    display: none;
   }
 
   .nevian-journey-stage::before {

@@ -164,7 +164,8 @@ function createMobileTickPath(selectedFloat, spacingPercent) {
   const finalSourceY = 50 + (steps.length - 1) * spacingPercent;
   const segments = [];
 
-  for (let sourceY = -24; sourceY <= finalSourceY; sourceY += 3.05) {
+  const tickSpacing = spacingPercent / 5;
+  for (let sourceY = -24; sourceY <= finalSourceY; sourceY += tickSpacing) {
     const y = sourceY - travel;
     if (y < -2 || y > 102 || y > finalStepY) continue;
     if (stepRows.some((stepY) => Math.abs(stepY - y) < 1.05)) continue;
@@ -216,6 +217,7 @@ export default function Journey() {
     let frame = 0;
     let lastTime = performance.now();
     let lastBroadcastIndex = -1;
+    let lastMobileVisualIndex = -1;
     let trackTop = 0;
     let scrollRange = 1;
     let mobileSpacing = 0;
@@ -265,6 +267,7 @@ export default function Journey() {
           label.style.transform = `translate3d(${-displacement}px, -50%, 0)`;
         });
         mobileTicksRef.current?.setAttribute('d', createMobileTickPath(selectedFloat, mobileSpacingPercent));
+        lastMobileVisualIndex = Math.round(selectedFloat);
       }
 
       if (nextIndex !== activeIndexRef.current) {
@@ -323,16 +326,22 @@ export default function Journey() {
 
     const onScroll = () => {
       const nextTarget = readProgress();
+
+      if (!desktop.matches) {
+        const nextIndex = Math.round(nextTarget * (steps.length - 1));
+        if (nextIndex === lastMobileVisualIndex) return;
+        target = nextIndex / (steps.length - 1);
+        current = target;
+        updateVisuals(current);
+        return;
+      }
+
       if (Math.abs(nextTarget - target) < 0.00012 && Math.abs(nextTarget - current) < 0.00012) return;
       target = nextTarget;
 
-      if (!desktop.matches || reduceMotion) {
-        if (frame) return;
-        frame = requestAnimationFrame(() => {
-          current = target;
-          updateVisuals(current);
-          frame = 0;
-        });
+      if (reduceMotion) {
+        current = target;
+        updateVisuals(current);
       } else if (Math.abs(target - current) > 0.00012) {
         requestTick();
       }
@@ -342,8 +351,12 @@ export default function Journey() {
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
       measureTrack();
-      target = readProgress();
+      const measuredProgress = readProgress();
+      target = desktop.matches
+        ? measuredProgress
+        : Math.round(measuredProgress * (steps.length - 1)) / (steps.length - 1);
       current = target;
+      if (!desktop.matches) lastMobileVisualIndex = -1;
       updateVisuals(current);
     };
 
@@ -368,7 +381,10 @@ export default function Journey() {
     };
 
     measureTrack();
-    target = readProgress();
+    const initialProgress = readProgress();
+    target = desktop.matches
+      ? initialProgress
+      : Math.round(initialProgress * (steps.length - 1)) / (steps.length - 1);
     current = target;
     updateVisuals(current);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -490,9 +506,13 @@ export default function Journey() {
 
           <div className="nevian-journey-mobile">
             <div ref={mobileRailRef} className="nevian-journey-mobile-rail" aria-hidden="true">
-              <div className="nevian-journey-mobile-highlight" />
               <svg className="nevian-journey-mobile-line" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <defs>
+                  <linearGradient id="nevianMobileHighlightGradient" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0" stopColor="#0b5234" stopOpacity="0" />
+                    <stop offset=".62" stopColor="#19794e" stopOpacity=".035" />
+                    <stop offset="1" stopColor="#43c681" stopOpacity=".17" />
+                  </linearGradient>
                   <linearGradient id="nevianMobileLineGradient" x1="0" x2="0" y1="0" y2="1">
                     <stop offset="0" stopColor="#263a31" stopOpacity=".3" />
                     <stop offset=".36" stopColor="#4eba82" stopOpacity=".65" />
@@ -501,6 +521,7 @@ export default function Journey() {
                     <stop offset="1" stopColor="#24352e" stopOpacity=".24" />
                   </linearGradient>
                 </defs>
+                <path className="nevian-journey-mobile-highlight-shape" d="M 88 -5 L 88 31 C 88 40 71 43 71 50 C 71 57 88 60 88 69 L 88 105 L 0 105 L 0 -5 Z" />
                 <path d="M 88 -5 L 88 31 C 88 40 71 43 71 50 C 71 57 88 60 88 69 L 88 105" />
               </svg>
 

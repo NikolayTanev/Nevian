@@ -1541,10 +1541,6 @@
   position: relative;
 }
 
-.nevian-journey-mobile-sentinels {
-  display: none;
-}
-
 .nevian-journey-stage {
   isolation: isolate;
   overflow: hidden;
@@ -1983,7 +1979,7 @@
 .nevian-journey-mobile-labels {
   z-index: 2;
   pointer-events: none;
-  transition: transform .14s cubic-bezier(.2, .72, .2, 1);
+  transition: none;
 }
 
 .nevian-journey-mobile-label {
@@ -1996,7 +1992,7 @@
   color: rgba(227, 235, 231, .52);
   opacity: .5;
   transform: translate3d(0, -50%, 0);
-  transition: opacity .12s ease, transform .14s cubic-bezier(.2, .72, .2, 1);
+  transition: opacity .12s ease;
 }
 
 .nevian-journey-mobile-label > span {
@@ -2181,26 +2177,6 @@
 }
 
 @media (max-width: 1023px) {
-  .nevian-journey-mobile-sentinels {
-    position: absolute;
-    z-index: -20;
-    top: 0;
-    left: 0;
-    display: block;
-    width: 1px;
-    height: calc(100% - 100svh);
-    pointer-events: none;
-    opacity: 0;
-  }
-
-  .nevian-journey-mobile-sentinels > i {
-    position: absolute;
-    top: var(--region-start);
-    left: 0;
-    width: 1px;
-    height: var(--region-size);
-  }
-
   .nevian-journey-track {
     height: 215svh;
     min-height: 1260px;

@@ -142,9 +142,37 @@ function curveXAtY(y, samples) {
   return LINE_X;
 }
 
-function mobileCurveXAtY(y) {
+function calculateMobileCurveX(y) {
   const distance = (y - 50) / 14.5;
   return 88 - 17 * Math.exp(-(distance ** 2));
+}
+
+const MOBILE_CURVE_LOOKUP = Array.from({ length: 105 }, (_, index) => calculateMobileCurveX(index - 2));
+
+function mobileCurveXAtY(y) {
+  const bounded = clamp(y, -2, 102) + 2;
+  const lower = Math.floor(bounded);
+  const upper = Math.min(MOBILE_CURVE_LOOKUP.length - 1, lower + 1);
+  const mix = bounded - lower;
+  return MOBILE_CURVE_LOOKUP[lower] + (MOBILE_CURVE_LOOKUP[upper] - MOBILE_CURVE_LOOKUP[lower]) * mix;
+}
+
+function createMobileTickPath(selectedFloat, spacingPercent) {
+  const travel = selectedFloat * spacingPercent;
+  const stepRows = steps.map((_, index) => 50 + index * spacingPercent - travel);
+  const finalStepY = stepRows[stepRows.length - 1];
+  const finalSourceY = 50 + (steps.length - 1) * spacingPercent;
+  const segments = [];
+
+  for (let sourceY = -24; sourceY <= finalSourceY; sourceY += 3.05) {
+    const y = sourceY - travel;
+    if (y < -2 || y > 102 || y > finalStepY) continue;
+    if (stepRows.some((stepY) => Math.abs(stepY - y) < 1.05)) continue;
+    const right = mobileCurveXAtY(y) - 1.2;
+    segments.push(`M ${right - 8.2} ${y} H ${right}`);
+  }
+
+  return segments.join(' ');
 }
 
 function createTickPaths(center, bulge, travel) {
@@ -175,6 +203,8 @@ export default function Journey() {
   const labelItemsRef = useRef([]);
   const mobileLabelItemsRef = useRef([]);
   const mobileLabelsRef = useRef(null);
+  const mobileRailRef = useRef(null);
+  const mobileTicksRef = useRef(null);
   const minorTicksRef = useRef(null);
   const pathRef = useRef(null);
 
@@ -189,6 +219,8 @@ export default function Journey() {
     let trackTop = 0;
     let scrollRange = 1;
     let mobileSpacing = 0;
+    let mobileSpacingPercent = 14.5;
+    let mobileRailWidth = 0;
 
     const updateVisuals = (progress) => {
       const selectedFloat = progress * (steps.length - 1);
@@ -226,6 +258,13 @@ export default function Journey() {
         if (mobileLabelsRef.current) {
           mobileLabelsRef.current.style.transform = `translate3d(0, ${-selectedFloat * mobileSpacing}px, 0)`;
         }
+        mobileLabelItemsRef.current.forEach((label, index) => {
+          if (!label) return;
+          const labelY = 50 + (index - selectedFloat) * mobileSpacingPercent;
+          const displacement = ((88 - mobileCurveXAtY(labelY)) / 100) * mobileRailWidth;
+          label.style.transform = `translate3d(${-displacement}px, -50%, 0)`;
+        });
+        mobileTicksRef.current?.setAttribute('d', createMobileTickPath(selectedFloat, mobileSpacingPercent));
       }
 
       if (nextIndex !== activeIndexRef.current) {
@@ -271,6 +310,8 @@ export default function Journey() {
       trackTop = track.getBoundingClientRect().top + window.scrollY;
       scrollRange = Math.max(1, track.offsetHeight - window.innerHeight);
       mobileSpacing = Math.min(window.innerHeight * .145, 118);
+      mobileSpacingPercent = (mobileSpacing / Math.max(1, window.innerHeight)) * 100;
+      mobileRailWidth = mobileRailRef.current?.offsetWidth || 0;
       mobileLabelItemsRef.current.forEach((label, index) => {
         if (label) label.style.top = `calc(50% + ${index * mobileSpacing}px)`;
       });
@@ -281,7 +322,9 @@ export default function Journey() {
     };
 
     const onScroll = () => {
-      target = readProgress();
+      const nextTarget = readProgress();
+      if (Math.abs(nextTarget - target) < 0.00012 && Math.abs(nextTarget - current) < 0.00012) return;
+      target = nextTarget;
 
       if (!desktop.matches || reduceMotion) {
         if (frame) return;
@@ -446,7 +489,7 @@ export default function Journey() {
           </div>
 
           <div className="nevian-journey-mobile">
-            <div className="nevian-journey-mobile-rail" aria-hidden="true">
+            <div ref={mobileRailRef} className="nevian-journey-mobile-rail" aria-hidden="true">
               <div className="nevian-journey-mobile-highlight" />
               <svg className="nevian-journey-mobile-line" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <defs>
@@ -461,13 +504,9 @@ export default function Journey() {
                 <path d="M 88 -5 L 88 31 C 88 40 71 43 71 50 C 71 57 88 60 88 69 L 88 105" />
               </svg>
 
-              <div className="nevian-journey-mobile-ticks">
-                {Array.from({ length: 29 }, (_, index) => {
-                  const y = 6 + index * (88 / 28);
-                  const x = mobileCurveXAtY(y);
-                  return <i key={index} style={{ top: `${y}%`, left: `${x - 10}%`, width: '8%' }} />;
-                })}
-              </div>
+              <svg className="nevian-journey-mobile-ticks" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path ref={mobileTicksRef} d={createMobileTickPath(0, 14.5)} />
+              </svg>
 
               <div ref={mobileLabelsRef} className="nevian-journey-mobile-labels">
                 {steps.map((step, index) => (

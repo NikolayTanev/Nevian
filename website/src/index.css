@@ -1965,14 +1965,15 @@
 .nevian-journey-mobile-ticks {
   z-index: 1;
   pointer-events: none;
+  overflow: visible;
 }
 
-.nevian-journey-mobile-ticks i {
-  position: absolute;
-  display: block;
-  height: 1px;
-  border-radius: 99px;
-  background: rgba(126, 164, 146, .3);
+.nevian-journey-mobile-ticks path {
+  fill: none;
+  stroke: rgba(126, 164, 146, .32);
+  stroke-width: .72;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .nevian-journey-mobile-labels {
@@ -1991,7 +1992,8 @@
   color: rgba(227, 235, 231, .52);
   opacity: .5;
   transform: translate3d(0, -50%, 0);
-  transition: opacity .16s linear, transform .22s cubic-bezier(.22, 1, .36, 1);
+  transition: opacity .16s linear;
+  will-change: transform;
 }
 
 .nevian-journey-mobile-label > span {
@@ -2023,7 +2025,6 @@
 .nevian-journey-mobile-label.is-active {
   color: #fff;
   opacity: 1;
-  transform: translate3d(-15px, -50%, 0);
 }
 
 .nevian-journey-mobile-label.is-active > span {
@@ -2187,6 +2188,7 @@
     top: 0;
     height: 100svh;
     min-height: 560px;
+    contain: paint;
   }
 
   .nevian-journey-grid {

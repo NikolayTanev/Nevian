@@ -2,10 +2,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
 const phaseDurations = [1400, 2600, 2850, 1200, 2500, 1200, 2150, 2400, 1200, 2750, 1200, 1750, 2700, 2200, 2400, 1200, 2800];
+// Change only this path whenever the demo profile picture should be replaced.
+const DEMO_PROFILE_IMAGE = '/assets/demo-user.jpg';
+
 const demoUser = {
   name: 'Linda Mogridge',
   email: 'linda.mogridge@contoso.com',
-  avatar: '/assets/linda-mogridge.png',
+  avatar: DEMO_PROFILE_IMAGE,
 };
 
 function UserAvatar({ phone = false }) {

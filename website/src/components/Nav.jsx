@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { IconMenu, IconClose } from './Icons.jsx';
 
 const workflowSteps = [
   { label: 'Report', slug: 'report' },
@@ -81,6 +80,29 @@ export default function Nav({ current = 'home' }) {
     window.addEventListener('nevian:workflow-active', updateWorkflowStep);
     return () => window.removeEventListener('nevian:workflow-active', updateWorkflowStep);
   }, []);
+
+  useEffect(() => {
+    if (!mobile) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMobile(false);
+    };
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = (event) => {
+      if (event.matches) setMobile(false);
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    desktop.addEventListener('change', closeOnDesktop);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+      desktop.removeEventListener('change', closeOnDesktop);
+    };
+  }, [mobile]);
 
   useEffect(() => {
     if (current !== 'home') {
@@ -233,48 +255,100 @@ export default function Nav({ current = 'home' }) {
         </a>
 
         <button
-          className="site-nav-toggle inline-flex h-10 w-10 items-center justify-center rounded-xl lg:hidden"
+          className={`site-nav-toggle inline-flex h-11 w-11 items-center justify-center lg:hidden ${mobile ? 'is-open' : ''}`}
           aria-label="Toggle menu"
           aria-expanded={mobile}
           aria-controls="site-mobile-navigation"
-          onClick={() => setMobile((value) => !value)}
+          onClick={() => setMobile((value) => {
+            const next = !value;
+            if (next) setWorkflowOpen(false);
+            return next;
+          })}
         >
-          {mobile ? <IconClose className="h-5 w-5" /> : <IconMenu className="h-5 w-5" />}
+          <span className="site-nav-toggle-lines" aria-hidden="true"><i /><i /><i /></span>
         </button>
       </div>
 
       {mobile && (
-        <div className="wrap lg:hidden" id="site-mobile-navigation">
-          <nav className="site-nav-mobile-menu mt-2 flex flex-col gap-1 rounded-2xl p-3" aria-label="Mobile navigation">
-            {navigation.map(({ label, href, key }) => (
-              <div key={label}>
-                <a
-                  href={href}
-                  onClick={(event) => navigate(event, href)}
-                  className={`site-nav-mobile-link ${active === key ? 'is-current' : ''}`}
-                  aria-current={active === key ? 'location' : undefined}
-                >
-                  {label}
-                </a>
-                {key === 'workflow' && (
-                  <div className="site-nav-mobile-workflow" aria-label="Workflow steps">
-                    {workflowSteps.map((step, index) => (
+        <div className="site-nav-mobile-layer lg:hidden" id="site-mobile-navigation">
+          <button className="site-nav-mobile-backdrop" type="button" aria-label="Close navigation" onClick={() => setMobile(false)} />
+          <nav className="site-nav-mobile-menu" aria-label="Mobile navigation">
+            <div className="site-nav-mobile-head">
+              <a href="/#top" className="site-nav-mobile-brand" onClick={(event) => navigate(event, '/#top')}>
+                <img src="/assets/logo.png" alt="" />
+                <span>Nevian</span>
+              </a>
+              <button type="button" className="site-nav-mobile-close" aria-label="Close menu" onClick={() => setMobile(false)}>
+                <i /><i />
+              </button>
+            </div>
+
+            <div className="site-nav-mobile-intro">
+              <span>Navigation</span>
+              <p>Explore the platform and jump directly into the workflow.</p>
+            </div>
+
+            <div className="site-nav-mobile-links">
+              {navigation.map(({ label, href, key }, navIndex) => {
+                if (key !== 'workflow') {
+                  return (
+                    <a
+                      key={label}
+                      href={href}
+                      onClick={(event) => navigate(event, href)}
+                      className={`site-nav-mobile-link ${active === key ? 'is-current' : ''}`}
+                      aria-current={active === key ? 'location' : undefined}
+                    >
+                      <span>{String(navIndex + 1).padStart(2, '0')}</span>
+                      <strong>{label}</strong>
+                      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10m-4-4 4 4-4 4" /></svg>
+                    </a>
+                  );
+                }
+
+                return (
+                  <div key={label} className={`site-nav-mobile-workflow-shell ${workflowOpen ? 'is-open' : ''}`}>
+                    <div className="site-nav-mobile-workflow-row">
                       <a
-                        key={step.slug}
-                        href={`/#workflow-${step.slug}`}
-                        onClick={(event) => navigateWorkflowStep(event, step, index)}
+                        href={href}
+                        onClick={(event) => navigate(event, href)}
+                        className={`site-nav-mobile-link ${active === key ? 'is-current' : ''}`}
+                        aria-current={active === key ? 'location' : undefined}
                       >
-                        <span>{String(index + 1).padStart(2, '0')}</span>
-                        {step.label}
+                        <span>{String(navIndex + 1).padStart(2, '0')}</span>
+                        <strong>{label}</strong>
                       </a>
-                    ))}
+                      <button type="button" aria-label="Toggle workflow steps" aria-expanded={workflowOpen} onClick={() => setWorkflowOpen((value) => !value)}>
+                        <svg viewBox="0 0 14 14" aria-hidden="true"><path d="m3 5 4 4 4-4" /></svg>
+                      </button>
+                    </div>
+
+                    <div className="site-nav-mobile-workflow" aria-label="Workflow steps">
+                      {workflowSteps.map((step, index) => (
+                        <a
+                          key={step.slug}
+                          href={`/#workflow-${step.slug}`}
+                          onClick={(event) => navigateWorkflowStep(event, step, index)}
+                          className={active === 'workflow' && activeWorkflowStep === index ? 'is-active' : ''}
+                        >
+                          <span>{String(index + 1).padStart(2, '0')}</span>
+                          <strong>{step.label}</strong>
+                          <i />
+                        </a>
+                      ))}
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
-            <a href="/contact.html" onClick={() => setMobile(false)} className="site-nav-cta mt-2 flex w-full">
-              Book a demo
-            </a>
+                );
+              })}
+            </div>
+
+            <div className="site-nav-mobile-footer">
+              <a href="/contact.html" onClick={() => setMobile(false)} className="site-nav-mobile-cta">
+                <span>Book a demo</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10m-4-4 4 4-4 4" /></svg>
+              </a>
+              <small>AI-powered IT support for lean teams.</small>
+            </div>
           </nav>
         </div>
       )}

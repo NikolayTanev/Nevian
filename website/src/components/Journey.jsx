@@ -142,6 +142,11 @@ function curveXAtY(y, samples) {
   return LINE_X;
 }
 
+function mobileCurveXAtY(y) {
+  const distance = (y - 50) / 14.5;
+  return 88 - 17 * Math.exp(-(distance ** 2));
+}
+
 function createTickPaths(center, bulge, travel) {
   const samples = createCurveSamples(center, bulge);
   const stepRows = steps.map((_, index) => STEP_ANCHOR + index * STEP_SPACING - travel);
@@ -168,6 +173,9 @@ export default function Journey() {
   const markerMaskRef = useRef(null);
   const labelsRef = useRef(null);
   const labelItemsRef = useRef([]);
+  const mobileLabelItemsRef = useRef([]);
+  const mobileStageRef = useRef(null);
+  const hapticSwitchRef = useRef(null);
   const minorTicksRef = useRef(null);
   const pathRef = useRef(null);
 
@@ -179,35 +187,70 @@ export default function Journey() {
     let frame = 0;
     let lastTime = performance.now();
     let lastBroadcastIndex = -1;
+    let lastHapticIndex = -1;
+    let lastHapticTime = 0;
+    let touchingTimeline = false;
+
+    const triggerTimelineHaptic = () => {
+      if (desktop.matches || reduceMotion || !touchingTimeline) return;
+
+      const now = performance.now();
+      if (now - lastHapticTime < 48) return;
+      lastHapticTime = now;
+
+      if (typeof navigator.vibrate === 'function') {
+        navigator.vibrate(7);
+        return;
+      }
+
+      hapticSwitchRef.current?.click();
+    };
 
     const updateVisuals = (progress) => {
       const selectedFloat = progress * (steps.length - 1);
       const travel = selectedFloat * STEP_SPACING;
-      const wave = Math.sin(selectedFloat * Math.PI);
-      const center = CENTER_Y;
-      const bulge = BASE_BULGE + Math.abs(wave) * .55;
-      const curvePath = createCurvePath(center, bulge);
-      const curveSamples = createCurveSamples(center, bulge);
-      const highlightPath = createLeftHighlightPath(curveSamples);
-      const markerClip = createMarkerClip(center, bulge);
-      const tickPath = createTickPaths(center, bulge, travel);
       let nextIndex = activeIndexRef.current;
 
       while (selectedFloat >= nextIndex + 1 && nextIndex < steps.length - 1) nextIndex += 1;
       while (selectedFloat <= nextIndex - 1 && nextIndex > 0) nextIndex -= 1;
 
-      labelsRef.current.style.transform = `translate3d(0, -${travel}vh, 0)`;
-      labelItemsRef.current.forEach((label, index) => {
-        if (!label) return;
-        const labelY = STEP_ANCHOR + index * STEP_SPACING - travel;
-        const displacement = curveXAtY(labelY, curveSamples) - LINE_X;
-        label.style.transform = `translate3d(${displacement}vw, -50%, 0)`;
-      });
-      minorTicksRef.current.setAttribute('d', tickPath);
-      pathRef.current.setAttribute('d', curvePath);
-      highlightPathRef.current.setAttribute('d', highlightPath);
-      markerMaskRef.current.style.clipPath = markerClip;
-      markerMaskRef.current.style.webkitClipPath = markerClip;
+      if (desktop.matches) {
+        const wave = Math.sin(selectedFloat * Math.PI);
+        const center = CENTER_Y;
+        const bulge = BASE_BULGE + Math.abs(wave) * .55;
+        const curvePath = createCurvePath(center, bulge);
+        const curveSamples = createCurveSamples(center, bulge);
+        const highlightPath = createLeftHighlightPath(curveSamples);
+        const markerClip = createMarkerClip(center, bulge);
+        const tickPath = createTickPaths(center, bulge, travel);
+
+        if (labelsRef.current) labelsRef.current.style.transform = `translate3d(0, -${travel}vh, 0)`;
+        labelItemsRef.current.forEach((label, index) => {
+          if (!label) return;
+          const labelY = STEP_ANCHOR + index * STEP_SPACING - travel;
+          const displacement = curveXAtY(labelY, curveSamples) - LINE_X;
+          label.style.transform = `translate3d(${displacement}vw, -50%, 0)`;
+        });
+        minorTicksRef.current?.setAttribute('d', tickPath);
+        pathRef.current?.setAttribute('d', curvePath);
+        highlightPathRef.current?.setAttribute('d', highlightPath);
+        if (markerMaskRef.current) {
+          markerMaskRef.current.style.clipPath = markerClip;
+          markerMaskRef.current.style.webkitClipPath = markerClip;
+        }
+      } else {
+        const spacing = Math.min(window.innerHeight * .145, 118);
+        mobileLabelItemsRef.current.forEach((label, index) => {
+          if (!label) return;
+          const delta = index - selectedFloat;
+          const distance = Math.abs(delta);
+          const focus = Math.max(0, 1 - distance / 1.18);
+          const translateX = -15 * focus;
+          label.style.transform = `translate3d(${translateX}px, calc(-50% + ${delta * spacing}px), 0)`;
+          label.style.opacity = String(clamp(1 - distance * .22, .16, 1));
+        });
+        mobileStageRef.current?.style.setProperty('--mobile-progress', selectedFloat.toFixed(4));
+      }
 
       if (nextIndex !== activeIndexRef.current) {
         activeIndexRef.current = nextIndex;
@@ -253,7 +296,6 @@ export default function Journey() {
     };
 
     const onScroll = () => {
-      if (!desktop.matches) return;
       target = readProgress();
 
       if (reduceMotion) {
@@ -265,31 +307,40 @@ export default function Journey() {
     };
 
     const onResize = () => {
-      if (!desktop.matches) return;
       target = readProgress();
       current = target;
       updateVisuals(current);
+    };
+
+    const onTimelineTouchStart = () => {
+      touchingTimeline = true;
+      lastHapticIndex = Math.round(readProgress() * (steps.length - 1) * 6);
+    };
+
+    const onTimelineTouchMove = () => {
+      if (!touchingTimeline) return;
+
+      const nextHapticIndex = Math.round(readProgress() * (steps.length - 1) * 6);
+      if (nextHapticIndex === lastHapticIndex) return;
+
+      lastHapticIndex = nextHapticIndex;
+      triggerTimelineHaptic();
+    };
+
+    const onTimelineTouchEnd = () => {
+      touchingTimeline = false;
     };
 
     const scrollToStep = (index, behavior = 'smooth') => {
       if (!Number.isInteger(index) || index < 0 || index >= steps.length) return;
 
       window.requestAnimationFrame(() => {
-        if (desktop.matches) {
-          const track = trackRef.current;
-          if (!track) return;
-          const trackTop = track.getBoundingClientRect().top + window.scrollY;
-          const total = Math.max(1, track.offsetHeight - window.innerHeight);
-          const progress = index / (steps.length - 1);
-          window.scrollTo({ top: trackTop + total * progress, behavior });
-          return;
-        }
-
-        const mobileStep = document.getElementById(`workflow-mobile-${steps[index].key.toLowerCase()}`);
-        if (!mobileStep) return;
-        const navHeight = document.querySelector('.site-nav')?.getBoundingClientRect().height || 72;
-        const top = mobileStep.getBoundingClientRect().top + window.scrollY - navHeight - 16;
-        window.scrollTo({ top: Math.max(0, top), behavior });
+        const track = trackRef.current;
+        if (!track) return;
+        const trackTop = track.getBoundingClientRect().top + window.scrollY;
+        const total = Math.max(1, track.offsetHeight - window.innerHeight);
+        const progress = index / (steps.length - 1);
+        window.scrollTo({ top: trackTop + total * progress, behavior });
       });
     };
 
@@ -303,13 +354,17 @@ export default function Journey() {
       if (index >= 0) scrollToStep(index);
     };
 
-    target = desktop.matches ? readProgress() : 0;
+    target = readProgress();
     current = target;
     updateVisuals(current);
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
     window.addEventListener('nevian:workflow-step', onStepRequest);
     window.addEventListener('hashchange', onWorkflowHash);
+    trackRef.current?.addEventListener('touchstart', onTimelineTouchStart, { passive: true });
+    trackRef.current?.addEventListener('touchmove', onTimelineTouchMove, { passive: true });
+    trackRef.current?.addEventListener('touchend', onTimelineTouchEnd, { passive: true });
+    trackRef.current?.addEventListener('touchcancel', onTimelineTouchEnd, { passive: true });
 
     const initialIndex = workflowIndexFromHash();
     if (initialIndex >= 0) {
@@ -322,6 +377,10 @@ export default function Journey() {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('nevian:workflow-step', onStepRequest);
       window.removeEventListener('hashchange', onWorkflowHash);
+      trackRef.current?.removeEventListener('touchstart', onTimelineTouchStart);
+      trackRef.current?.removeEventListener('touchmove', onTimelineTouchMove);
+      trackRef.current?.removeEventListener('touchend', onTimelineTouchEnd);
+      trackRef.current?.removeEventListener('touchcancel', onTimelineTouchEnd);
     };
   }, []);
 
@@ -333,6 +392,14 @@ export default function Journey() {
 
   return (
     <section id="how" className="nevian-journey">
+      <input
+        ref={hapticSwitchRef}
+        className="nevian-journey-haptic-switch"
+        type="checkbox"
+        switch=""
+        tabIndex={-1}
+        aria-hidden="true"
+      />
       <div ref={trackRef} className="nevian-journey-track">
         <div className="nevian-journey-stage">
           <div className="nevian-journey-base" />
@@ -423,24 +490,70 @@ export default function Journey() {
             </article>
           </div>
 
-          <div className="nevian-journey-mobile wrap">
-            <div className="nevian-journey-mobile-heading">
-              <span>How Nevian works</span>
-              <h2>From first message to resolved ticket.</h2>
-              <p>One connected workflow, with context and automation built into every step.</p>
+          <div ref={mobileStageRef} className="nevian-journey-mobile">
+            <div className="nevian-journey-mobile-rail" aria-hidden="true">
+              <div className="nevian-journey-mobile-highlight" />
+              <svg className="nevian-journey-mobile-line" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="nevianMobileLineGradient" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stopColor="#263a31" stopOpacity=".3" />
+                    <stop offset=".36" stopColor="#4eba82" stopOpacity=".65" />
+                    <stop offset=".5" stopColor="#8dff6a" />
+                    <stop offset=".66" stopColor="#1e9d69" stopOpacity=".72" />
+                    <stop offset="1" stopColor="#24352e" stopOpacity=".24" />
+                  </linearGradient>
+                </defs>
+                <path d="M 88 -5 L 88 31 C 88 40 71 43 71 50 C 71 57 88 60 88 69 L 88 105" />
+              </svg>
+
+              <div className="nevian-journey-mobile-ticks">
+                {Array.from({ length: 29 }, (_, index) => {
+                  const y = 6 + index * (88 / 28);
+                  const x = mobileCurveXAtY(y);
+                  return <i key={index} style={{ top: `${y}%`, left: `${x - 10}%`, width: '8%' }} />;
+                })}
+              </div>
+
+              <div className="nevian-journey-mobile-labels">
+                {steps.map((step, index) => (
+                  <div
+                    key={step.key}
+                    ref={(node) => { mobileLabelItemsRef.current[index] = node; }}
+                    className={`nevian-journey-mobile-label ${index === activeIndex ? 'is-active' : ''}`}
+                    aria-current={index === activeIndex ? 'step' : undefined}
+                  >
+                    <span>{step.key}</span>
+                    <i />
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="nevian-journey-mobile-list">
-              {steps.map((step, index) => (
-                <article key={step.key} id={`workflow-mobile-${step.key.toLowerCase()}`}>
-                  <div className="nevian-journey-mobile-number">{String(index + 1).padStart(2, '0')}</div>
-                  <div>
-                    <span>{step.key}</span>
-                    <h3>{step.headline}</h3>
-                    <p>{step.desc}</p>
-                  </div>
-                </article>
-              ))}
+            <article className="nevian-journey-mobile-copy">
+              <div key={activeIndex} className="nevian-journey-mobile-copy-enter">
+                <div className="nevian-journey-mobile-brand">
+                  <img src="/assets/logo.png" alt="" />
+                  <span>Nevian workflow</span>
+                </div>
+                <div className="nevian-journey-mobile-phase">
+                  {String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')} · {activeStep.phase}
+                </div>
+                <h2>{activeStep.headline}</h2>
+                <div className="nevian-journey-mobile-metric">
+                  <strong>{activeStep.stat}</strong>
+                  <span>{activeStep.statLabel}</span>
+                </div>
+                <p>{activeStep.desc}</p>
+                <ul>
+                  {activeStep.tags.slice(0, 2).map((tag) => <li key={tag}>{tag}</li>)}
+                </ul>
+              </div>
+            </article>
+
+            <div className="nevian-journey-mobile-progress" aria-hidden="true">
+              <span>{String(activeIndex + 1).padStart(2, '0')}</span>
+              <i><b style={{ transform: `scaleX(${(activeIndex + 1) / steps.length})` }} /></i>
+              <span>{String(steps.length).padStart(2, '0')}</span>
             </div>
           </div>
 

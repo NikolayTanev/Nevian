@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
 const phaseDurations = [1400, 2600, 2850, 1200, 2500, 1200, 2150, 2400, 1200, 2750, 1200, 1750, 2700, 2200, 2400, 1200, 2800];
@@ -35,11 +35,58 @@ function MiniIcon({ type }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={paths[type]} /></svg>;
 }
 
-function TargetCursor({ delay = .68 }) {
+function PersistentCursor({ frameRef, phase }) {
+  const cursorRef = useRef(null);
+  const clicking = [3, 5, 6, 8, 10, 15].includes(phase);
+  const clickDelay = phase === 6 ? 1.62 : .68;
+
+  useLayoutEffect(() => {
+    const frame = frameRef.current;
+    const cursor = cursorRef.current;
+    if (!frame || !cursor) return undefined;
+
+    let animationFrame = 0;
+    let followUntil = performance.now() + 1450;
+
+    const updatePosition = () => {
+      const target = frame.querySelector('[data-password-cursor-target="true"]');
+      if (target) {
+        const frameRect = frame.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const x = targetRect.left - frameRect.left + targetRect.width / 2 - 3;
+        const y = targetRect.top - frameRect.top + targetRect.height / 2 - 2;
+        cursor.style.setProperty('--password-cursor-x', `${x}px`);
+        cursor.style.setProperty('--password-cursor-y', `${y}px`);
+        cursor.classList.add('is-ready');
+      }
+
+      if (performance.now() < followUntil) {
+        animationFrame = window.requestAnimationFrame(updatePosition);
+      }
+    };
+
+    const followTarget = () => {
+      window.cancelAnimationFrame(animationFrame);
+      followUntil = performance.now() + 900;
+      animationFrame = window.requestAnimationFrame(updatePosition);
+    };
+
+    const mutationObserver = new MutationObserver(followTarget);
+    mutationObserver.observe(frame, { childList: true, subtree: true });
+    window.addEventListener('resize', followTarget);
+    animationFrame = window.requestAnimationFrame(updatePosition);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      mutationObserver.disconnect();
+      window.removeEventListener('resize', followTarget);
+    };
+  }, [frameRef, phase]);
+
   return (
-    <span className="password-target-cursor" style={{ '--cursor-delay': `${delay}s` }} aria-hidden="true">
-      <svg viewBox="0 0 28 36"><path d="M3 2v27l7-7 5 11 5-2-5-11h10L3 2Z" /></svg>
-      <i />
+    <span ref={cursorRef} className="password-persistent-cursor" style={{ '--cursor-delay': `${clickDelay}s` }} aria-hidden="true">
+      <svg key={`pointer-${phase}`} className={clicking ? 'is-clicking' : ''} viewBox="0 0 28 36"><path d="M3 2v27l7-7 5 11 5-2-5-11h10L3 2Z" /></svg>
+      {clicking && <i key={`click-${phase}`} />}
     </span>
   );
 }
@@ -92,9 +139,8 @@ function EmailPane({ password = false, phase }) {
         <a>{password ? 'Forgot my password' : "Can't access your account?"}</a>
         <div className="password-ms-actions">
           <button type="button" className="is-back">Back</button>
-          <button type="button" className={`is-next${clicking ? ` is-clicking${password ? ' is-late-click' : ''}` : ''}`}>
+          <button type="button" className={`is-next${clicking ? ` is-clicking${password ? ' is-late-click' : ''}` : ''}`} data-password-cursor-target="true">
             {password ? 'Sign in' : 'Next'}
-            {clicking && <TargetCursor delay={password ? 1.62 : .68} />}
           </button>
         </div>
       </div>
@@ -121,11 +167,10 @@ function IdentityPane({ phase }) {
         <h3>Verify your identity</h3>
         <div className="password-ms-methods">
           {methods.map(([icon, label], index) => (
-            <button key={label} type="button" className={`${index === 0 ? 'is-target' : ''}${index === 0 && phase === 8 ? ' is-clicking' : ''}`}>
+            <button key={label} type="button" className={`${index === 0 ? 'is-target' : ''}${index === 0 && phase === 8 ? ' is-clicking' : ''}`} data-password-cursor-target={index === 0 ? 'true' : undefined}>
               <MiniIcon type={icon} />
               <span>{label}</span>
               <IconArrow />
-              {index === 0 && phase === 8 && <TargetCursor />}
             </button>
           ))}
         </div>
@@ -165,9 +210,8 @@ function AuthenticatorPane({ selected, phase }) {
           <strong>Approve sign in?</strong>
           <span>Contoso Corporation</span>
           <small>{demoUser.email}</small>
-          <button type="button" className={selected ? 'is-selected' : ''}>
+          <button type="button" className={selected ? 'is-selected' : ''} data-password-cursor-target="true">
             28
-            {phase === 10 && <TargetCursor />}
           </button>
           <button type="button">54</button>
           <button type="button">90</button>
@@ -181,7 +225,7 @@ function AuthenticatorPane({ selected, phase }) {
 
 function SigningPane() {
   return (
-    <div className="password-ms-signing">
+    <div className="password-ms-signing" data-password-cursor-target="true">
       <MicrosoftMark />
       <div className="password-ms-spinner"><i /><i /></div>
       <h3>Completing verification</h3>
@@ -192,14 +236,27 @@ function SigningPane() {
 
 export default function PasswordResetDemo() {
   const sectionRef = useRef(null);
+  const demoFrameRef = useRef(null);
   const [phase, setPhase] = useState(0);
   const [inView, setInView] = useState(false);
   const [run, setRun] = useState(0);
   const [showAgentReply, setShowAgentReply] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: .22 });
-    if (sectionRef.current) observer.observe(sectionRef.current);
+    let wasActive = false;
+    const observer = new IntersectionObserver(([entry]) => {
+      const isActive = entry.isIntersecting && entry.intersectionRatio >= .22;
+
+      if (isActive !== wasActive) {
+        wasActive = isActive;
+        setInView(isActive);
+        setPhase(0);
+        setShowAgentReply(false);
+        setRun((value) => value + 1);
+      }
+    }, { threshold: [0, .22, .5] });
+
+    if (demoFrameRef.current) observer.observe(demoFrameRef.current);
     return () => observer.disconnect();
   }, []);
 
@@ -267,7 +324,7 @@ export default function PasswordResetDemo() {
           </div>
         </header>
 
-        <div className="password-demo-frame" data-phase={phase}>
+        <div ref={demoFrameRef} className="password-demo-frame" data-phase={phase}>
           <div className={`password-demo-camera ${messageCloseup ? 'is-message-closeup' : ''} ${microsoftMode !== 'hidden' ? 'is-auth-open' : ''}`}>
             <div className={`password-demo-workspace ${conversationFocused ? 'is-conversation-focused' : ''}`}>
               <main className="password-demo-chat">
@@ -280,7 +337,7 @@ export default function PasswordResetDemo() {
 
                   {phase >= 1 && (
                     <div className="password-chat-row is-user">
-                      <div className="password-chat-bubble is-user"><span className={phase === 1 ? 'password-type-user' : ''}>I forgot my password.</span></div>
+                      <div className="password-chat-bubble is-user" data-password-cursor-target={phase <= 2 ? 'true' : undefined}><span className={phase === 1 ? 'password-type-user' : ''}>I forgot my password.</span></div>
                       <UserAvatar />
                     </div>
                   )}
@@ -292,9 +349,8 @@ export default function PasswordResetDemo() {
                         <b>I can help with that.</b>
                         <p>Before resetting your password, I need to verify your identity securely with Microsoft.</p>
                         {phase <= 3 && (
-                          <button type="button" className={`password-verify-button${phase === 3 ? ' is-clicking' : ''}`}>
+                          <button type="button" className={`password-verify-button${phase === 3 ? ' is-clicking' : ''}`} data-password-cursor-target={phase === 3 ? 'true' : undefined}>
                             <MiniIcon type="shield" /> Verify with Microsoft <IconArrow />
-                            {phase === 3 && <TargetCursor />}
                           </button>
                         )}
                       </div>
@@ -304,7 +360,7 @@ export default function PasswordResetDemo() {
                   {phase >= 12 && (
                     <div className="password-chat-row is-agent password-chat-success">
                       <span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span>
-                      <div className="password-chat-bubble is-agent">
+                      <div className="password-chat-bubble is-agent" data-password-cursor-target={phase === 12 ? 'true' : undefined}>
                         <span className="password-success-label"><IconCheck /> Identity verified</span>
                         <b>You&apos;re all set.</b>
                         <p>At your next sign-in, Microsoft will ask you to create a new password. No technician needed.</p>
@@ -314,22 +370,21 @@ export default function PasswordResetDemo() {
 
                   {phase >= 13 && (
                     <div className="password-chat-row is-user password-chat-thanks">
-                      <div className="password-chat-bubble is-user">Perfect, thank you!</div><UserAvatar />
+                      <div className="password-chat-bubble is-user" data-password-cursor-target={phase === 13 ? 'true' : undefined}>Perfect, thank you!</div><UserAvatar />
                     </div>
                   )}
 
                   {phase >= 14 && (
                     <div className="password-chat-row is-agent password-chat-close">
                       <span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span>
-                      <div key={phase >= 16 ? 'closed' : 'choice'} className="password-chat-bubble is-agent password-close-state">
+                      <div key={phase >= 16 ? 'closed' : 'choice'} className="password-chat-bubble is-agent password-close-state" data-password-cursor-target={phase >= 16 ? 'true' : undefined}>
                         {phase < 16 ? (
                           <>
                             <b>Happy to help.</b>
                             <p>Would you like me to close this ticket?</p>
                             <div className="password-close-actions">
-                              <button type="button" className={`is-close${phase === 15 ? ' is-clicking' : ''}`}>
+                              <button type="button" className={`is-close${phase === 15 ? ' is-clicking' : ''}`} data-password-cursor-target="true">
                                 <IconCheck /> Close ticket
-                                {phase === 15 && <TargetCursor delay={.68} />}
                               </button>
                               <button type="button" className="is-more">I need more help</button>
                             </div>
@@ -345,7 +400,7 @@ export default function PasswordResetDemo() {
                     </div>
                   )}
                 </div>
-                <div className="password-demo-composer"><span>Message Nevian AI…</span><button type="button">↑</button></div>
+                <div className="password-demo-composer" data-password-cursor-target={phase === 0 ? 'true' : undefined}><span>Message Nevian AI…</span><button type="button">↑</button></div>
               </main>
 
               <aside className="password-demo-context">
@@ -368,6 +423,8 @@ export default function PasswordResetDemo() {
               </div>
             )}
           </div>
+
+          <PersistentCursor frameRef={demoFrameRef} phase={phase} />
 
           <div className="password-demo-progress">
             {['Request', 'Sign in', 'Verify', phase >= 16 ? 'Closed' : 'Reset ready'].map((label, index) => (

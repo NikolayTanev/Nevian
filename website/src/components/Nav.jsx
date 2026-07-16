@@ -110,35 +110,42 @@ export default function Nav({ current = 'home' }) {
       return undefined;
     }
 
-    let frame = 0;
+    const sections = trackedSections
+      .map(({ id, key }) => ({ element: document.getElementById(id), key }))
+      .filter(({ element }) => element);
 
-    const updateActiveSection = () => {
-      frame = 0;
+    const setInitialSection = () => {
       const navHeight = document.querySelector('.site-nav')?.getBoundingClientRect().height || 72;
       const probe = window.scrollY + navHeight + Math.min(190, window.innerHeight * .28);
       let next = 'home';
 
-      trackedSections.forEach(({ id, key }) => {
-        const section = document.getElementById(id);
-        const sectionTop = section ? section.getBoundingClientRect().top + window.scrollY : Infinity;
+      sections.forEach(({ element, key }) => {
+        const sectionTop = element.getBoundingClientRect().top + window.scrollY;
         if (sectionTop <= probe) next = key;
       });
 
       setActive((value) => (value === next ? value : next));
     };
 
-    const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateActiveSection);
-    };
+    setInitialSection();
 
-    updateActiveSection();
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
+    if (!('IntersectionObserver' in window)) return undefined;
+
+    // A narrow viewport band updates the indicator natively without running
+    // layout reads in the scroll handler. This keeps iOS momentum scrolling free.
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (!visible.length) return;
+      const match = sections.find(({ element }) => element === visible[visible.length - 1].target);
+      if (match) setActive((value) => (value === match.key ? value : match.key));
+    }, { rootMargin: '-18% 0px -72% 0px', threshold: 0 });
+
+    sections.forEach(({ element }) => observer.observe(element));
 
     return () => {
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
-      if (frame) window.cancelAnimationFrame(frame);
+      observer.disconnect();
     };
   }, [current]);
 

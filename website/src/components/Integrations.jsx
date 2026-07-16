@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useReveal } from '../hooks/useReveal.js';
 
 const logos = [
@@ -36,6 +37,24 @@ function Track({ ariaHidden }) {
 
 export default function Integrations() {
   const [ref, shown] = useReveal();
+  const marqueeRef = useRef(null);
+
+  useEffect(() => {
+    const marquee = marqueeRef.current;
+    if (!marquee) return undefined;
+    if (!('IntersectionObserver' in window)) {
+      marquee.classList.add('is-running');
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      marquee.classList.toggle('is-running', entry.isIntersecting);
+    }, { threshold: 0 });
+
+    observer.observe(marquee);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="integrations-band py-10">
       <div ref={ref} className={`wrap ${shown ? 'animate-fade-up' : 'opacity-0'}`}>
@@ -48,7 +67,7 @@ export default function Integrations() {
             with no reset. Each track is wider than the visible column, so the
             same logo is never on screen twice at once. Edges fade to the page
             background via a mask. */}
-        <div className="logo-marquee group relative flex overflow-hidden [-webkit-mask-image:linear-gradient(90deg,transparent,#000_3%,#000_97%,transparent)] [mask-image:linear-gradient(90deg,transparent,#000_3%,#000_97%,transparent)]">
+        <div ref={marqueeRef} className="logo-marquee group relative flex overflow-hidden [-webkit-mask-image:linear-gradient(90deg,transparent,#000_3%,#000_97%,transparent)] [mask-image:linear-gradient(90deg,transparent,#000_3%,#000_97%,transparent)]">
           <div className="logo-track-move flex w-max flex-nowrap">
             <Track />
             <Track ariaHidden />

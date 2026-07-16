@@ -148,6 +148,13 @@ function calculateMobileCurveX(y) {
 }
 
 const MOBILE_CURVE_LOOKUP = Array.from({ length: 105 }, (_, index) => calculateMobileCurveX(index - 2));
+const MOBILE_STEP_REGIONS = [
+  { start: 0, size: 12.5 },
+  { start: 12.5, size: 25 },
+  { start: 37.5, size: 25 },
+  { start: 62.5, size: 25 },
+  { start: 87.5, size: 12.5 },
+];
 
 function mobileCurveXAtY(y) {
   const bounded = clamp(y, -2, 102) + 2;
@@ -206,6 +213,7 @@ export default function Journey() {
   const mobileLabelsRef = useRef(null);
   const mobileRailRef = useRef(null);
   const mobileTicksRef = useRef(null);
+  const mobileSentinelsRef = useRef(null);
   const minorTicksRef = useRef(null);
   const pathRef = useRef(null);
 
@@ -216,6 +224,7 @@ export default function Journey() {
     let target = 0;
     let frame = 0;
     let mobileFrame = 0;
+    let mobileObserver = null;
     let pendingMobileIndex = -1;
     let lastTime = performance.now();
     let lastBroadcastIndex = -1;
@@ -329,26 +338,6 @@ export default function Journey() {
     const onScroll = () => {
       const nextTarget = readProgress();
 
-      if (!desktop.matches) {
-        const nextIndex = Math.round(nextTarget * (steps.length - 1));
-        if (nextIndex === lastMobileVisualIndex || nextIndex === pendingMobileIndex) return;
-
-        // Mobile Safari may emit a burst of scroll events while momentum scrolling.
-        // Collapse that burst into one paint and always render only the newest step.
-        pendingMobileIndex = nextIndex;
-        if (!mobileFrame) {
-          mobileFrame = requestAnimationFrame(() => {
-            mobileFrame = 0;
-            const latestIndex = pendingMobileIndex;
-            pendingMobileIndex = -1;
-            target = latestIndex / (steps.length - 1);
-            current = target;
-            updateVisuals(current);
-          });
-        }
-        return;
-      }
-
       if (Math.abs(nextTarget - target) < 0.00012 && Math.abs(nextTarget - current) < 0.00012) return;
       target = nextTarget;
 
@@ -358,6 +347,35 @@ export default function Journey() {
       } else if (Math.abs(target - current) > 0.00012) {
         requestTick();
       }
+    };
+
+    const scheduleMobileIndex = (nextIndex) => {
+      if (nextIndex === lastMobileVisualIndex || nextIndex === pendingMobileIndex) return;
+      pendingMobileIndex = nextIndex;
+      if (mobileFrame) return;
+
+      mobileFrame = requestAnimationFrame(() => {
+        mobileFrame = 0;
+        const latestIndex = pendingMobileIndex;
+        pendingMobileIndex = -1;
+        target = latestIndex / (steps.length - 1);
+        current = target;
+        updateVisuals(current);
+      });
+    };
+
+    const observeMobileSteps = () => {
+      if (desktop.matches || !mobileSentinelsRef.current || !('IntersectionObserver' in window)) return;
+      mobileObserver = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (!visible.length) return;
+        const closest = visible.sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top))[0];
+        scheduleMobileIndex(Number(closest.target.dataset.stepIndex));
+      }, { rootMargin: '0px 0px -98% 0px', threshold: 0 });
+
+      mobileSentinelsRef.current.querySelectorAll('[data-step-index]').forEach((sentinel) => {
+        mobileObserver.observe(sentinel);
+      });
     };
 
     const onResize = () => {
@@ -403,7 +421,8 @@ export default function Journey() {
       : Math.round(initialProgress * (steps.length - 1)) / (steps.length - 1);
     current = target;
     updateVisuals(current);
-    window.addEventListener('scroll', onScroll, { passive: true });
+    if (desktop.matches) window.addEventListener('scroll', onScroll, { passive: true });
+    else observeMobileSteps();
     window.addEventListener('resize', onResize, { passive: true });
     window.addEventListener('nevian:workflow-step', onStepRequest);
     window.addEventListener('hashchange', onWorkflowHash);
@@ -416,6 +435,7 @@ export default function Journey() {
     return () => {
       if (frame) cancelAnimationFrame(frame);
       if (mobileFrame) cancelAnimationFrame(mobileFrame);
+      mobileObserver?.disconnect();
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('nevian:workflow-step', onStepRequest);
@@ -432,6 +452,15 @@ export default function Journey() {
   return (
     <section id="how" className="nevian-journey">
       <div ref={trackRef} className="nevian-journey-track">
+        <div ref={mobileSentinelsRef} className="nevian-journey-mobile-sentinels" aria-hidden="true">
+          {MOBILE_STEP_REGIONS.map((region, index) => (
+            <i
+              key={steps[index].key}
+              data-step-index={index}
+              style={{ '--region-start': `${region.start}%`, '--region-size': `${region.size}%` }}
+            />
+          ))}
+        </div>
         <div className="nevian-journey-stage">
           <div className="nevian-journey-base" />
           <div className="nevian-journey-grid nevian-journey-grid-top" />

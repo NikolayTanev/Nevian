@@ -119,6 +119,9 @@
 
 /* Free-floating navigation shared by desktop and mobile. */
 .site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
   isolation: isolate;
   color: #f4f8f6;
   border: 0;
@@ -130,8 +133,18 @@
   margin-bottom: -4.5rem;
 }
 
+/* Black scrim behind the nav that fades to transparent toward the bottom,
+   so overlaid content stays readable without a hard nav bar edge. */
 .site-nav::before {
-  content: none;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 220%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .68) 38%, rgba(0, 0, 0, 0) 100%);
 }
 
 .site-nav::after {
@@ -1765,13 +1778,49 @@
   width: min(36.5vw, 680px);
 }
 
-.nevian-journey-copy-enter {
-  animation: nevian-copy-enter .38s cubic-bezier(.16, 1, .3, 1) both;
+/* Crossfade layers: the incoming step animates in while the outgoing step
+   (kept mounted for one transition) animates out over it. Time-based, so it
+   reads as choreography regardless of scroll speed. */
+.nevian-journey-copy-layer {
+  will-change: transform, opacity, filter;
 }
 
-@keyframes nevian-copy-enter {
-  from { opacity: .36; transform: translate3d(0, 7px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+/* The incoming layer reveals as a group (fade + blur clear); its children each
+   pop in with a small scale overshoot on a quick stagger, for a jumpy feel. */
+.nevian-journey-copy-layer.is-entering {
+  animation: nevian-copy-in .4s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.nevian-journey-copy-layer.is-entering > * {
+  animation: nevian-copy-pop .5s cubic-bezier(.22, 1, .3, 1) both;
+}
+
+.nevian-journey-copy-layer.is-entering > *:nth-child(1) { animation-delay: .02s; }
+.nevian-journey-copy-layer.is-entering > *:nth-child(2) { animation-delay: .09s; }
+.nevian-journey-copy-layer.is-entering > *:nth-child(3) { animation-delay: .16s; }
+.nevian-journey-copy-layer.is-entering > *:nth-child(4) { animation-delay: .23s; }
+
+.nevian-journey-copy-layer.is-exiting {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: nevian-copy-out .24s cubic-bezier(.4, 0, 1, 1) both;
+}
+
+@keyframes nevian-copy-in {
+  from { opacity: 0; filter: blur(8px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+@keyframes nevian-copy-pop {
+  0% { opacity: 0; transform: translate3d(0, 22px, 0) scale(.9); }
+  55% { opacity: 1; transform: translate3d(0, -4px, 0) scale(1.05); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes nevian-copy-out {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+  to { opacity: 0; transform: translate3d(0, -16px, 0) scale(.96); filter: blur(8px); }
 }
 
 .nevian-journey-brand {
@@ -1789,9 +1838,6 @@
   width: clamp(42px, 3vw, 58px);
   aspect-ratio: 1;
   place-items: center;
-  border: 1px solid rgba(141, 255, 106, .2);
-  border-radius: 50%;
-  background: rgba(16, 38, 29, .74);
 }
 
 .nevian-journey-brand-mark img {
@@ -2294,8 +2340,11 @@
 
 @media (min-width: 1024px) {
   .nevian-journey-track {
-    height: 200vh;
-    min-height: 1280px;
+    /* Scroll distance per step = track height - sticky stage height.
+       Quadrupled from 100vh to 400vh of scroll so each sub-section gets
+       more room to fade in, hold, and fade out. */
+    height: 500vh;
+    min-height: 3260px;
   }
 
   .nevian-journey-stage {
@@ -2340,9 +2389,27 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nevian-journey-copy-enter {
-    animation-duration: .001ms !important;
-    animation-iteration-count: 1 !important;
+  /* Plain crossfade, no movement, scale, or blur. */
+  .nevian-journey-copy-layer.is-entering > * {
+    animation: none !important;
+  }
+
+  .nevian-journey-copy-layer.is-entering {
+    animation: nevian-copy-in-reduced .2s ease both;
+  }
+
+  .nevian-journey-copy-layer.is-exiting {
+    animation: nevian-copy-out-reduced .16s ease both;
+  }
+
+  @keyframes nevian-copy-in-reduced {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes nevian-copy-out-reduced {
+    from { opacity: 1; }
+    to { opacity: 0; }
   }
 }
 

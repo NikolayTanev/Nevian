@@ -204,6 +204,9 @@ function createTickPaths(center, bulge, travel) {
 export default function Journey() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
+  const [outgoing, setOutgoing] = useState(null);
+  const prevActiveRef = useRef(0);
+  const transitionSeq = useRef(0);
   const trackRef = useRef(null);
   const highlightPathRef = useRef(null);
   const markerMaskRef = useRef(null);
@@ -241,13 +244,8 @@ export default function Journey() {
       const selectedFloat = progress * (steps.length - 1);
       const travel = selectedFloat * STEP_SPACING;
       let nextIndex = desktop.matches
-        ? activeIndexRef.current
+        ? clamp(Math.round(selectedFloat), 0, steps.length - 1)
         : clamp(Math.floor(selectedFloat + .002), 0, steps.length - 1);
-
-      if (desktop.matches) {
-        while (selectedFloat >= nextIndex + 1 && nextIndex < steps.length - 1) nextIndex += 1;
-        while (selectedFloat <= nextIndex - 1 && nextIndex > 0) nextIndex -= 1;
-      }
 
       if (desktop.matches) {
         const wave = Math.sin(selectedFloat * Math.PI);
@@ -452,7 +450,39 @@ export default function Journey() {
     };
   }, []);
 
+  // When the active step changes (at the scroll midpoint), keep the previous
+  // step mounted for one transition so it can animate out while the new one
+  // animates in. This is a real time-based crossfade, independent of scroll speed.
+  useEffect(() => {
+    if (prevActiveRef.current === activeIndex) return;
+    const fromIndex = prevActiveRef.current;
+    prevActiveRef.current = activeIndex;
+    transitionSeq.current += 1;
+    setOutgoing({ index: fromIndex, id: transitionSeq.current });
+  }, [activeIndex]);
+
   const activeStep = steps[activeIndex];
+
+  const renderStep = (step) => (
+    <>
+      <div className="nevian-journey-brand">
+        <span className="nevian-journey-brand-mark">
+          <img src="/assets/logo.png" alt="" />
+        </span>
+        <span>Nevian workflow</span>
+      </div>
+
+      <h2>{step.headline}</h2>
+
+      <div className="nevian-journey-metric">
+        <strong>{step.stat}</strong>
+        <span>{step.statLabel}</span>
+      </div>
+
+      <p>{step.desc}</p>
+    </>
+  );
+
   const initialPath = createCurvePath(CENTER_Y, BASE_BULGE);
   const initialHighlightPath = createLeftHighlightPath(createCurveSamples(CENTER_Y, BASE_BULGE));
   const initialMarkerClip = createMarkerClip(CENTER_Y, BASE_BULGE);
@@ -527,22 +557,21 @@ export default function Journey() {
             </div>
 
             <article className="nevian-journey-copy">
-              <div key={activeIndex} className="nevian-journey-copy-enter">
-                <div className="nevian-journey-brand">
-                  <span className="nevian-journey-brand-mark">
-                    <img src="/assets/logo.png" alt="" />
-                  </span>
-                  <span>Nevian workflow</span>
+              {outgoing && (
+                <div
+                  key={`out-${outgoing.id}`}
+                  className="nevian-journey-copy-layer is-exiting"
+                  aria-hidden="true"
+                  onAnimationEnd={(event) => {
+                    if (event.target !== event.currentTarget) return;
+                    setOutgoing((current) => (current && current.id === outgoing.id ? null : current));
+                  }}
+                >
+                  {renderStep(steps[outgoing.index])}
                 </div>
-
-                <h2>{activeStep.headline}</h2>
-
-                <div className="nevian-journey-metric">
-                  <strong>{activeStep.stat}</strong>
-                  <span>{activeStep.statLabel}</span>
-                </div>
-
-                <p>{activeStep.desc}</p>
+              )}
+              <div key={`in-${activeIndex}`} className="nevian-journey-copy-layer is-entering">
+                {renderStep(activeStep)}
               </div>
             </article>
           </div>

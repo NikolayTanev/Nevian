@@ -1975,7 +1975,7 @@
 .nevian-journey-mobile-labels {
   z-index: 2;
   pointer-events: none;
-  transition: transform .46s cubic-bezier(.22, 1, .36, 1);
+  transition: transform .14s cubic-bezier(.2, .72, .2, 1);
 }
 
 .nevian-journey-mobile-label {
@@ -1988,7 +1988,7 @@
   color: rgba(227, 235, 231, .52);
   opacity: .5;
   transform: translate3d(0, -50%, 0);
-  transition: opacity .24s ease, transform .46s cubic-bezier(.22, 1, .36, 1);
+  transition: opacity .12s ease, transform .14s cubic-bezier(.2, .72, .2, 1);
 }
 
 .nevian-journey-mobile-label > span {
@@ -2004,7 +2004,7 @@
   font-size: clamp(.72rem, 3.1vw, .88rem);
   font-weight: 520;
   letter-spacing: -.018em;
-  transition: color .22s ease, border-color .22s ease, background-color .22s ease, box-shadow .22s ease;
+  transition: color .12s ease, border-color .12s ease, background-color .12s ease;
 }
 
 .nevian-journey-mobile-label > i {
@@ -2044,7 +2044,7 @@
 
 .nevian-journey-mobile-copy-enter {
   width: 100%;
-  animation: nevian-mobile-copy-enter .34s cubic-bezier(.16, 1, .3, 1) both;
+  animation: nevian-mobile-copy-enter .16s cubic-bezier(.2, .72, .2, 1) both;
 }
 
 .nevian-journey-mobile-brand {
@@ -2164,7 +2164,7 @@
   inset: 0;
   background: #58d596;
   transform-origin: left center;
-  transition: transform .25s ease;
+  transition: transform .12s ease-out;
 }
 
 @keyframes nevian-mobile-copy-enter {
@@ -2183,7 +2183,14 @@
     top: 0;
     height: 100svh;
     min-height: 560px;
-    contain: paint;
+    contain: layout paint style;
+    transform: translateZ(0);
+  }
+
+  .nevian-journey-mobile,
+  .nevian-journey-mobile-rail,
+  .nevian-journey-mobile-copy {
+    contain: layout paint style;
   }
 
   .nevian-journey-grid {

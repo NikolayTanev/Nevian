@@ -215,6 +215,8 @@ export default function Journey() {
     let current = 0;
     let target = 0;
     let frame = 0;
+    let mobileFrame = 0;
+    let pendingMobileIndex = -1;
     let lastTime = performance.now();
     let lastBroadcastIndex = -1;
     let lastMobileVisualIndex = -1;
@@ -329,10 +331,21 @@ export default function Journey() {
 
       if (!desktop.matches) {
         const nextIndex = Math.round(nextTarget * (steps.length - 1));
-        if (nextIndex === lastMobileVisualIndex) return;
-        target = nextIndex / (steps.length - 1);
-        current = target;
-        updateVisuals(current);
+        if (nextIndex === lastMobileVisualIndex || nextIndex === pendingMobileIndex) return;
+
+        // Mobile Safari may emit a burst of scroll events while momentum scrolling.
+        // Collapse that burst into one paint and always render only the newest step.
+        pendingMobileIndex = nextIndex;
+        if (!mobileFrame) {
+          mobileFrame = requestAnimationFrame(() => {
+            mobileFrame = 0;
+            const latestIndex = pendingMobileIndex;
+            pendingMobileIndex = -1;
+            target = latestIndex / (steps.length - 1);
+            current = target;
+            updateVisuals(current);
+          });
+        }
         return;
       }
 
@@ -349,7 +362,10 @@ export default function Journey() {
 
     const onResize = () => {
       if (frame) cancelAnimationFrame(frame);
+      if (mobileFrame) cancelAnimationFrame(mobileFrame);
       frame = 0;
+      mobileFrame = 0;
+      pendingMobileIndex = -1;
       measureTrack();
       const measuredProgress = readProgress();
       target = desktop.matches
@@ -399,6 +415,7 @@ export default function Journey() {
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      if (mobileFrame) cancelAnimationFrame(mobileFrame);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('nevian:workflow-step', onStepRequest);

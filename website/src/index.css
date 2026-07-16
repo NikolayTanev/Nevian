@@ -5060,15 +5060,8 @@ html.contact-route .site-nav {
   .password-demo-progress span { font-size: .53rem; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .password-demo-section *,
-  .password-demo-section *::before,
-  .password-demo-section *::after {
-    animation-duration: .001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .001ms !important;
-  }
-}
+/* The password demo is a product showcase that must play its sequence; it is
+   intentionally exempt from the reduced-motion blanket disable. */
 
 /* Full closing footer inspired by the reference layout. */
 .site-footer {

@@ -270,11 +270,6 @@ export default function PasswordResetDemo() {
 
   useEffect(() => {
     if (!inView) return undefined;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      setPhase(13);
-      return undefined;
-    }
 
     const timer = window.setTimeout(() => {
       setPhase((current) => (current >= phaseDurations.length - 1 ? 0 : current + 1));

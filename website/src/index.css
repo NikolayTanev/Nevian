@@ -1541,6 +1541,10 @@
   position: relative;
 }
 
+.nevian-journey-mobile-sentinels {
+  display: none;
+}
+
 .nevian-journey-stage {
   isolation: isolate;
   overflow: hidden;
@@ -2176,7 +2180,117 @@
   to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
+@keyframes nevian-mobile-label-travel {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, max(-58svh, -472px), 0); }
+}
+
+@keyframes nevian-mobile-bend-0 {
+  0% { transform: translate3d(-23.61%, -50%, 0); }
+  25% { transform: translate3d(-8.69%, -50%, 0); }
+  50% { transform: translate3d(-.43%, -50%, 0); }
+  75%, 100% { transform: translate3d(0, -50%, 0); }
+}
+
+@keyframes nevian-mobile-bend-1 {
+  0% { transform: translate3d(-8.69%, -50%, 0); }
+  25% { transform: translate3d(-23.61%, -50%, 0); }
+  50% { transform: translate3d(-8.69%, -50%, 0); }
+  75% { transform: translate3d(-.43%, -50%, 0); }
+  100% { transform: translate3d(0, -50%, 0); }
+}
+
+@keyframes nevian-mobile-bend-2 {
+  0%, 100% { transform: translate3d(-.43%, -50%, 0); }
+  25%, 75% { transform: translate3d(-8.69%, -50%, 0); }
+  50% { transform: translate3d(-23.61%, -50%, 0); }
+}
+
+@keyframes nevian-mobile-bend-3 {
+  0% { transform: translate3d(0, -50%, 0); }
+  25% { transform: translate3d(-.43%, -50%, 0); }
+  50% { transform: translate3d(-8.69%, -50%, 0); }
+  75% { transform: translate3d(-23.61%, -50%, 0); }
+  100% { transform: translate3d(-8.69%, -50%, 0); }
+}
+
+@keyframes nevian-mobile-bend-4 {
+  0%, 25% { transform: translate3d(0, -50%, 0); }
+  50% { transform: translate3d(-.43%, -50%, 0); }
+  75% { transform: translate3d(-8.69%, -50%, 0); }
+  100% { transform: translate3d(-23.61%, -50%, 0); }
+}
+
 @media (max-width: 1023px) {
+  .nevian-journey-track {
+    view-timeline-name: --nevian-mobile-timeline;
+    view-timeline-axis: block;
+  }
+
+  .nevian-journey-mobile {
+    --mobile-step-spacing: min(14.5svh, 118px);
+  }
+
+  .nevian-journey-mobile-sentinels {
+    position: absolute;
+    z-index: -20;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 1px;
+    height: calc(100% - 100svh);
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .nevian-journey-mobile-sentinels > i {
+    position: absolute;
+    top: var(--region-start);
+    left: 0;
+    width: 1px;
+    height: var(--region-size);
+  }
+
+  @supports (animation-timeline: view()) {
+    .nevian-journey-mobile-labels,
+    .nevian-journey-mobile-label {
+      animation-duration: 1ms;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --nevian-mobile-timeline;
+      animation-range: contain 0% contain 100%;
+    }
+
+    .nevian-journey-mobile-labels {
+      animation-name: nevian-mobile-label-travel;
+    }
+
+    .nevian-journey-mobile-label:nth-child(1) {
+      top: 50%;
+      animation-name: nevian-mobile-bend-0;
+    }
+
+    .nevian-journey-mobile-label:nth-child(2) {
+      top: calc(50% + var(--mobile-step-spacing));
+      animation-name: nevian-mobile-bend-1;
+    }
+
+    .nevian-journey-mobile-label:nth-child(3) {
+      top: calc(50% + var(--mobile-step-spacing) + var(--mobile-step-spacing));
+      animation-name: nevian-mobile-bend-2;
+    }
+
+    .nevian-journey-mobile-label:nth-child(4) {
+      top: calc(50% + var(--mobile-step-spacing) + var(--mobile-step-spacing) + var(--mobile-step-spacing));
+      animation-name: nevian-mobile-bend-3;
+    }
+
+    .nevian-journey-mobile-label:nth-child(5) {
+      top: calc(50% + var(--mobile-step-spacing) + var(--mobile-step-spacing) + var(--mobile-step-spacing) + var(--mobile-step-spacing));
+      animation-name: nevian-mobile-bend-4;
+    }
+  }
+
   .nevian-journey-track {
     height: 215svh;
     min-height: 1260px;

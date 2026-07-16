@@ -148,6 +148,13 @@ function calculateMobileCurveX(y) {
 }
 
 const MOBILE_CURVE_LOOKUP = Array.from({ length: 105 }, (_, index) => calculateMobileCurveX(index - 2));
+const MOBILE_STEP_REGIONS = [
+  { start: 0, size: 25 },
+  { start: 25, size: 25 },
+  { start: 50, size: 25 },
+  { start: 75, size: 24 },
+  { start: 99, size: 1 },
+];
 
 function mobileCurveXAtY(y) {
   const bounded = clamp(y, -2, 102) + 2;
@@ -206,16 +213,21 @@ export default function Journey() {
   const mobileLabelsRef = useRef(null);
   const mobileRailRef = useRef(null);
   const mobileTicksRef = useRef(null);
+  const mobileSentinelsRef = useRef(null);
   const minorTicksRef = useRef(null);
   const pathRef = useRef(null);
 
   useEffect(() => {
     const desktop = window.matchMedia('(min-width: 1024px)');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nativeMobileTimeline = !desktop.matches
+      && typeof CSS !== 'undefined'
+      && CSS.supports?.('animation-timeline: view()');
     let current = 0;
     let target = 0;
     let frame = 0;
     let mobileFrame = 0;
+    let mobileObserver = null;
     let lastTime = performance.now();
     let lastBroadcastIndex = -1;
     let lastMobileTickKey = -1;
@@ -262,19 +274,21 @@ export default function Journey() {
           markerMaskRef.current.style.webkitClipPath = markerClip;
         }
       } else {
-        if (mobileLabelsRef.current) {
-          mobileLabelsRef.current.style.transform = `translate3d(0, ${-selectedFloat * mobileSpacing}px, 0)`;
-        }
-        mobileLabelItemsRef.current.forEach((label, index) => {
-          if (!label) return;
-          const labelY = 50 + (index - selectedFloat) * mobileSpacingPercent;
-          const displacement = ((88 - mobileCurveXAtY(labelY)) / 100) * mobileRailWidth;
-          label.style.transform = `translate3d(${-displacement}px, -50%, 0)`;
-        });
-        const mobileTickKey = Math.round(selectedFloat * 48);
-        if (mobileTickKey !== lastMobileTickKey) {
-          lastMobileTickKey = mobileTickKey;
-          mobileTicksRef.current?.setAttribute('d', createMobileTickPath(mobileTickKey / 48, mobileSpacingPercent));
+        if (!nativeMobileTimeline) {
+          if (mobileLabelsRef.current) {
+            mobileLabelsRef.current.style.transform = `translate3d(0, ${-selectedFloat * mobileSpacing}px, 0)`;
+          }
+          mobileLabelItemsRef.current.forEach((label, index) => {
+            if (!label) return;
+            const labelY = 50 + (index - selectedFloat) * mobileSpacingPercent;
+            const displacement = ((88 - mobileCurveXAtY(labelY)) / 100) * mobileRailWidth;
+            label.style.transform = `translate3d(${-displacement}px, -50%, 0)`;
+          });
+          const mobileTickKey = Math.round(selectedFloat * 48);
+          if (mobileTickKey !== lastMobileTickKey) {
+            lastMobileTickKey = mobileTickKey;
+            mobileTicksRef.current?.setAttribute('d', createMobileTickPath(mobileTickKey / 48, mobileSpacingPercent));
+          }
         }
       }
 
@@ -324,7 +338,9 @@ export default function Journey() {
       mobileSpacingPercent = (mobileSpacing / Math.max(1, window.innerHeight)) * 100;
       mobileRailWidth = mobileRailRef.current?.offsetWidth || 0;
       mobileLabelItemsRef.current.forEach((label, index) => {
-        if (label) label.style.top = `calc(50% + ${index * mobileSpacing}px)`;
+        if (!label) return;
+        if (nativeMobileTimeline) label.style.removeProperty('top');
+        else label.style.top = `calc(50% + ${index * mobileSpacing}px)`;
       });
     };
 
@@ -356,6 +372,24 @@ export default function Journey() {
       } else if (Math.abs(target - current) > 0.00012) {
         requestTick();
       }
+    };
+
+    const observeNativeMobileSteps = () => {
+      if (!nativeMobileTimeline || !mobileSentinelsRef.current || !('IntersectionObserver' in window)) return;
+
+      mobileObserver = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (!visible.length) return;
+        const closest = visible.sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top))[0];
+        const index = Number(closest.target.dataset.stepIndex);
+        target = index / (steps.length - 1);
+        current = target;
+        updateVisuals(current);
+      }, { rootMargin: '0px 0px -98% 0px', threshold: 0 });
+
+      mobileSentinelsRef.current.querySelectorAll('[data-step-index]').forEach((sentinel) => {
+        mobileObserver.observe(sentinel);
+      });
     };
 
     const onResize = () => {
@@ -396,7 +430,8 @@ export default function Journey() {
     target = initialProgress;
     current = target;
     updateVisuals(current);
-    window.addEventListener('scroll', onScroll, { passive: true });
+    if (nativeMobileTimeline) observeNativeMobileSteps();
+    else window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
     window.addEventListener('nevian:workflow-step', onStepRequest);
     window.addEventListener('hashchange', onWorkflowHash);
@@ -409,6 +444,7 @@ export default function Journey() {
     return () => {
       if (frame) cancelAnimationFrame(frame);
       if (mobileFrame) cancelAnimationFrame(mobileFrame);
+      mobileObserver?.disconnect();
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('nevian:workflow-step', onStepRequest);
@@ -425,6 +461,15 @@ export default function Journey() {
   return (
     <section id="how" className="nevian-journey">
       <div ref={trackRef} className="nevian-journey-track">
+        <div ref={mobileSentinelsRef} className="nevian-journey-mobile-sentinels" aria-hidden="true">
+          {MOBILE_STEP_REGIONS.map((region, index) => (
+            <i
+              key={steps[index].key}
+              data-step-index={index}
+              style={{ '--region-start': `${region.start}%`, '--region-size': `${region.size}%` }}
+            />
+          ))}
+        </div>
         <div className="nevian-journey-stage">
           <div className="nevian-journey-base" />
           <div className="nevian-journey-grid nevian-journey-grid-top" />

@@ -174,8 +174,7 @@ export default function Journey() {
   const labelsRef = useRef(null);
   const labelItemsRef = useRef([]);
   const mobileLabelItemsRef = useRef([]);
-  const mobileStageRef = useRef(null);
-  const hapticSwitchRef = useRef(null);
+  const mobileLabelsRef = useRef(null);
   const minorTicksRef = useRef(null);
   const pathRef = useRef(null);
 
@@ -187,24 +186,9 @@ export default function Journey() {
     let frame = 0;
     let lastTime = performance.now();
     let lastBroadcastIndex = -1;
-    let lastHapticIndex = -1;
-    let lastHapticTime = 0;
-    let touchingTimeline = false;
-
-    const triggerTimelineHaptic = () => {
-      if (desktop.matches || reduceMotion || !touchingTimeline) return;
-
-      const now = performance.now();
-      if (now - lastHapticTime < 48) return;
-      lastHapticTime = now;
-
-      if (typeof navigator.vibrate === 'function') {
-        navigator.vibrate(7);
-        return;
-      }
-
-      hapticSwitchRef.current?.click();
-    };
+    let trackTop = 0;
+    let scrollRange = 1;
+    let mobileSpacing = 0;
 
     const updateVisuals = (progress) => {
       const selectedFloat = progress * (steps.length - 1);
@@ -239,17 +223,9 @@ export default function Journey() {
           markerMaskRef.current.style.webkitClipPath = markerClip;
         }
       } else {
-        const spacing = Math.min(window.innerHeight * .145, 118);
-        mobileLabelItemsRef.current.forEach((label, index) => {
-          if (!label) return;
-          const delta = index - selectedFloat;
-          const distance = Math.abs(delta);
-          const focus = Math.max(0, 1 - distance / 1.18);
-          const translateX = -15 * focus;
-          label.style.transform = `translate3d(${translateX}px, calc(-50% + ${delta * spacing}px), 0)`;
-          label.style.opacity = String(clamp(1 - distance * .22, .16, 1));
-        });
-        mobileStageRef.current?.style.setProperty('--mobile-progress', selectedFloat.toFixed(4));
+        if (mobileLabelsRef.current) {
+          mobileLabelsRef.current.style.transform = `translate3d(0, ${-selectedFloat * mobileSpacing}px, 0)`;
+        }
       }
 
       if (nextIndex !== activeIndexRef.current) {
@@ -289,58 +265,52 @@ export default function Journey() {
       frame = requestAnimationFrame(tick);
     };
 
-    const readProgress = () => {
+    const measureTrack = () => {
       const track = trackRef.current;
-      const total = Math.max(1, track.offsetHeight - window.innerHeight);
-      return clamp(-track.getBoundingClientRect().top / total);
+      if (!track) return;
+      trackTop = track.getBoundingClientRect().top + window.scrollY;
+      scrollRange = Math.max(1, track.offsetHeight - window.innerHeight);
+      mobileSpacing = Math.min(window.innerHeight * .145, 118);
+      mobileLabelItemsRef.current.forEach((label, index) => {
+        if (label) label.style.top = `calc(50% + ${index * mobileSpacing}px)`;
+      });
+    };
+
+    const readProgress = () => {
+      return clamp((window.scrollY - trackTop) / scrollRange);
     };
 
     const onScroll = () => {
       target = readProgress();
 
-      if (reduceMotion) {
-        current = target;
-        updateVisuals(current);
+      if (!desktop.matches || reduceMotion) {
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+          current = target;
+          updateVisuals(current);
+          frame = 0;
+        });
       } else if (Math.abs(target - current) > 0.00012) {
         requestTick();
       }
     };
 
     const onResize = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      measureTrack();
       target = readProgress();
       current = target;
       updateVisuals(current);
-    };
-
-    const onTimelineTouchStart = () => {
-      touchingTimeline = true;
-      lastHapticIndex = Math.round(readProgress() * (steps.length - 1) * 6);
-    };
-
-    const onTimelineTouchMove = () => {
-      if (!touchingTimeline) return;
-
-      const nextHapticIndex = Math.round(readProgress() * (steps.length - 1) * 6);
-      if (nextHapticIndex === lastHapticIndex) return;
-
-      lastHapticIndex = nextHapticIndex;
-      triggerTimelineHaptic();
-    };
-
-    const onTimelineTouchEnd = () => {
-      touchingTimeline = false;
     };
 
     const scrollToStep = (index, behavior = 'smooth') => {
       if (!Number.isInteger(index) || index < 0 || index >= steps.length) return;
 
       window.requestAnimationFrame(() => {
-        const track = trackRef.current;
-        if (!track) return;
-        const trackTop = track.getBoundingClientRect().top + window.scrollY;
-        const total = Math.max(1, track.offsetHeight - window.innerHeight);
+        measureTrack();
         const progress = index / (steps.length - 1);
-        window.scrollTo({ top: trackTop + total * progress, behavior });
+        window.scrollTo({ top: trackTop + scrollRange * progress, behavior });
       });
     };
 
@@ -354,6 +324,7 @@ export default function Journey() {
       if (index >= 0) scrollToStep(index);
     };
 
+    measureTrack();
     target = readProgress();
     current = target;
     updateVisuals(current);
@@ -361,10 +332,6 @@ export default function Journey() {
     window.addEventListener('resize', onResize, { passive: true });
     window.addEventListener('nevian:workflow-step', onStepRequest);
     window.addEventListener('hashchange', onWorkflowHash);
-    trackRef.current?.addEventListener('touchstart', onTimelineTouchStart, { passive: true });
-    trackRef.current?.addEventListener('touchmove', onTimelineTouchMove, { passive: true });
-    trackRef.current?.addEventListener('touchend', onTimelineTouchEnd, { passive: true });
-    trackRef.current?.addEventListener('touchcancel', onTimelineTouchEnd, { passive: true });
 
     const initialIndex = workflowIndexFromHash();
     if (initialIndex >= 0) {
@@ -377,10 +344,6 @@ export default function Journey() {
       window.removeEventListener('resize', onResize);
       window.removeEventListener('nevian:workflow-step', onStepRequest);
       window.removeEventListener('hashchange', onWorkflowHash);
-      trackRef.current?.removeEventListener('touchstart', onTimelineTouchStart);
-      trackRef.current?.removeEventListener('touchmove', onTimelineTouchMove);
-      trackRef.current?.removeEventListener('touchend', onTimelineTouchEnd);
-      trackRef.current?.removeEventListener('touchcancel', onTimelineTouchEnd);
     };
   }, []);
 
@@ -392,14 +355,6 @@ export default function Journey() {
 
   return (
     <section id="how" className="nevian-journey">
-      <input
-        ref={hapticSwitchRef}
-        className="nevian-journey-haptic-switch"
-        type="checkbox"
-        switch=""
-        tabIndex={-1}
-        aria-hidden="true"
-      />
       <div ref={trackRef} className="nevian-journey-track">
         <div className="nevian-journey-stage">
           <div className="nevian-journey-base" />
@@ -490,7 +445,7 @@ export default function Journey() {
             </article>
           </div>
 
-          <div ref={mobileStageRef} className="nevian-journey-mobile">
+          <div className="nevian-journey-mobile">
             <div className="nevian-journey-mobile-rail" aria-hidden="true">
               <div className="nevian-journey-mobile-highlight" />
               <svg className="nevian-journey-mobile-line" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -514,7 +469,7 @@ export default function Journey() {
                 })}
               </div>
 
-              <div className="nevian-journey-mobile-labels">
+              <div ref={mobileLabelsRef} className="nevian-journey-mobile-labels">
                 {steps.map((step, index) => (
                   <div
                     key={step.key}

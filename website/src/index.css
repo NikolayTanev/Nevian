@@ -1531,18 +1531,6 @@
   background: #07090d;
 }
 
-/* Kept as a native Safari switch so iOS 18 can provide Taptic feedback.
-   It stays rendered but permanently outside the visible viewport. */
-.nevian-journey-haptic-switch {
-  position: fixed;
-  top: -100px;
-  left: -100px;
-  width: 51px;
-  height: 31px;
-  opacity: .001;
-  pointer-events: none;
-}
-
 .nevian-journey-track,
 .nevian-journey-stage {
   position: relative;
@@ -1989,6 +1977,7 @@
 .nevian-journey-mobile-labels {
   z-index: 2;
   pointer-events: none;
+  will-change: transform;
 }
 
 .nevian-journey-mobile-label {
@@ -1999,7 +1988,9 @@
   width: 72%;
   align-items: center;
   color: rgba(227, 235, 231, .52);
-  will-change: transform, opacity;
+  opacity: .5;
+  transform: translate3d(0, -50%, 0);
+  transition: opacity .16s linear, transform .22s cubic-bezier(.22, 1, .36, 1);
 }
 
 .nevian-journey-mobile-label > span {
@@ -2030,6 +2021,8 @@
 
 .nevian-journey-mobile-label.is-active {
   color: #fff;
+  opacity: 1;
+  transform: translate3d(-15px, -50%, 0);
 }
 
 .nevian-journey-mobile-label.is-active > span {
@@ -2178,8 +2171,8 @@
 }
 
 @keyframes nevian-mobile-copy-enter {
-  from { opacity: .22; transform: translate3d(0, 10px, 0); filter: blur(2px); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+  from { opacity: .28; transform: translate3d(0, 7px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 @media (max-width: 1023px) {
@@ -2197,7 +2190,17 @@
 
   .nevian-journey-grid {
     width: 66%;
-    opacity: .25;
+    opacity: .16;
+  }
+
+  .nevian-journey-grid-bottom {
+    display: none;
+  }
+
+  .nevian-journey-grain {
+    opacity: .12;
+    background-image: url('/assets/static-grain.svg');
+    background-size: 221px 213px;
   }
 
   .nevian-journey-stage::before {

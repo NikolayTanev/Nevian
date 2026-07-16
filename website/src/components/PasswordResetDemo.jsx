@@ -152,8 +152,8 @@ function EmailPane({ password = false, phase }) {
           </button>
         </div>
       </div>
-      {!password && (
-        <div className="password-ms-options"><MiniIcon type="phone" /> Sign-in options</div>
+              {!password && (
+        <div className="password-ms-options"><MiniIcon type="phone" /> Other ways to sign in</div>
       )}
     </div>
   );
@@ -323,11 +323,10 @@ export default function PasswordResetDemo() {
       <div className="password-demo-shell">
         <header className="password-demo-heading">
           <div>
-            <span><i /> Automated password recovery</span>
-            <h2>From locked out to back in—without an IT ticket.</h2>
+            <h2>Reset a password without opening a ticket.</h2>
           </div>
           <div className="password-demo-heading-copy">
-            <p>Nevian verifies identity through Microsoft, keeps every step visible, and returns the user to work in minutes.</p>
+            <p>Nevian confirms the user&apos;s identity with Microsoft and records each step before restoring access.</p>
             <button type="button" onClick={replay}>Replay demo <IconArrow /></button>
           </div>
         </header>
@@ -337,11 +336,11 @@ export default function PasswordResetDemo() {
             <div className={`password-demo-workspace ${conversationFocused ? 'is-conversation-focused' : ''}`}>
               <main className="password-demo-chat">
                 <header>
-                  <div><span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span><b>Nevian AI</b><small><i /> Online · Identity recovery</small></div>
+                  <div><span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span><b>Nevian</b><small><i /> Online, helping with account access</small></div>
                   <button type="button">•••</button>
                 </header>
                 <div className="password-demo-messages">
-                  <div className="password-demo-date">Today · Secure conversation</div>
+                  <div className="password-demo-date">Today</div>
 
                   {phase >= 1 && (
                     <div className="password-chat-row is-user">
@@ -371,7 +370,7 @@ export default function PasswordResetDemo() {
                       <div className="password-chat-bubble is-agent" data-password-cursor-target={phase === 12 ? 'true' : undefined}>
                         <span className="password-success-label"><IconCheck /> Identity verified</span>
                         <b>You&apos;re all set.</b>
-                        <p>At your next sign-in, Microsoft will ask you to create a new password. No technician needed.</p>
+                        <p>When they next sign in, Microsoft will ask them to choose a new password. No technician needed.</p>
                       </div>
                     </div>
                   )}
@@ -413,9 +412,9 @@ export default function PasswordResetDemo() {
 
               <aside className="password-demo-context">
                 <span>Recovery context</span>
-                <div className="password-context-user"><UserAvatar /><b>{demoUser.name}</b><small>Finance · Berlin</small></div>
+                <div className="password-context-user"><UserAvatar /><b>{demoUser.name}</b><small>Finance, Berlin</small></div>
                 <dl><div><dt>Account</dt><dd>Microsoft 365</dd></div><div><dt>Device</dt><dd>NEV-LT-042</dd></div><div><dt>Risk</dt><dd className="is-low">Low</dd></div></dl>
-                <div className="password-context-policy"><MiniIcon type="shield" /><span><b>Reset policy</b><small>MFA required · Fully audited</small></span></div>
+                <div className="password-context-policy"><MiniIcon type="shield" /><span><b>Reset policy</b><small>MFA required and fully recorded</small></span></div>
               </aside>
             </div>
           </div>

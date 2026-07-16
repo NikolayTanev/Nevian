@@ -4,23 +4,23 @@ import { IconChat, IconDevice, IconShield, IconGrid } from './Icons.jsx';
 const features = [
   {
     Icon: IconChat,
-    title: 'AI Ticketing',
-    text: 'Plain-language intake and one-second triage. Nevian classifies, prioritizes, and drafts a first response before a human even opens the ticket.',
+    title: 'Ticket handling',
+    text: 'People write what is wrong in their own words. Nevian reviews the request and prepares a useful first response for the team.',
   },
   {
     Icon: IconDevice,
-    title: 'Endpoint Agent',
-    text: 'A light Windows desk agent attaches live device context — OS, disk, network, recent errors — to every ticket automatically.',
+    title: 'Device details',
+    text: 'The Windows agent adds the operating system, storage, network, and recent errors to the ticket automatically.',
   },
   {
     Icon: IconShield,
-    title: 'Security & Automation',
-    text: 'Outbound-only, signed automation jobs with an audit trail at every step. Powerful actions without opening inbound holes.',
+    title: 'Controlled automation',
+    text: 'Approved jobs run through an outbound connection, and every action is recorded for review.',
   },
   {
     Icon: IconGrid,
-    title: 'Admin Dashboard',
-    text: 'One command center for tickets, devices, and automation — with the metrics that tell you where time actually goes.',
+    title: 'Team view',
+    text: 'Tickets, devices, automation, and time spent are available in one place.',
   },
 ];
 
@@ -30,10 +30,9 @@ export default function Features() {
     <section id="features" className="py-20">
       <div className="wrap">
         <div ref={ref} className={`max-w-2xl ${shown ? 'animate-fade-up' : 'opacity-0'}`}>
-          <span className="eyebrow">One platform</span>
-          <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">Everything a lean IT team actually needs</h2>
+          <h2 className="text-3xl font-extrabold sm:text-4xl">The parts your IT team will use every day</h2>
           <p className="mt-3 text-lg text-dim">
-            Four pieces that work together out of the box — no sprawling suite, no six-week onboarding.
+            Ticket handling, device context, safe automation, and a clear place to see the work.
           </p>
         </div>
 

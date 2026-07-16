@@ -354,7 +354,7 @@ export default function Nav({ current = 'home' }) {
                 <span>Book a demo</span>
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10m-4-4 4 4-4 4" /></svg>
               </a>
-              <small>AI-powered IT support for lean teams.</small>
+              <small>Nevian handles routine support work and keeps your team informed.</small>
             </div>
           </nav>
         </div>

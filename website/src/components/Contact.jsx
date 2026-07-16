@@ -73,9 +73,8 @@ export default function Contact() {
     <section id="contact" className="py-20">
       <div className="wrap">
         <div ref={ref} className={`mx-auto max-w-2xl text-center ${shown ? 'animate-fade-up' : 'opacity-0'}`}>
-          <span className="eyebrow">Get in touch</span>
-          <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">Request early access</h2>
-          <p className="mt-3 text-lg text-dim">Tell us a bit about your team and we'll get back to you shortly.</p>
+          <h2 className="text-3xl font-extrabold sm:text-4xl">Tell us what your team needs</h2>
+          <p className="mt-3 text-lg text-dim">Share a little about your setup and we&apos;ll reply shortly.</p>
         </div>
 
         <form onSubmit={onSubmit} noValidate className="mx-auto mt-8 max-w-2xl rounded-3xl border border-border bg-surface p-8 shadow-card">
@@ -100,10 +99,10 @@ export default function Contact() {
               <span className="text-sm font-semibold text-dim">Company size</span>
               <select name="companySize" className={field} defaultValue="">
                 <option value="">Select…</option>
-                <option>1–10</option>
-                <option>11–50</option>
-                <option>51–200</option>
-                <option>201–500</option>
+                <option>1 to 10</option>
+                <option>11 to 50</option>
+                <option>51 to 200</option>
+                <option>201 to 500</option>
                 <option>500+</option>
               </select>
             </label>

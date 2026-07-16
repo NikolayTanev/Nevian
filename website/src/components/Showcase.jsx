@@ -14,10 +14,9 @@ export default function Showcase() {
       <div className="wrap">
         <div ref={ref} className={`grid items-center gap-10 lg:grid-cols-2 ${shown ? 'animate-fade-up' : 'opacity-0'}`}>
           <div>
-            <span className="eyebrow">Admin dashboard</span>
-            <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">One command center for the work IT actually does.</h2>
+            <h2 className="text-3xl font-extrabold sm:text-4xl">See the work your team is handling.</h2>
             <p className="mt-3 text-lg text-dim">
-              Tickets, devices, and automation in a single calm view — with the metrics that tell you where time goes.
+              Tickets, devices, automation, and the time spent on each are all in one view.
             </p>
             <ul className="mt-6 space-y-3">
               {points.map((p) => (

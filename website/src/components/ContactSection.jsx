@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
 const fitSteps = [
-  ['01', 'Share the environment', 'Users, devices, and the workflow slowing your team down.'],
-  ['02', 'Map the right fit', 'We connect Nevian’s context and automation to the way you already work.'],
-  ['03', 'Leave with a rollout path', 'A focused next step—without a six-month implementation plan.'],
+  ['01', 'Show us the current setup', 'We look at your users, devices, and the support work taking up the most time.'],
+  ['02', 'Choose the first use case', 'Together, we decide where Nevian would be useful and what should stay with your team.'],
+  ['03', 'Plan the rollout', 'You leave with a specific next step and a realistic scope.'],
 ];
 
 export default function ContactSection() {
@@ -33,9 +33,8 @@ export default function ContactSection() {
     <section id="contact" className="contact-section">
       <div className="contact-shell">
         <div className="contact-intro">
-          <div className="contact-eyebrow">Talk to our team</div>
-          <h2>See how Nevian could fit your team.</h2>
-          <p>Tell us about your users, devices, and support workflow. We’ll show you where Nevian can make a practical difference.</p>
+          <h2>See whether Nevian fits your team.</h2>
+          <p>Tell us how support works today. We&apos;ll show you what Nevian could take on and where your team would stay involved.</p>
 
           <div className="contact-fit-map" aria-label="What happens next">
             {fitSteps.map(([number, title, description]) => (
@@ -61,10 +60,8 @@ export default function ContactSection() {
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="contact-form-heading">
             <div>
-              <span>Contact request</span>
               <h3>Tell us about your setup.</h3>
             </div>
-            <div className="contact-form-status">Private by default</div>
           </div>
 
           <div className="contact-form-grid">
@@ -87,11 +84,11 @@ export default function ContactSection() {
             <label>
               <span>Company size</span>
               <div className="contact-select">
-                <select name="companySize" defaultValue="1–25 employees" required>
-                  <option>1–25 employees</option>
-                  <option>26–100 employees</option>
-                  <option>101–500 employees</option>
-                  <option>501–1,000 employees</option>
+                <select name="companySize" defaultValue="1 to 25 employees" required>
+                  <option>1 to 25 employees</option>
+                  <option>26 to 100 employees</option>
+                  <option>101 to 500 employees</option>
+                  <option>501 to 1,000 employees</option>
                   <option>1,000+ employees</option>
                 </select>
               </div>
@@ -101,9 +98,9 @@ export default function ContactSection() {
               <div className="contact-select">
                 <select name="devices" defaultValue="Under 25" required>
                   <option>Under 25</option>
-                  <option>25–100</option>
-                  <option>101–500</option>
-                  <option>501–1,000</option>
+                  <option>25 to 100</option>
+                  <option>101 to 500</option>
+                  <option>501 to 1,000</option>
                   <option>1,000+</option>
                 </select>
               </div>

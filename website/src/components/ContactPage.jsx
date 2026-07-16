@@ -6,8 +6,8 @@ const ENDPOINT = 'https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/cont
 const EMAIL = 'nevian.info@gmail.com';
 
 const details = [
-  'A focused 30-minute walkthrough',
-  'A practical fit check for your environment',
+  'A focused 30 minute walkthrough',
+  'An honest look at whether Nevian fits your environment',
   'A reply within one business day',
 ];
 
@@ -77,11 +77,10 @@ export default function ContactPage() {
         <section className="contact-page-section">
           <div className="contact-page-shell">
             <div className="contact-page-copy">
-              <div className="contact-page-eyebrow">Contact Nevian</div>
-              <h1>Let&apos;s make IT support feel lighter.</h1>
+              <h1>Let&apos;s talk about your support workload.</h1>
               <p>
-                Tell us where support work slows your team down. We&apos;ll show you where Nevian can add context,
-                remove repetitive work, and keep every action visible.
+                Tell us what takes up your team&apos;s time today. We&apos;ll explain how Nevian could handle the routine work
+                and where your team would stay involved.
               </p>
 
               <ul className="contact-page-details">
@@ -98,10 +97,8 @@ export default function ContactPage() {
             <form className="contact-page-form" onSubmit={handleSubmit}>
               <div className="contact-page-form-header">
                 <div>
-                  <span>Start a conversation</span>
                   <h2>Tell us about your team.</h2>
                 </div>
-                <div className="contact-page-private"><i /> Private by default</div>
               </div>
 
               <div className="contact-page-fields">
@@ -123,11 +120,11 @@ export default function ContactPage() {
                 </label>
                 <label>
                   <span>Company size</span>
-                  <select name="companySize" defaultValue="1-25 employees" required>
-                    <option>1-25 employees</option>
-                    <option>26-100 employees</option>
-                    <option>101-500 employees</option>
-                    <option>501-1,000 employees</option>
+                  <select name="companySize" defaultValue="1 to 25 employees" required>
+                    <option>1 to 25 employees</option>
+                    <option>26 to 100 employees</option>
+                    <option>101 to 500 employees</option>
+                    <option>501 to 1,000 employees</option>
                     <option>1,000+ employees</option>
                   </select>
                 </label>
@@ -135,9 +132,9 @@ export default function ContactPage() {
                   <span>Managed devices</span>
                   <select name="devices" defaultValue="Under 25" required>
                     <option>Under 25</option>
-                    <option>25-100</option>
-                    <option>101-500</option>
-                    <option>501-1,000</option>
+                    <option>25 to 100</option>
+                    <option>101 to 500</option>
+                    <option>501 to 1,000</option>
                     <option>1,000+</option>
                   </select>
                 </label>
@@ -175,7 +172,7 @@ export default function ContactPage() {
 
       <footer className="contact-page-footer">
         <a href="/" className="contact-page-footer-brand"><img src="/assets/logo.png" alt="" /> Nevian</a>
-        <span>AI-powered IT support for lean teams.</span>
+        <span>Nevian handles routine support work and keeps your team informed.</span>
         <span>© {new Date().getFullYear()} Nevian</span>
       </footer>
     </>

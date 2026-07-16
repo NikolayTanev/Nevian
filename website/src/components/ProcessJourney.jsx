@@ -5,23 +5,23 @@ import { useReveal } from '../hooks/useReveal.js';
 const steps = [
   {
     title: 'Discovery',
-    description: 'We begin by learning about your users, devices, and support workflow through a focused call or meeting.',
+    description: 'We look at the requests your team receives most often, the devices they manage, and how support works today.',
   },
   {
     title: 'Planning',
-    description: 'We map the right rollout around your priorities, systems, and the work that slows your team down.',
+    description: 'Together, we choose a useful first rollout and agree on what success should look like.',
   },
   {
-    title: 'Development',
-    description: 'Nevian is configured around your environment, with integrations and automation built in from day one.',
+    title: 'Setup',
+    description: 'We connect Nevian to the systems it needs and configure the approved support work.',
   },
   {
     title: 'Launch',
-    description: 'We introduce the platform cleanly, validate every workflow, and give your team a calm path into production.',
+    description: 'We test each workflow with your team, fix any gaps, and then make it available to users.',
   },
   {
     title: 'Support',
-    description: 'We stay close after launch, monitor outcomes, and refine the system as your team and needs evolve.',
+    description: 'After launch, we review the results with you and adjust the setup as your needs change.',
   },
 ];
 
@@ -49,25 +49,16 @@ export default function ProcessJourney() {
       <div className="process-journey-inner">
         <header className="process-journey-header">
           <div>
-            <h2 id="process-journey-title">
-              Begin <span>Your<br />Journey</span> with <span>Us</span>
-            </h2>
-
-            <div className="process-journey-label">
-              <ProcessIcon />
-              How it works
-            </div>
+            <h2 id="process-journey-title">How we get Nevian running</h2>
           </div>
 
           <div className="process-journey-intro">
             <p>
-              Working with us is simple and transparent. We start with a quick call to understand your goals and needs,
-              then develop a tailored plan with clear timelines and solutions. Once approved, our team moves into
-              deployment, keeping you updated at every stage. After launch, we ensure smooth delivery and offer ongoing
-              support if needed.
+              We start by looking at the requests your team handles most often and the systems behind them. From there,
+              we agree on a useful first rollout, configure it with your team, and test it before anyone depends on it.
             </p>
             <a href="/contact.html" className="process-journey-control">
-              Take Control <IconArrow />
+              Talk to us <IconArrow />
             </a>
           </div>
         </header>

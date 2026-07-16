@@ -58,8 +58,8 @@ export default function Integrations() {
   return (
     <section className="integrations-band py-10">
       <div ref={ref} className={`wrap ${shown ? 'animate-fade-up' : 'opacity-0'}`}>
-        <p className="mb-8 text-center text-sm font-semibold uppercase tracking-wider text-muted">
-          Works with the tools your IT team already runs
+        <p className="mb-8 text-center text-sm text-muted">
+          Nevian connects to the tools your team already uses.
         </p>
 
         {/* Seamless marquee: one moving row holds two identical tracks and

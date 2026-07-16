@@ -184,7 +184,7 @@ export default function Architecture() {
 
           <DiagramNode className="architecture-orchestration" icon="orchestration" delay={520} description="Coordinates approved actions, dependencies, retries, and the complete audit trail.">Orchestration</DiagramNode>
           <DiagramNode className="architecture-desk" icon="monitor" delay={590} description="Collects live endpoint context and executes signed fixes on user devices.">Desk Agent</DiagramNode>
-          <DiagramNode className="architecture-server" icon="lock" delay={650} description="Runs controlled server-side automation without opening inbound access.">Server Agent</DiagramNode>
+          <DiagramNode className="architecture-server" icon="lock" delay={650} description="Runs controlled automation on servers without opening inbound access.">Server Agent</DiagramNode>
         </div>
 
         <div className="architecture-mobile-flow" aria-label="Nevian workflow">

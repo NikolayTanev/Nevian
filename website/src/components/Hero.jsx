@@ -12,7 +12,7 @@ const tickets = [
       { role: 'user', text: "I'm locked out and forgot my password." },
       { role: 'ai', text: "I can reset it for you. What's the 6-digit code from your authenticator app?" },
       { role: 'user', text: '482 913' },
-      { role: 'ai', text: "Verified. Here's a temporary password: ", code: 'Tq7$kR2wze', tail: ". You'll set a new one at next sign-in." },
+      { role: 'ai', text: "Verified. Here's a temporary password: ", code: 'Tq7$kR2wze', tail: ". You'll choose a new one when you next sign in." },
     ],
     sys: { kind: 'green', text: 'Resolved automatically in 1.4 seconds' },
   },
@@ -29,7 +29,7 @@ const tickets = [
       { role: 'ai', text: "Installing now through the desk agent. I'll confirm when it's ready." },
       { role: 'ai', text: 'All set. Acrobat Pro is installed and ready to use.' },
     ],
-    sys: { kind: 'green', text: 'Resolved automatically · no waiting' },
+    sys: { kind: 'green', text: 'Resolved automatically with no waiting' },
   },
   {
     id: 't3',
@@ -40,9 +40,9 @@ const tickets = [
     msgs: [
       { role: 'user', text: 'My laptop keeps crashing with a blue screen.' },
       { role: 'ai', text: "I checked your device and I'm seeing repeated crashes after a recent graphics driver update." },
-      { role: 'ai', text: "This one needs hands-on repair, so I've escalated it with your logs and full device context attached." },
+      { role: 'ai', text: "This needs a technician, so I've passed it on with your logs and device details attached." },
     ],
-    sys: { kind: 'amber', text: 'Escalated to 2nd-level · assigned to Alex R.' },
+    sys: { kind: 'amber', text: 'Escalated to second line support and assigned to Alex R.' },
   },
   {
     id: 't4',
@@ -56,7 +56,7 @@ const tickets = [
       { role: 'user', text: 'Yes, go ahead.' },
       { role: 'ai', text: "Updated and reconnected. You're on the VPN now." },
     ],
-    sys: { kind: 'green', text: 'Resolved automatically · no waiting' },
+    sys: { kind: 'green', text: 'Resolved automatically with no waiting' },
   },
 ];
 
@@ -83,15 +83,14 @@ export default function Hero() {
       <div className="hero-content wrap">
         {/* Headline + CTAs, centered */}
         <div className="hero-copy hero-enter">
-          <div className="hero-eyebrow"><i /> AI-powered service desk</div>
           <h1>
-            Resolve tickets faster with <span className="text-accent">AI</span> and full endpoint context.
+            Give every IT request the context it needs.
           </h1>
-          <p>Resolve routine work instantly while your team keeps full visibility and control.</p>
+          <p>Nevian handles common requests, gathers device details, and shows your team exactly what happened.</p>
           <div className="hero-actions">
             <a href="/contact.html" className="hero-button hero-button-primary">Book a demo</a>
             <a href="#how" className="hero-button hero-button-secondary">
-              See How It Works <IconArrow className="h-4 w-4" />
+              See how it works <IconArrow className="h-4 w-4" />
             </a>
           </div>
         </div>

@@ -3,48 +3,48 @@ import { useEffect, useRef, useState } from 'react';
 const steps = [
   {
     key: 'Report',
-    phase: 'Frictionless intake',
-    headline: 'A request starts with a conversation.',
+    phase: 'Request received',
+    headline: 'Start with a normal conversation.',
     stat: '0',
     statLabel: 'forms to fill',
-    desc: 'Users describe the problem in plain language. Nevian understands the request without portals, dropdowns, or rigid scripts.',
-    tags: ['Plain-language intake', 'Any channel', 'Instant response'],
+    desc: 'People can describe the problem in their own words. Nevian turns that message into a support request without sending them through a portal.',
+    tags: ['Plain language', 'Any channel', 'Quick reply'],
   },
   {
     key: 'Triage',
-    phase: 'AI classification',
-    headline: 'Every ticket gets the right next step.',
+    phase: 'Request reviewed',
+    headline: 'The next step is clear from the start.',
     stat: '1.2s',
-    statLabel: 'to full triage',
-    desc: 'Nevian classifies urgency, identifies intent, and prepares the next action before a technician even opens the queue.',
-    tags: ['Intent detection', 'Priority scoring', 'Smart routing'],
+    statLabel: 'to review the request',
+    desc: 'Nevian checks what the request is about, how urgent it looks, and who should handle it before it reaches the queue.',
+    tags: ['Request type', 'Urgency', 'Routing'],
   },
   {
     key: 'Context',
-    phase: 'Endpoint intelligence',
-    headline: 'The full device picture is already there.',
+    phase: 'Device checked',
+    headline: 'Device details arrive with the request.',
     stat: 'Live',
-    statLabel: 'endpoint context',
-    desc: 'OS, hardware, disk, network, recent errors, and policy state arrive with the ticket automatically—ready for action.',
+    statLabel: 'device details',
+    desc: 'The ticket includes the operating system, hardware, storage, network, recent errors, and policy status, so nobody has to ask for them later.',
     tags: ['Device health', 'Recent errors', 'Network state'],
   },
   {
     key: 'Automate',
-    phase: 'Secure execution',
-    headline: 'Routine fixes happen safely in the background.',
+    phase: 'Fix approved',
+    headline: 'Routine fixes run under your rules.',
     stat: '100%',
-    statLabel: 'audited actions',
-    desc: 'Signed, outbound-only jobs execute approved fixes inside your network. Every command and result stays visible.',
-    tags: ['Signed jobs', 'Outbound only', 'Full audit trail'],
+    statLabel: 'of actions recorded',
+    desc: 'Nevian runs approved jobs inside your environment and records every command and result for your team to review.',
+    tags: ['Signed jobs', 'Outbound connection', 'Complete record'],
   },
   {
     key: 'Resolve',
-    phase: 'Closed-loop support',
-    headline: 'Users get answers. IT gets its time back.',
+    phase: 'Work completed',
+    headline: 'The user gets an answer and IT gets the record.',
     stat: '1.4s',
-    statLabel: 'to resolution',
-    desc: 'Nevian confirms the outcome, documents the work, and closes the loop. Your team only sees what truly needs a human.',
-    tags: ['Automatic follow-up', 'Documented outcome', 'Human escalation'],
+    statLabel: 'for a common reset',
+    desc: 'Nevian confirms the result, writes down what changed, and closes the request. Anything unusual stays with your team.',
+    tags: ['User follow up', 'Recorded result', 'Human handoff'],
   },
 ];
 
@@ -535,9 +535,6 @@ export default function Journey() {
                   <span>Nevian workflow</span>
                 </div>
 
-                <div className="nevian-journey-phase">
-                  Step {String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')} · {activeStep.phase}
-                </div>
                 <h2>{activeStep.headline}</h2>
 
                 <div className="nevian-journey-metric">
@@ -546,15 +543,6 @@ export default function Journey() {
                 </div>
 
                 <p>{activeStep.desc}</p>
-
-                <ul className="nevian-journey-tags" aria-label={`${activeStep.key} capabilities`}>
-                  {activeStep.tags.map((tag) => (
-                    <li key={tag}>
-                      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8.2 3 3L13 4.8" /></svg>
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
               </div>
             </article>
           </div>
@@ -605,18 +593,12 @@ export default function Journey() {
                   <img src="/assets/logo.png" alt="" />
                   <span>Nevian workflow</span>
                 </div>
-                <div className="nevian-journey-mobile-phase">
-                  {String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')} · {activeStep.phase}
-                </div>
                 <h2>{activeStep.headline}</h2>
                 <div className="nevian-journey-mobile-metric">
                   <strong>{activeStep.stat}</strong>
                   <span>{activeStep.statLabel}</span>
                 </div>
                 <p>{activeStep.desc}</p>
-                <ul>
-                  {activeStep.tags.slice(0, 2).map((tag) => <li key={tag}>{tag}</li>)}
-                </ul>
               </div>
             </article>
 

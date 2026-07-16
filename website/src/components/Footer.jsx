@@ -73,12 +73,11 @@ export default function Footer({ showCta = true }) {
 
         <section className="footer-newsletter" aria-labelledby="footer-newsletter-title">
           <div>
-            <div className="footer-section-label"><i /> Subscribe to our newsletter</div>
-            <h2 id="footer-newsletter-title">The latest IT support insights, product updates, and resources—in your inbox.</h2>
+            <h2 id="footer-newsletter-title">Useful notes on IT support and new work from Nevian.</h2>
           </div>
 
           <form className="footer-newsletter-form" onSubmit={subscribe}>
-            <label htmlFor="newsletter-email"><i /> Email</label>
+            <label htmlFor="newsletter-email">Email</label>
             <div>
               <input id="newsletter-email" name="newsletterEmail" type="email" placeholder="Enter your email" required />
               <button type="submit">Subscribe <IconArrow aria-hidden="true" /></button>

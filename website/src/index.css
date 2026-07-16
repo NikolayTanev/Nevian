@@ -26,9 +26,6 @@
   .wrap {
     @apply mx-auto w-full max-w-6xl px-6;
   }
-  .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full border border-accent-line bg-accent-soft px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-deep;
-  }
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition active:translate-y-px;
   }
@@ -892,36 +889,9 @@
   text-align: center;
 }
 
-.hero-eyebrow {
-  display: inline-flex;
-  min-height: 30px;
-  align-items: center;
-  gap: 9px;
-  padding: 0 13px;
-  border: 1px solid rgba(105, 222, 163, .28);
-  border-radius: 999px;
-  color: rgba(211, 244, 227, .82);
-  background: rgba(5, 15, 11, .58);
-  box-shadow: inset 0 1px rgba(255, 255, 255, .025);
-  font-size: .68rem;
-  font-weight: 750;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-
-.hero-eyebrow i {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #55d799;
-  box-shadow: 0 0 10px rgba(85, 215, 153, .56);
-}
-
 .hero-copy h1 {
   max-width: 820px;
-  margin: 18px auto 0;
+  margin: 0 auto;
   color: #f7faf8;
   font-size: clamp(2.5rem, 4.25vw, 4rem);
   font-weight: 800;
@@ -1830,20 +1800,6 @@
   object-fit: contain;
 }
 
-.nevian-journey-phase {
-  display: inline-flex;
-  margin-top: clamp(18px, 2.1vh, 26px);
-  padding: 7px 11px;
-  color: #93e8b9;
-  font-size: .7rem;
-  font-weight: 800;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-  border: 1px solid rgba(107, 214, 155, .22);
-  border-radius: 999px;
-  background: rgba(21, 160, 107, .08);
-}
-
 .nevian-journey-copy h2 {
   max-width: 680px;
   margin: clamp(16px, 2.2vh, 26px) 0 0;
@@ -1887,38 +1843,6 @@
   color: rgba(221, 230, 226, .67);
   font-size: clamp(.94rem, 1.05vw, 1.1rem);
   line-height: 1.62;
-}
-
-.nevian-journey-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: clamp(18px, 2.5vh, 28px) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.nevian-journey-tags li {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 10px;
-  color: rgba(229, 239, 234, .76);
-  font-size: .72rem;
-  font-weight: 650;
-  border: 1px solid rgba(136, 162, 151, .18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .035);
-}
-
-.nevian-journey-tags svg {
-  width: 13px;
-  height: 13px;
-  fill: none;
-  stroke: #6bd69b;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .nevian-journey-mobile {
@@ -3008,17 +2932,9 @@ html.contact-route .site-nav {
   align-self: center;
 }
 
-.contact-page-eyebrow {
-  color: rgba(91, 215, 154, .78);
-  font-size: .69rem;
-  font-weight: 750;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-
 .contact-page-copy h1 {
   max-width: 520px;
-  margin: clamp(10px, 1.7vh, 18px) 0 0;
+  margin: 0;
   color: #f5f7f6;
   font-family: 'Hanken Grotesk', Inter, system-ui, sans-serif;
   font-size: clamp(2.65rem, min(4.35vw, 7vh), 4.65rem);
@@ -3099,23 +3015,6 @@ html.contact-route .site-nav {
   color: #f3f7f5;
   font-size: clamp(1.45rem, 2vw, 1.8rem);
   font-weight: 680;
-}
-
-.contact-page-private {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding-top: 3px;
-  color: rgba(201, 216, 208, .46);
-  font-size: .65rem;
-  white-space: nowrap;
-}
-
-.contact-page-private i {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #4fd393;
 }
 
 .contact-page-fields {
@@ -3994,28 +3893,9 @@ html.contact-route .site-nav {
   gap: clamp(40px, 7vw, 110px);
 }
 
-.password-demo-heading > div:first-child > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  color: rgba(109, 224, 167, .78);
-  font-size: .68rem;
-  font-weight: 750;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-}
-
-.password-demo-heading > div:first-child > span i {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #61dda1;
-  box-shadow: 0 0 12px rgba(97, 221, 161, .5);
-}
-
 .password-demo-heading h2 {
   max-width: 800px;
-  margin: 15px 0 0;
+  margin: 0;
   color: #f7faf8;
   font-size: clamp(2.7rem, 5vw, 5.3rem);
   font-weight: 740;
@@ -6141,14 +6021,8 @@ html.contact-route .site-nav {
     padding-bottom: 6px;
   }
 
-  .hero-eyebrow {
-    min-height: 27px;
-    padding: 0 10px;
-    font-size: .58rem;
-  }
-
   .hero-copy h1 {
-    margin-top: 15px;
+    margin-top: 0;
     font-size: clamp(2.15rem, 10.8vw, 3.1rem);
     line-height: .98;
   }

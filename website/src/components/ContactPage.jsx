@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Nav from './Nav.jsx';
+import ContactSelect from './ContactSelect.jsx';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
 const ENDPOINT = 'https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/contact';
@@ -10,6 +11,31 @@ const details = [
   'An honest look at whether Nevian fits your environment',
   'A reply within one business day',
 ];
+
+const validationMessages = {
+  firstName: 'Enter your first name.',
+  lastName: 'Enter your last name.',
+  email: 'Enter your work email.',
+  company: 'Enter your company name.',
+  companySize: 'Choose your company size.',
+  devices: 'Choose a device count.',
+  goal: 'Choose what you want to improve.',
+  message: 'Add a short message.',
+};
+
+function findInvalidField(form) {
+  return Array.from(form.elements).find((field) => field.willValidate && !field.validity.valid);
+}
+
+function validationMessageFor(field) {
+  if (field.name === 'email' && field.validity.typeMismatch) return 'Enter a valid work email.';
+  return validationMessages[field.name] || 'Check this field and try again.';
+}
+
+function focusInvalidField(field) {
+  const customTrigger = field.closest('.contact-page-select')?.querySelector('.contact-page-select-trigger');
+  (customTrigger || field).focus();
+}
 
 export default function ContactPage() {
   const [sending, setSending] = useState(false);
@@ -42,11 +68,21 @@ export default function ContactPage() {
     const data = Object.fromEntries(new FormData(form).entries());
 
     if (data.website) {
+      form.classList.remove('has-validation-errors');
       form.reset();
       setStatus({ message: 'Thanks. We received your request.', kind: 'success' });
       return;
     }
 
+    const invalidField = findInvalidField(form);
+    if (invalidField) {
+      form.classList.add('has-validation-errors');
+      setStatus({ message: validationMessageFor(invalidField), kind: 'error' });
+      window.requestAnimationFrame(() => focusInvalidField(invalidField));
+      return;
+    }
+
+    form.classList.remove('has-validation-errors');
     setSending(true);
     setStatus({ message: 'Sending your request...', kind: '' });
 
@@ -67,6 +103,20 @@ export default function ContactPage() {
     } finally {
       setSending(false);
     }
+  };
+
+  const handleInput = (event) => {
+    const form = event.currentTarget;
+    if (!form.classList.contains('has-validation-errors')) return;
+
+    const invalidField = findInvalidField(form);
+    if (invalidField) {
+      setStatus({ message: validationMessageFor(invalidField), kind: 'error' });
+      return;
+    }
+
+    form.classList.remove('has-validation-errors');
+    setStatus({ message: '', kind: '' });
   };
 
   return (
@@ -94,7 +144,7 @@ export default function ContactPage() {
               </a>
             </div>
 
-            <form className="contact-page-form" onSubmit={handleSubmit}>
+            <form className="contact-page-form" onSubmit={handleSubmit} onInput={handleInput} noValidate>
               <div className="contact-page-form-header">
                 <div>
                   <h2>Tell us about your team.</h2>
@@ -118,36 +168,43 @@ export default function ContactPage() {
                   <span>Company</span>
                   <input name="company" type="text" autoComplete="organization" placeholder="Company Inc." required />
                 </label>
-                <label>
-                  <span>Company size</span>
-                  <select name="companySize" defaultValue="1 to 25 employees" required>
-                    <option>1 to 25 employees</option>
-                    <option>26 to 100 employees</option>
-                    <option>101 to 500 employees</option>
-                    <option>501 to 1,000 employees</option>
-                    <option>1,000+ employees</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Managed devices</span>
-                  <select name="devices" defaultValue="Under 25" required>
-                    <option>Under 25</option>
-                    <option>25 to 100</option>
-                    <option>101 to 500</option>
-                    <option>501 to 1,000</option>
-                    <option>1,000+</option>
-                  </select>
-                </label>
-                <label className="contact-page-field-wide">
-                  <span>What are you looking to improve?</span>
-                  <select name="goal" defaultValue="Faster ticket resolution" required>
-                    <option>Faster ticket resolution</option>
-                    <option>Better endpoint visibility</option>
-                    <option>Safe IT automation</option>
-                    <option>A unified admin workflow</option>
-                    <option>Something else</option>
-                  </select>
-                </label>
+                <ContactSelect
+                  name="companySize"
+                  label="Company size"
+                  placeholder="Select company size"
+                  options={[
+                    '1 to 25 employees',
+                    '26 to 100 employees',
+                    '101 to 500 employees',
+                    '501 to 1,000 employees',
+                    '1,000+ employees',
+                  ]}
+                />
+                <ContactSelect
+                  name="devices"
+                  label="Managed devices"
+                  placeholder="Select device count"
+                  options={[
+                    'Under 25',
+                    '25 to 100',
+                    '101 to 500',
+                    '501 to 1,000',
+                    '1,000+',
+                  ]}
+                />
+                <ContactSelect
+                  className="contact-page-field-wide"
+                  name="goal"
+                  label="What are you looking to improve?"
+                  placeholder="Select a goal"
+                  options={[
+                    'Faster ticket resolution',
+                    'Better endpoint visibility',
+                    'Safe IT automation',
+                    'A unified admin workflow',
+                    'Something else',
+                  ]}
+                />
                 <label className="contact-page-field-wide">
                   <span>Message</span>
                   <textarea name="message" rows="5" placeholder="Tell us a little about your current IT support setup..." required />
@@ -162,7 +219,7 @@ export default function ContactPage() {
                 {sending ? 'Sending...' : 'Send request'} <IconArrow aria-hidden="true" />
               </button>
 
-              <div className={`contact-page-status ${status.kind === 'success' ? 'is-success' : ''}`} aria-live="polite">
+              <div className={`contact-page-status ${status.kind ? `is-${status.kind}` : ''}`} aria-live="polite">
                 {status.message}
               </div>
             </form>

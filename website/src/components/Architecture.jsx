@@ -60,23 +60,23 @@ function FlowLines() {
       <g className="architecture-line-paths">
         <path d="M350 54V174" />
         <path d="M760 54V174" />
-        <path d="M350 228V255H520V279" />
-        <path d="M760 228V255H520" />
-        <path d="M104 330H470" />
-        <path d="M570 330H940" />
-        <path d="M520 380V430" />
+        <path d="M350 228V255H660V279" />
+        <path d="M760 228V255H660" />
+        <path d="M104 330H610" />
+        <path d="M710 330H940" />
+        <path d="M660 380V405H520V430" />
         <path d="M520 485V515H355V540M520 515H690V540" />
       </g>
 
       <g className="architecture-junctions">
-        <circle cx="520" cy="255" r="3.5" />
-        <circle cx="570" cy="330" r="4" />
+        <circle cx="660" cy="255" r="3.5" />
+        <circle cx="710" cy="330" r="4" />
         <circle cx="520" cy="515" r="3.5" />
       </g>
 
       <g className="architecture-flow-dots">
-        <circle r="3"><animateMotion dur="7.2s" repeatCount="indefinite" path="M350 228V255H520" /></circle>
-        <circle r="3"><animateMotion dur="8.4s" begin="-3.1s" repeatCount="indefinite" path="M104 330H470" /></circle>
+        <circle r="3"><animateMotion dur="7.2s" repeatCount="indefinite" path="M350 228V255H660" /></circle>
+        <circle r="3"><animateMotion dur="8.4s" begin="-3.1s" repeatCount="indefinite" path="M104 330H610" /></circle>
       </g>
     </svg>
   );

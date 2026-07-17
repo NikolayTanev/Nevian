@@ -61,7 +61,6 @@ export default function Footer({ showCta = true }) {
               <path d="M700 0v83l30 30h148M118 0v121l-48 48v117" />
             </svg>
             <div className="footer-cta-content">
-              <span>One platform. Less IT friction.</span>
               <h2 id="footer-cta-title">Ready to dive in?</h2>
               <p>See where Nevian can remove repetitive work from your support workflow.</p>
               <a href="/contact.html" className="footer-cta-button">

@@ -72,61 +72,63 @@ function Tag({ tag }) {
 function HeroContextField({ className }) {
   return (
     <div aria-hidden="true" className={`hero-context-field ${className}`}>
-      <svg className="hero-context-links" viewBox="0 0 1000 520" preserveAspectRatio="none">
-        <path d="M92 190 C250 190 290 258 442 258" />
-        <path d="M908 170 C748 170 716 258 558 258" />
-        <path d="M150 420 C292 420 330 300 448 282" />
-        <path d="M850 416 C708 416 666 302 552 282" />
-        <path d="M500 82 L500 438" />
-        <circle cx="500" cy="270" r="7" />
-        <circle cx="442" cy="258" r="3" />
-        <circle cx="558" cy="258" r="3" />
-      </svg>
+      <div className="hero-context-canvas">
+        <svg className="hero-context-links" viewBox="0 0 1000 520" preserveAspectRatio="none">
+          <path d="M92 190 C250 190 290 258 442 258" />
+          <path d="M908 170 C748 170 716 258 558 258" />
+          <path d="M150 420 C292 420 330 300 448 282" />
+          <path d="M850 416 C708 416 666 302 552 282" />
+          <path d="M500 82 L500 438" />
+          <circle cx="500" cy="270" r="7" />
+          <circle cx="442" cy="258" r="3" />
+          <circle cx="558" cy="258" r="3" />
+        </svg>
 
-      <article className="hero-context-node hero-context-request">
-        <div className="hero-context-node-head">
-          <span>Incoming request</span>
-          <b>TKT-0044</b>
-        </div>
-        <strong>Laptop keeps crashing</strong>
-        <p>Crash history and recent changes found</p>
-        <div className="hero-context-tags">
-          <i>Device linked</i>
-          <i>Logs attached</i>
-        </div>
-      </article>
+        <article className="hero-context-node hero-context-request">
+          <div className="hero-context-node-head">
+            <span>Incoming request</span>
+            <b>TKT-0044</b>
+          </div>
+          <strong>Laptop keeps crashing</strong>
+          <p>Crash history and recent changes found</p>
+          <div className="hero-context-tags">
+            <i>Device linked</i>
+            <i>Logs attached</i>
+          </div>
+        </article>
 
-      <article className="hero-context-node hero-context-device">
-        <div className="hero-context-node-head">
-          <span>Device context</span>
-          <b>Live</b>
-        </div>
-        <dl>
-          <div><dt>Device</dt><dd>LATITUDE-5430-01</dd></div>
-          <div><dt>OS</dt><dd>Windows 11</dd></div>
-          <div><dt>Health</dt><dd className="is-warning">Needs attention</dd></div>
-        </dl>
-      </article>
+        <article className="hero-context-node hero-context-device">
+          <div className="hero-context-node-head">
+            <span>Device context</span>
+            <b>Live</b>
+          </div>
+          <dl>
+            <div><dt>Device</dt><dd>LATITUDE-5430-01</dd></div>
+            <div><dt>OS</dt><dd>Windows 11</dd></div>
+            <div><dt>Health</dt><dd className="is-warning">Needs attention</dd></div>
+          </dl>
+        </article>
 
-      <article className="hero-context-node hero-context-signal">
-        <div className="hero-context-node-head">
-          <span>Signal detected</span>
-          <b>09:42</b>
-        </div>
-        <strong>Graphics driver changed</strong>
-        <div className="hero-context-wave" aria-hidden="true">
-          <i /><i /><i /><i /><i /><i /><i /><i />
-        </div>
-      </article>
+        <article className="hero-context-node hero-context-signal">
+          <div className="hero-context-node-head">
+            <span>Signal detected</span>
+            <b>09:42</b>
+          </div>
+          <strong>Graphics driver changed</strong>
+          <div className="hero-context-wave" aria-hidden="true">
+            <i /><i /><i /><i /><i /><i /><i /><i />
+          </div>
+        </article>
 
-      <article className="hero-context-node hero-context-outcome">
-        <span className="hero-context-check"><IconCheck /></span>
-        <div>
-          <span>Context assembled</span>
-          <strong>Ready for second line</strong>
-          <small>Assigned with evidence attached</small>
-        </div>
-      </article>
+        <article className="hero-context-node hero-context-outcome">
+          <span className="hero-context-check"><IconCheck /></span>
+          <div>
+            <span>Context assembled</span>
+            <strong>Ready for second line</strong>
+            <small>Assigned with evidence attached</small>
+          </div>
+        </article>
+      </div>
     </div>
   );
 }
@@ -137,8 +139,16 @@ export default function Hero() {
 
   const moveSpotlight = (event) => {
     const bounds = event.currentTarget.getBoundingClientRect();
+    const hero = event.currentTarget.closest('.hero-section');
+    const heroBounds = hero?.getBoundingClientRect();
+    const main = event.currentTarget.closest('main');
     event.currentTarget.style.setProperty('--hero-spotlight-x', `${event.clientX - bounds.left}px`);
     event.currentTarget.style.setProperty('--hero-spotlight-y', `${event.clientY - bounds.top}px`);
+    main?.style.setProperty('--hero-transition-x', `${event.clientX}px`);
+    if (hero && heroBounds) {
+      hero.style.setProperty('--hero-light-x', `${event.clientX - heroBounds.left}px`);
+      hero.style.setProperty('--hero-light-y', `${event.clientY - heroBounds.top}px`);
+    }
   };
 
   return (

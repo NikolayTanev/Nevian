@@ -56,9 +56,39 @@ const BASE_BULGE = 3.1;
 const CURVE_HALF_HEIGHT = 20;
 const CURVE_OUTER_CONTROL = 14;
 const CURVE_INNER_CONTROL = 6;
+// Widen the early and middle step intervals without changing the track bounds.
+const DESKTOP_STEP_TRANSITIONS = [.14, .41, .68, .94];
 
 function clamp(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
+}
+
+function desktopStepFloatFromProgress(progress) {
+  const boundedProgress = clamp(progress);
+  let lowerProgress = 0;
+  let lowerStepFloat = 0;
+
+  for (let index = 0; index < DESKTOP_STEP_TRANSITIONS.length; index += 1) {
+    const upperProgress = DESKTOP_STEP_TRANSITIONS[index];
+    const upperStepFloat = index + .5;
+
+    if (boundedProgress <= upperProgress) {
+      const segmentProgress = (boundedProgress - lowerProgress) / (upperProgress - lowerProgress);
+      return lowerStepFloat + segmentProgress * (upperStepFloat - lowerStepFloat);
+    }
+
+    lowerProgress = upperProgress;
+    lowerStepFloat = upperStepFloat;
+  }
+
+  const segmentProgress = (boundedProgress - lowerProgress) / (1 - lowerProgress);
+  return lowerStepFloat + segmentProgress * (steps.length - 1 - lowerStepFloat);
+}
+
+function desktopProgressForStep(index) {
+  if (index <= 0) return 0;
+  if (index >= steps.length - 1) return 1;
+  return (DESKTOP_STEP_TRANSITIONS[index - 1] + DESKTOP_STEP_TRANSITIONS[index]) / 2;
 }
 
 function workflowIndexFromHash(hash = window.location.hash) {
@@ -241,7 +271,9 @@ export default function Journey() {
     let mobileRailWidth = 0;
 
     const updateVisuals = (progress) => {
-      const selectedFloat = progress * (steps.length - 1);
+      const selectedFloat = desktop.matches
+        ? desktopStepFloatFromProgress(progress)
+        : progress * (steps.length - 1);
       const travel = selectedFloat * STEP_SPACING;
       let nextIndex = desktop.matches
         ? clamp(Math.round(selectedFloat), 0, steps.length - 1)
@@ -408,7 +440,9 @@ export default function Journey() {
 
       window.requestAnimationFrame(() => {
         measureTrack();
-        const progress = index / (steps.length - 1);
+        const progress = desktop.matches
+          ? desktopProgressForStep(index)
+          : index / (steps.length - 1);
         window.scrollTo({ top: trackTop + scrollRange * progress, behavior });
       });
     };

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PlatformMenu from './PlatformMenu.jsx';
 
 const workflowSteps = [
   { label: 'Report', slug: 'report' },
@@ -18,8 +19,10 @@ const navigation = [
 
 const trackedSections = [
   { id: 'top', key: 'home' },
+  { id: 'integrations', key: 'platform' },
   { id: 'how', key: 'workflow' },
   { id: 'features', key: 'platform' },
+  { id: 'password-reset', key: 'platform' },
 ];
 
 const prefetchedPages = new Set();
@@ -47,6 +50,7 @@ export default function Nav({ current = 'home' }) {
   const [mobile, setMobile] = useState(false);
   const [active, setActive] = useState(current);
   const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [platformOpen, setPlatformOpen] = useState(false);
   const [activeWorkflowStep, setActiveWorkflowStep] = useState(0);
 
   useEffect(() => {
@@ -152,6 +156,7 @@ export default function Nav({ current = 'home' }) {
   const navigate = (event, href) => {
     setMobile(false);
     setWorkflowOpen(false);
+    setPlatformOpen(false);
 
     const hash = href.startsWith('/#') ? href.slice(1) : '';
     const onHomepage = window.location.pathname === '/' || window.location.pathname.endsWith('/index.html');
@@ -172,6 +177,7 @@ export default function Nav({ current = 'home' }) {
   const navigateWorkflowStep = (event, step, index) => {
     setMobile(false);
     setWorkflowOpen(false);
+    setPlatformOpen(false);
     setActiveWorkflowStep(index);
 
     const onHomepage = window.location.pathname === '/' || window.location.pathname.endsWith('/index.html');
@@ -195,62 +201,31 @@ export default function Nav({ current = 'home' }) {
 
         <nav className="ml-2 hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
           {navigation.map(({ label, href, key }) => {
-            if (key !== 'workflow') {
+            if (key === 'platform') {
               return (
-                <a
+                <PlatformMenu
                   key={label}
-                  href={href}
-                  onClick={(event) => navigate(event, href)}
-                  className={`site-nav-link ${active === key ? 'is-current' : ''}`}
-                  aria-current={active === key ? 'location' : undefined}
-                >
-                  {label}
-                </a>
+                  active={active === key}
+                  open={platformOpen}
+                  onOpenChange={(value) => {
+                    setPlatformOpen(value);
+                    if (value) setWorkflowOpen(false);
+                  }}
+                  onNavigate={navigate}
+                />
               );
             }
 
             return (
-              <div
+              <a
                 key={label}
-                className={`site-nav-workflow ${workflowOpen ? 'is-open' : ''}`}
-                onMouseEnter={() => setWorkflowOpen(true)}
-                onMouseLeave={() => setWorkflowOpen(false)}
-                onFocus={() => setWorkflowOpen(true)}
-                onBlur={(event) => {
-                  if (!event.currentTarget.contains(event.relatedTarget)) setWorkflowOpen(false);
-                }}
+                href={href}
+                onClick={(event) => navigate(event, href)}
+                className={`site-nav-link ${active === key ? 'is-current' : ''}`}
+                aria-current={active === key ? 'location' : undefined}
               >
-                <a
-                  href={href}
-                  onClick={(event) => navigate(event, href)}
-                  className={`site-nav-link site-nav-workflow-trigger ${active === key ? 'is-current' : ''}`}
-                  aria-current={active === key ? 'location' : undefined}
-                  aria-haspopup="menu"
-                  aria-expanded={workflowOpen}
-                >
-                  {label}
-                  <svg viewBox="0 0 12 12" aria-hidden="true">
-                    <path d="m3 4.5 3 3 3-3" />
-                  </svg>
-                </a>
-
-                <div className="site-nav-dropdown site-nav-workflow-menu" role="menu" aria-label="Workflow steps">
-                  <div className="site-nav-workflow-kicker">Jump to a step</div>
-                  {workflowSteps.map((step, index) => (
-                    <a
-                      key={step.slug}
-                      href={`/#workflow-${step.slug}`}
-                      role="menuitem"
-                      onClick={(event) => navigateWorkflowStep(event, step, index)}
-                      className={`site-nav-workflow-item ${active === 'workflow' && activeWorkflowStep === index ? 'is-active' : ''}`}
-                    >
-                      <span>{String(index + 1).padStart(2, '0')}</span>
-                      <strong>{step.label}</strong>
-                      <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7h8m-3-3 3 3-3 3" /></svg>
-                    </a>
-                  ))}
-                </div>
-              </div>
+                {label}
+              </a>
             );
           })}
         </nav>
@@ -268,7 +243,10 @@ export default function Nav({ current = 'home' }) {
           aria-controls="site-mobile-navigation"
           onClick={() => setMobile((value) => {
             const next = !value;
-            if (next) setWorkflowOpen(false);
+            if (next) {
+              setWorkflowOpen(false);
+              setPlatformOpen(false);
+            }
             return next;
           })}
         >

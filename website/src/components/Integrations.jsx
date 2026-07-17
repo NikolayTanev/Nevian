@@ -56,7 +56,7 @@ export default function Integrations() {
   }, []);
 
   return (
-    <section className="integrations-band py-10">
+    <section id="integrations" className="integrations-band py-10">
       <div ref={ref} className={`wrap ${shown ? 'animate-fade-up' : 'opacity-0'}`}>
         <p className="mb-8 text-center text-sm text-muted">
           Nevian connects to the tools your team already uses.

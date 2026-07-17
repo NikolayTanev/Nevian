@@ -123,3 +123,8 @@ Format:
 - **When:** Adapting a visual navigation reference into an existing marketing site.
 - **Lesson:** First map every card to a real section or route and add missing anchors before styling the panel. Use a button for the disclosure trigger and ordinary links inside the destination grid instead of ARIA menu roles, then support click, hover, outside click, Escape, ArrowDown focus, hidden-state tab control, and reduced motion. Give each card a content-specific preview so the menu communicates the product rather than copying the reference literally. When the mega menu becomes the main discovery surface, remove overlapping sibling flyouts instead of making every nav item expandable. Treat the brand accent as an orientation signal, not a surface treatment: keep panels, cards, borders, and shadows neutral, then reserve accent color for the current location or one meaningful status.
 - **Source:** success · 2026-07-17 · Platform mega menu
+
+### Apply decorative fades to the artwork layer, not the content wrapper
+- **When:** Fading a section background into the next surface while interactive diagrams or cards sit above it.
+- **Lesson:** A foreground gradient on the shared content wrapper will dim nodes, labels, connectors, and controls along with the artwork. Put the mask or gradient on the background pseudo-element itself, and ensure the background image covers the section so its physical edge never appears. Keep semantic and interactive content in a separate unfaded layer.
+- **Source:** failure to success · 2026-07-17 · architecture bottom fade

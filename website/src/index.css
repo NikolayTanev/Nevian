@@ -1329,6 +1329,15 @@
    A brighter duplicate is clipped to the cursor, so every hover position
    reveals either a panel, connector, grid line, or status marker. */
 @media (min-width: 768px) {
+  .hero-section {
+    z-index: 3;
+    overflow: visible;
+  }
+
+  .integrations-band {
+    z-index: 2;
+  }
+
   .hero-content {
     --hero-spotlight-x: 50%;
     --hero-spotlight-y: 42%;
@@ -1338,17 +1347,20 @@
   }
 
   .hero-content::after {
+    --hero-glow-bleed: clamp(190px, 20vw, 320px);
     content: '';
     position: absolute;
     z-index: 1;
-    inset: 0;
+    inset: calc(var(--hero-glow-bleed) * -1);
     opacity: 0;
     pointer-events: none;
     background: radial-gradient(
-      circle 230px at var(--hero-spotlight-x) var(--hero-spotlight-y),
+      circle 250px at
+        calc(var(--hero-spotlight-x) + var(--hero-glow-bleed))
+        calc(var(--hero-spotlight-y) + var(--hero-glow-bleed)),
       rgba(39, 188, 118, .13),
       rgba(17, 95, 60, .035) 52%,
-      transparent 76%
+      transparent 78%
     );
     transition: opacity .2s ease;
   }

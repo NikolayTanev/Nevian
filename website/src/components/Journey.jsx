@@ -611,64 +611,40 @@ export default function Journey() {
           </div>
 
           <div className="nevian-journey-mobile">
-            <div ref={mobileRailRef} className="nevian-journey-mobile-rail" aria-hidden="true">
-              <svg className="nevian-journey-mobile-line" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="nevianMobileHighlightGradient" x1="0" x2="1" y1="0" y2="0">
-                    <stop offset="0" stopColor="#0b5234" stopOpacity="0" />
-                    <stop offset=".62" stopColor="#19794e" stopOpacity=".035" />
-                    <stop offset="1" stopColor="#43c681" stopOpacity=".17" />
-                  </linearGradient>
-                  <linearGradient id="nevianMobileLineGradient" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0" stopColor="#263a31" stopOpacity=".3" />
-                    <stop offset=".36" stopColor="#4eba82" stopOpacity=".65" />
-                    <stop offset=".5" stopColor="#8dff6a" />
-                    <stop offset=".66" stopColor="#1e9d69" stopOpacity=".72" />
-                    <stop offset="1" stopColor="#24352e" stopOpacity=".24" />
-                  </linearGradient>
-                </defs>
-                <path className="nevian-journey-mobile-highlight-shape" d="M 88 -5 L 88 31 C 88 40 71 43 71 50 C 71 57 88 60 88 69 L 88 105 L 0 105 L 0 -5 Z" />
-                <path d="M 88 -5 L 88 31 C 88 40 71 43 71 50 C 71 57 88 60 88 69 L 88 105" />
-              </svg>
+            <div className="nevian-journey-mobile-cards">
+              {steps.map((step, index) => (
+                <article
+                  key={step.key}
+                  className="nevian-journey-mobile-card"
+                  data-workflow-card={index}
+                >
+                  <header className="nevian-journey-mobile-card-header">
+                    <div className="nevian-journey-mobile-brand">
+                      <img src="/assets/logo.png" alt="" />
+                      <span>Nevian workflow</span>
+                    </div>
+                    <span>{String(index + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}</span>
+                  </header>
 
-              <svg className="nevian-journey-mobile-ticks" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path ref={mobileTicksRef} d={createMobileTickPath(0, 14.5)} />
-              </svg>
-
-              <div ref={mobileLabelsRef} className="nevian-journey-mobile-labels">
-                {steps.map((step, index) => (
-                  <div
-                    key={step.key}
-                    ref={(node) => { mobileLabelItemsRef.current[index] = node; }}
-                    className={`nevian-journey-mobile-label ${index === activeIndex ? 'is-active' : ''}`}
-                    aria-current={index === activeIndex ? 'step' : undefined}
-                  >
-                    <span>{step.key}</span>
-                    <i />
+                  <div className="nevian-journey-mobile-card-phase">
+                    <strong>{step.key}</strong>
+                    <span>{step.phase}</span>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            <article className="nevian-journey-mobile-copy">
-              <div key={activeIndex} className="nevian-journey-mobile-copy-enter">
-                <div className="nevian-journey-mobile-brand">
-                  <img src="/assets/logo.png" alt="" />
-                  <span>Nevian workflow</span>
-                </div>
-                <h2>{activeStep.headline}</h2>
-                <div className="nevian-journey-mobile-metric">
-                  <strong>{activeStep.stat}</strong>
-                  <span>{activeStep.statLabel}</span>
-                </div>
-                <p>{activeStep.desc}</p>
-              </div>
-            </article>
+                  <h2>{step.headline}</h2>
 
-            <div className="nevian-journey-mobile-progress" aria-hidden="true">
-              <span>{String(activeIndex + 1).padStart(2, '0')}</span>
-              <i><b style={{ transform: `scaleX(${(activeIndex + 1) / steps.length})` }} /></i>
-              <span>{String(steps.length).padStart(2, '0')}</span>
+                  <div className="nevian-journey-mobile-card-metric">
+                    <strong>{step.stat}</strong>
+                    <span>{step.statLabel}</span>
+                  </div>
+
+                  <p>{step.desc}</p>
+
+                  <ul>
+                    {step.tags.map((tag) => <li key={tag}>{tag}</li>)}
+                  </ul>
+                </article>
+              ))}
             </div>
           </div>
 

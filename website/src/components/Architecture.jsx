@@ -33,7 +33,6 @@ function LineIcon({ type }) {
 function NodeTooltip({ children }) {
   return (
     <div className="architecture-node-tooltip" aria-hidden="true">
-      <span>What it does</span>
       <p>{children}</p>
     </div>
   );
@@ -75,8 +74,15 @@ function FlowLines() {
       </g>
 
       <g className="architecture-flow-dots">
-        <circle r="3"><animateMotion dur="7.2s" repeatCount="indefinite" path="M350 228V255H660" /></circle>
-        <circle r="3"><animateMotion dur="8.4s" begin="-3.1s" repeatCount="indefinite" path="M104 330H610" /></circle>
+        <circle r="3"><animateMotion dur="6.8s" begin="-1.2s" calcMode="paced" repeatCount="indefinite" path="M350 54V174" /></circle>
+        <circle r="3"><animateMotion dur="7.4s" begin="-4.3s" calcMode="paced" repeatCount="indefinite" path="M760 54V174" /></circle>
+        <circle r="3"><animateMotion dur="7.2s" begin="-2.6s" calcMode="paced" repeatCount="indefinite" path="M350 228V255H660V279" /></circle>
+        <circle r="3"><animateMotion dur="7.8s" begin="-5.1s" calcMode="paced" repeatCount="indefinite" path="M760 228V255H660" /></circle>
+        <circle r="3"><animateMotion dur="8.4s" begin="-3.1s" calcMode="paced" repeatCount="indefinite" path="M104 330H610" /></circle>
+        <circle r="3"><animateMotion dur="6.9s" begin="-4.7s" calcMode="paced" repeatCount="indefinite" path="M710 330H940" /></circle>
+        <circle r="3"><animateMotion dur="7.6s" begin="-1.8s" calcMode="paced" repeatCount="indefinite" path="M660 380V405H520V430" /></circle>
+        <circle r="3"><animateMotion dur="8.1s" begin="-5.8s" calcMode="paced" repeatCount="indefinite" path="M520 485V515H355V540" /></circle>
+        <circle r="3"><animateMotion dur="7.7s" begin="-3.9s" calcMode="paced" repeatCount="indefinite" path="M520 515H690V540" /></circle>
       </g>
     </svg>
   );

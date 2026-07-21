@@ -10667,7 +10667,7 @@ html.contact-route .site-nav {
     width: var(--tab-width);
     height: 450px;
     overflow: hidden;
-    border: 1.5px solid rgba(96, 216, 154, .55);
+    border: 1.5px solid rgba(188, 202, 195, .18);
     border-radius: 15px;
     color: #edf6f1;
     background: linear-gradient(160deg, rgba(17, 20, 18, .995), rgba(7, 9, 8, .995));
@@ -10693,8 +10693,8 @@ html.contact-route .site-nav {
 
   .hero-product-card.is-collapsed:hover {
     width: 46px;
-    border-color: rgba(94, 226, 160, .58);
-    box-shadow: 0 24px 52px rgba(0, 0, 0, .42), 0 0 20px rgba(61, 196, 128, .08), inset 0 1px rgba(255, 255, 255, .06);
+    border-color: rgba(200, 214, 207, .3);
+    box-shadow: 0 24px 52px rgba(0, 0, 0, .42), inset 0 1px rgba(255, 255, 255, .06);
     cursor: pointer;
   }
 
@@ -10702,7 +10702,7 @@ html.contact-route .site-nav {
     left: 50%;
     width: var(--active-width);
     border-radius: 26px;
-    border-color: rgba(89, 215, 151, .42);
+    border-color: rgba(190, 204, 197, .22);
     box-shadow:
       0 46px 100px rgba(0, 0, 0, .56),
       0 18px 42px rgba(0, 0, 0, .34),
@@ -10743,11 +10743,10 @@ html.contact-route .site-nav {
   }
 
   .hero-product-tab > span:last-child {
-    color: #ffffff;
-    font-size: .67rem;
-    font-weight: 700;
-    letter-spacing: .075em;
-    text-transform: uppercase;
+    color: rgba(238, 246, 242, .92);
+    font-size: .72rem;
+    font-weight: 560;
+    letter-spacing: .01em;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
   }
@@ -10781,7 +10780,7 @@ html.contact-route .site-nav {
        animating card), so the layout never reflows while the card widens.
        The card's growing edge simply reveals the finished content. */
     width: calc(100cqw - 141px);
-    grid-template-rows: 48px 220px minmax(0, 1fr);
+    grid-template-rows: 236px minmax(0, 1fr);
     visibility: hidden;
     pointer-events: none;
     transition: visibility 0s .32s;
@@ -10795,7 +10794,6 @@ html.contact-route .site-nav {
 
   /* Staggered content entrance, echoing the platform dropdown's cascade.
      The card's growing edge wipes the frame in; these settle the pieces. */
-  .hero-product-card.is-active .hero-product-card-topline,
   .hero-product-card.is-active .hero-product-visual,
   .hero-product-card.is-active .hero-product-card-copy h2,
   .hero-product-card.is-active .hero-product-card-copy p,
@@ -10804,8 +10802,7 @@ html.contact-route .site-nav {
     animation: hero-card-item-in .5s cubic-bezier(.16, 1, .3, 1) both;
   }
 
-  .hero-product-card.is-active .hero-product-card-topline { animation-delay: .06s; }
-  .hero-product-card.is-active .hero-product-visual { animation-delay: .12s; }
+  .hero-product-card.is-active .hero-product-visual { animation-delay: .1s; }
   .hero-product-card.is-active .hero-product-card-copy h2 { animation-delay: .18s; }
   .hero-product-card.is-active .hero-product-card-copy p { animation-delay: .24s; }
   .hero-product-card.is-active .hero-product-card-actions li { animation-delay: .28s; }
@@ -10889,58 +10886,15 @@ html.contact-route .site-nav {
   .hero-product-card.is-active .hero-stack-ready-rows > span:nth-child(2) { animation-delay: .44s; }
   .hero-product-card.is-active .hero-stack-ready-rows > span:nth-child(3) { animation-delay: .52s; }
 
-  .hero-product-card-topline {
-    display: flex;
-    padding: 0 23px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    border-bottom: 1px solid rgba(190, 204, 197, .11);
-    color: rgba(197, 216, 206, .68);
-    font-size: .61rem;
-    font-weight: 700;
-    letter-spacing: .075em;
-    text-transform: uppercase;
-  }
-
-  .hero-product-card-topline > span {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .hero-product-card-topline i {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #63dfa3;
-    box-shadow: 0 0 0 5px rgba(83, 211, 147, .06);
-  }
-
-  .hero-product-card-topline b {
-    padding: 5px 8px;
-    border: 1px solid rgba(190, 204, 197, .14);
-    border-radius: 999px;
-    color: rgba(224, 235, 229, .72);
-    background: rgba(255, 255, 255, .022);
-    font-size: .57rem;
-    letter-spacing: .035em;
-  }
-
   .hero-product-visual {
     position: relative;
-    padding: 18px 22px 16px;
+    padding: 24px 24px 18px;
     overflow: hidden;
     background: linear-gradient(160deg, rgba(14, 17, 15, .98), rgba(6, 8, 7, .995));
   }
 
   .hero-product-visual::before {
-    content: '';
-    position: absolute;
-    inset: -20%;
-    opacity: .6;
-    pointer-events: none;
-    background: radial-gradient(circle at 50% 48%, rgba(62, 170, 116, .06), transparent 56%);
+    content: none;
   }
 
   .hero-stack-scene {
@@ -10980,9 +10934,9 @@ html.contact-route .site-nav {
   .hero-product-card-copy p {
     max-width: 46ch;
     margin: 0;
-    color: rgba(199, 215, 207, .64);
-    font-size: .69rem;
-    line-height: 1.48;
+    color: rgba(205, 220, 213, .8);
+    font-size: .72rem;
+    line-height: 1.5;
   }
 
   .hero-product-card-actions {
@@ -11001,50 +10955,50 @@ html.contact-route .site-nav {
   .hero-product-card-actions li {
     display: flex;
     align-items: center;
-    gap: 7px;
-    color: rgba(218, 230, 224, .72);
-    font-size: .62rem;
+    gap: 8px;
+    color: rgba(220, 232, 225, .84);
+    font-size: .68rem;
   }
 
   .hero-product-card-actions li svg {
-    width: 12px;
-    height: 12px;
-    color: #68dca1;
+    width: 13px;
+    height: 13px;
+    color: #5fd79a;
   }
 
   .hero-product-card-actions > a {
     display: inline-flex;
     width: max-content;
-    min-height: 31px;
-    padding: 0 12px;
     align-items: center;
-    gap: 8px;
-    border: 1px solid rgba(88, 207, 147, .24);
-    border-radius: 999px;
-    color: #dcf7e9;
-    background: rgba(38, 133, 87, .08);
-    font-size: .64rem;
-    font-weight: 700;
+    gap: 7px;
+    color: #7ee3ad;
+    font-size: .7rem;
+    font-weight: 600;
     text-decoration: none;
+  }
+
+  .hero-product-card-actions > a svg {
+    width: 14px;
+    height: 14px;
+    transition: transform .3s cubic-bezier(.16, 1, .3, 1);
   }
 
   .hero-product-card-actions > a:hover,
   .hero-product-card-actions > a:focus-visible {
-    border-color: rgba(91, 219, 154, .5);
-    background: rgba(38, 133, 87, .14);
+    color: #a6f0cb;
     outline: none;
   }
 
-  .hero-product-card-actions > a svg { width: 13px; height: 13px; }
+  .hero-product-card-actions > a:hover svg,
+  .hero-product-card-actions > a:focus-visible svg {
+    transform: translateX(3px);
+  }
 
   .hero-stack-scene-request {
     display: grid;
-    padding: 14px 16px;
+    padding: 8px 6px;
     align-content: center;
-    gap: 13px;
-    border: 1px solid rgba(190, 204, 197, .13);
-    border-radius: 17px;
-    background: rgba(4, 7, 5, .58);
+    gap: 16px;
   }
 
   .hero-stack-ticket-head,
@@ -11074,30 +11028,31 @@ html.contact-route .site-nav {
 
   .hero-stack-ticket-main {
     display: grid;
-    padding: 12px;
+    padding: 14px;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: 11px;
-    border: 1px solid rgba(190, 204, 197, .12);
-    border-radius: 13px;
-    background: rgba(255, 255, 255, .018);
+    gap: 12px;
+    border: 1.5px solid rgba(190, 204, 197, .2);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .025);
   }
 
   .hero-stack-ticket-main > span {
     display: grid;
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     place-items: center;
-    border: 1px solid rgba(190, 204, 197, .16);
     border-radius: 10px;
-    color: rgba(236, 244, 240, .82);
-    font-size: .64rem;
-    font-weight: 750;
+    color: #06120c;
+    background: #6bdca4;
+    font-size: .66rem;
+    font-weight: 700;
+    letter-spacing: .01em;
   }
 
   .hero-stack-ticket-main > div { display: grid; gap: 3px; }
-  .hero-stack-ticket-main small { color: rgba(196, 216, 205, .78); font-size: .66rem; }
-  .hero-stack-ticket-main strong { color: #edf6f1; font-size: .82rem; font-weight: 620; }
+  .hero-stack-ticket-main small { color: rgba(203, 221, 212, .82); font-size: .68rem; }
+  .hero-stack-ticket-main strong { color: #f2f8f4; font-size: .86rem; font-weight: 600; }
   .hero-stack-ticket-signals { justify-content: flex-start; }
   .hero-stack-ticket-signals i { flex: 1; height: 1px; background: rgba(187, 201, 194, .15); }
 
@@ -11260,7 +11215,7 @@ html.contact-route .site-nav {
   }
 
   .hero-product-card { height: 420px; }
-  .hero-product-card-content { width: calc(100cqw - 135px); grid-template-rows: 46px 202px minmax(0, 1fr); }
+  .hero-product-card-content { width: calc(100cqw - 135px); grid-template-rows: 214px minmax(0, 1fr); }
   .hero-product-card-body { padding: 17px 18px 18px; grid-template-columns: minmax(0, 1fr) 160px; gap: 16px; }
   .hero-product-card-copy h2 { font-size: 1.08rem; }
   .hero-product-card-copy p { font-size: .64rem; }

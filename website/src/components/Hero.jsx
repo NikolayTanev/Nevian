@@ -243,10 +243,6 @@ function HeroProductStack() {
             </button>
 
             <div className="hero-product-card-content" aria-hidden={!isActive}>
-              <div className="hero-product-card-topline">
-                <span><i />{card.label}</span>
-                <b>{card.status}</b>
-              </div>
               <div className="hero-product-visual"><HeroProductVisual kind={card.key} /></div>
               <div className="hero-product-card-body">
                 <div className="hero-product-card-copy"><h2>{card.title}</h2><p>{card.description}</p></div>

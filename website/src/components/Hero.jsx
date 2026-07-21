@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
 const tickets = [
@@ -69,66 +69,181 @@ function Tag({ tag }) {
   );
 }
 
-function HeroContextField({ className }) {
-  return (
-    <div aria-hidden="true" className={`hero-context-field ${className}`}>
-      <div className="hero-context-canvas">
-        <svg className="hero-context-links" viewBox="0 0 1000 520" preserveAspectRatio="none">
-          <path d="M92 190 C250 190 290 258 442 258" />
-          <path d="M908 170 C748 170 716 258 558 258" />
-          <path d="M150 420 C292 420 330 300 448 282" />
-          <path d="M850 416 C708 416 666 302 552 282" />
-          <path d="M500 82 L500 438" />
-          <circle cx="500" cy="270" r="7" />
-          <circle cx="442" cy="258" r="3" />
-          <circle cx="558" cy="258" r="3" />
-        </svg>
+const heroProductCards = [
+  {
+    key: 'request',
+    tab: 'Request',
+    label: 'Request intake',
+    status: 'Matched',
+    title: 'Understand the request before it hits the queue.',
+    description: 'Nevian connects the person, device, and intent while the conversation is still happening.',
+    bullets: ['Identity verified', 'Managed device linked'],
+    href: '#how',
+  },
+  {
+    key: 'device',
+    tab: 'Context',
+    label: 'Device context',
+    status: 'Live',
+    title: 'Bring the device state into the conversation.',
+    description: 'Health, management, and recent activity arrive together instead of being gathered by hand.',
+    bullets: ['Entra and Intune matched', 'Recent failures surfaced'],
+    href: '#features',
+  },
+  {
+    key: 'evidence',
+    tab: 'Evidence',
+    label: 'Change correlation',
+    status: '3 signals',
+    title: 'Find the change behind the issue.',
+    description: 'A clear timeline connects the first failure to the driver update that happened just before it.',
+    bullets: ['Crash window compared', 'Likely cause highlighted'],
+    href: '#how',
+  },
+  {
+    key: 'handoff',
+    tab: 'Handoff',
+    label: 'Resolution brief',
+    status: 'Ready',
+    title: 'Give second line a ready-to-use brief.',
+    description: 'The right team receives the summary, evidence, and ownership without repeating the investigation.',
+    bullets: ['Six evidence items attached', 'EUC support assigned'],
+    href: '/contact.html',
+  },
+];
 
-        <article className="hero-context-node hero-context-request">
-          <div className="hero-context-node-head">
-            <span>Incoming request</span>
-            <b>TKT-0044</b>
-          </div>
-          <strong>Laptop keeps crashing</strong>
-          <p>Crash history and recent changes found</p>
-          <div className="hero-context-tags">
-            <i>Device linked</i>
-            <i>Logs attached</i>
-          </div>
-        </article>
-
-        <article className="hero-context-node hero-context-device">
-          <div className="hero-context-node-head">
-            <span>Device context</span>
-            <b>Live</b>
-          </div>
-          <dl>
-            <div><dt>Device</dt><dd>LATITUDE-5430-01</dd></div>
-            <div><dt>OS</dt><dd>Windows 11</dd></div>
-            <div><dt>Health</dt><dd className="is-warning">Needs attention</dd></div>
-          </dl>
-        </article>
-
-        <article className="hero-context-node hero-context-signal">
-          <div className="hero-context-node-head">
-            <span>Signal detected</span>
-            <b>09:42</b>
-          </div>
-          <strong>Graphics driver changed</strong>
-          <div className="hero-context-wave" aria-hidden="true">
-            <i /><i /><i /><i /><i /><i /><i /><i />
-          </div>
-        </article>
-
-        <article className="hero-context-node hero-context-outcome">
-          <span className="hero-context-check"><IconCheck /></span>
-          <div>
-            <span>Context assembled</span>
-            <strong>Ready for second line</strong>
-            <small>Assigned with evidence attached</small>
-          </div>
-        </article>
+function HeroProductVisual({ kind }) {
+  if (kind === 'request') {
+    return (
+      <div className="hero-stack-scene hero-stack-scene-request">
+        <div className="hero-stack-ticket-head"><span><i /> New request</span><b>TKT-0044</b></div>
+        <div className="hero-stack-ticket-main">
+          <span>LM</span>
+          <div><small>Linda M. · Finance</small><strong>Laptop crashes after sign-in</strong></div>
+        </div>
+        <div className="hero-stack-ticket-signals"><span>Identity</span><i /><span>Device</span><i /><span>Recent activity</span></div>
       </div>
+    );
+  }
+
+  if (kind === 'device') {
+    return (
+      <div className="hero-stack-scene hero-stack-scene-device">
+        <span className="hero-stack-context-chip is-identity">Entra matched</span>
+        <span className="hero-stack-context-chip is-health">2 failures</span>
+        <span className="hero-stack-context-chip is-checkin">38 sec ago</span>
+        <div className="hero-stack-device-core"><i /><strong>LATITUDE-5430</strong><small>Windows 11 · Managed</small></div>
+      </div>
+    );
+  }
+
+  if (kind === 'evidence') {
+    return (
+      <div className="hero-stack-scene hero-stack-scene-evidence">
+        <div className="hero-stack-evidence-title"><small>Crash window</small><strong>Driver update found 18 minutes earlier</strong></div>
+        <div className="hero-stack-evidence-track"><span /><span /><span className="is-change" /><span /><span className="is-crash" /></div>
+        <div className="hero-stack-evidence-labels"><span>09:24 · Driver changed</span><span>09:42 · First crash</span></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="hero-stack-scene hero-stack-scene-handoff">
+      <div className="hero-stack-ready-mark"><span><IconCheck /></span></div>
+      <div className="hero-stack-ready-copy"><strong>Evidence package complete</strong><small>Everything second line needs, attached once.</small></div>
+      <div className="hero-stack-ready-rows"><span><i />Crash logs</span><span><i />Device state</span><span><i />Change timeline</span></div>
+    </div>
+  );
+}
+
+function HeroProductStack() {
+  const [activeCard, setActiveCard] = useState(1);
+  const stackRef = useRef(null);
+
+  const activateCard = (index) => {
+    setActiveCard(index);
+  };
+
+  const moveStackLight = (event) => {
+    const stack = stackRef.current;
+    if (!stack) return;
+    const bounds = stack.getBoundingClientRect();
+    const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+    const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+    stack.style.setProperty('--stack-glow-x', `${x * 100}%`);
+    stack.style.setProperty('--stack-glow-y', `${y * 100}%`);
+    stack.style.setProperty('--stack-tilt-x', `${(0.5 - y) * 3}deg`);
+    stack.style.setProperty('--stack-tilt-y', `${(x - 0.5) * 4}deg`);
+    stack.style.setProperty('--stack-parallax-x', `${(x - 0.5) * 7}px`);
+    stack.style.setProperty('--stack-parallax-y', `${(y - 0.5) * 5}px`);
+  };
+
+  const resetStackLight = () => {
+    const stack = stackRef.current;
+    if (!stack) return;
+    stack.style.setProperty('--stack-glow-x', '50%');
+    stack.style.setProperty('--stack-glow-y', '42%');
+    stack.style.setProperty('--stack-tilt-x', '0deg');
+    stack.style.setProperty('--stack-tilt-y', '0deg');
+    stack.style.setProperty('--stack-parallax-x', '0px');
+    stack.style.setProperty('--stack-parallax-y', '0px');
+  };
+
+  return (
+    <div
+      ref={stackRef}
+      className="hero-product-stack"
+      onPointerMove={moveStackLight}
+      onPointerLeave={resetStackLight}
+      aria-label="Nevian product workflow"
+    >
+      {heroProductCards.map((card, index) => {
+        const isActive = activeCard === index;
+        const distance = Math.abs(index - activeCard);
+        const side = index < activeCard ? 'left' : 'right';
+
+        return (
+          <article
+            className={`hero-product-card ${isActive ? 'is-active' : 'is-collapsed'}`}
+            data-side={side}
+            key={card.key}
+            style={{
+              '--card-z': `${-26 - distance * 18}px`,
+              zIndex: isActive ? 8 : 7 - distance,
+            }}
+            onPointerEnter={() => activateCard(index)}
+          >
+            <button
+              type="button"
+              className="hero-product-tab"
+              aria-label={`Open ${card.tab}`}
+              aria-hidden={isActive}
+              tabIndex={isActive ? -1 : 0}
+              onPointerEnter={() => activateCard(index)}
+              onFocus={() => activateCard(index)}
+              onClick={() => activateCard(index)}
+            >
+              <span className={`hero-product-tab-icon is-${card.key}`} aria-hidden="true"><i /></span>
+              <span>{card.tab}</span>
+            </button>
+
+            <div className="hero-product-card-content" aria-hidden={!isActive}>
+              <div className="hero-product-card-topline">
+                <span><i />{card.label}</span>
+                <b>{card.status}</b>
+              </div>
+              <div className="hero-product-visual"><HeroProductVisual kind={card.key} /></div>
+              <div className="hero-product-card-body">
+                <div className="hero-product-card-copy"><h2>{card.title}</h2><p>{card.description}</p></div>
+                <div className="hero-product-card-actions">
+                  <ul>{card.bullets.map((bullet) => <li key={bullet}><IconCheck />{bullet}</li>)}</ul>
+                  <a href={card.href} tabIndex={isActive ? 0 : -1}>Explore <IconArrow /></a>
+                </div>
+              </div>
+            </div>
+          </article>
+        );
+      })}
     </div>
   );
 }
@@ -163,9 +278,6 @@ export default function Hero() {
         onPointerEnter={moveSpotlight}
         onPointerMove={moveSpotlight}
       >
-        <HeroContextField className="hero-context-field-ambient" />
-        <HeroContextField className="hero-context-field-spotlight" />
-
         {/* Headline + CTAs, centered */}
         <div className="hero-copy hero-enter">
           <h1>
@@ -179,6 +291,8 @@ export default function Hero() {
             </a>
           </div>
         </div>
+
+        <HeroProductStack />
 
         {/* Interactive help-desk preview */}
         <div

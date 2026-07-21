@@ -857,12 +857,21 @@
 .hero-background {
   position: absolute;
   z-index: -3;
-  inset: 0;
+  /* Extended left/right/top so the blur never reveals a soft edge there; the
+     bottom is handled by the mask below so it blends into the next section. */
+  inset: -32px -32px 0;
   pointer-events: none;
   background-image: url('/assets/hero-background.jpeg');
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
+  /* Darken the artwork a lot and soften it, so the green line system reads as
+     the focus. The flow-lines SVG is a separate layer and stays crisp. */
+  filter: blur(9px) brightness(.4);
+  /* Fade the artwork out toward the bottom so it dissolves into the section
+     color instead of clipping into a hard seam. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 90%);
+  mask-image: linear-gradient(to bottom, #000 58%, transparent 90%);
 }
 
 .hero-background::after {
@@ -870,8 +879,42 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 42% 32% at 50% 12%, rgba(2, 7, 5, .48), transparent 100%),
+    radial-gradient(ellipse 42% 32% at 50% 12%, rgba(2, 7, 5, .38), transparent 100%),
     linear-gradient(180deg, rgba(2, 6, 5, .08) 0%, rgba(2, 6, 5, .02) 45%, rgba(7, 9, 13, .22) 72%, rgba(7, 9, 13, .82) 100%);
+}
+
+/* Responsive line bundle: single line into the hero, bending and branching
+   toward the top-right. Sits above the artwork, behind all hero content.
+   The soft green radials are the backdrop glow behind the fan and the trunk. */
+.hero-flow-lines {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 34% 42% at 62% 34%, rgba(52, 184, 112, .18), transparent 70%),
+    radial-gradient(ellipse 44% 34% at 86% 14%, rgba(52, 184, 112, .12), transparent 72%),
+    radial-gradient(ellipse 15% 30% at 36% 82%, rgba(52, 184, 112, .14), transparent 74%);
+  /* Slight softening so the strokes read like the line in the section below. */
+  filter: blur(.75px);
+  /* Two composited masks: fade in from the bottom edge, and fade the strands
+     out toward the top-right as they reach their ends. */
+  -webkit-mask-image:
+    linear-gradient(to top, transparent 0%, rgba(0, 0, 0, .28) 6%, rgba(0, 0, 0, .62) 12%, rgba(0, 0, 0, .88) 19%, #000 28%),
+    linear-gradient(to right, #000 46%, rgba(0, 0, 0, .5) 82%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to top, transparent 0%, rgba(0, 0, 0, .28) 6%, rgba(0, 0, 0, .62) 12%, rgba(0, 0, 0, .88) 19%, #000 28%),
+    linear-gradient(to right, #000 46%, rgba(0, 0, 0, .5) 82%, transparent 100%);
+  mask-composite: intersect;
+}
+
+@media (max-width: 767px) {
+  .hero-flow-lines {
+    opacity: .55;
+  }
 }
 
 .hero-section-fade {
@@ -880,9 +923,9 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: 250px;
+  height: 120px;
   pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(7, 9, 13, .68) 62%, #07090d 100%);
+  background: linear-gradient(180deg, transparent, #07090d);
 }
 
 .hero-content {
@@ -1330,68 +1373,13 @@
    reveals either a panel, connector, grid line, or status marker. */
 @media (min-width: 768px) {
   .hero-section {
-    --hero-light-x: 50%;
-    --hero-light-y: 42%;
     z-index: 3;
     overflow: visible;
-  }
-
-  .hero-section::before {
-    content: '';
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    right: 0;
-    bottom: -220px;
-    left: 0;
-    opacity: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(
-        circle 92px at var(--hero-light-x) var(--hero-light-y),
-        rgba(171, 255, 213, .085),
-        rgba(90, 231, 161, .025) 48%,
-        transparent 76%
-      ),
-      radial-gradient(
-        circle 310px at var(--hero-light-x) var(--hero-light-y),
-        rgba(39, 188, 118, .12),
-        rgba(17, 95, 60, .035) 52%,
-        transparent 82%
-      );
-    transition: opacity .22s ease;
-  }
-
-  .hero-section:hover::before {
-    opacity: 1;
   }
 
   .integrations-band {
     z-index: 2;
     isolation: isolate;
-  }
-
-  .integrations-band::before {
-    content: '';
-    position: absolute;
-    z-index: 0;
-    top: -190px;
-    right: 0;
-    left: 0;
-    height: 380px;
-    opacity: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      ellipse 300px 190px at var(--hero-transition-x, 50vw) 0,
-      rgba(39, 188, 118, .12),
-      rgba(17, 95, 60, .04) 48%,
-      transparent 76%
-    );
-    transition: opacity .26s cubic-bezier(.16, 1, .3, 1);
-  }
-
-  .hero-section:hover + .integrations-band::before {
-    opacity: 1;
   }
 
   .integrations-band > * {
@@ -10662,32 +10650,15 @@ html.contact-route .site-nav {
   .hero-product-stack {
     --active-width: min(620px, calc(100% - 126px));
     --tab-width: 38px;
-    --stack-glow-x: 50%;
-    --stack-glow-y: 42%;
-    --stack-tilt-x: 0deg;
-    --stack-tilt-y: 0deg;
-    --stack-parallax-x: 0px;
-    --stack-parallax-y: 0px;
     position: relative;
     z-index: 6;
     display: block;
     width: min(760px, 58vw);
     height: 520px;
     justify-self: center;
-    perspective: 1500px;
-    perspective-origin: 50% 48%;
-    transform-style: preserve-3d;
-  }
-
-  .hero-product-stack::before {
-    content: '';
-    position: absolute;
-    inset: 3% -4% 0;
-    opacity: .5;
-    pointer-events: none;
-    background: radial-gradient(circle 240px at var(--stack-glow-x) var(--stack-glow-y), rgba(56, 184, 120, .11), transparent 76%);
-    filter: blur(18px);
-    transition: opacity .3s ease;
+    /* Query container so card CONTENT can size to the whole stack, not the
+       card that is currently animating its width. Prevents reflow on expand. */
+    container-type: inline-size;
   }
 
   .hero-product-card {
@@ -10696,13 +10667,11 @@ html.contact-route .site-nav {
     width: var(--tab-width);
     height: 450px;
     overflow: hidden;
-    border: 1px solid rgba(86, 213, 149, .34);
+    border: 1.5px solid rgba(96, 216, 154, .55);
     border-radius: 15px;
     color: #edf6f1;
     background: linear-gradient(160deg, rgba(17, 20, 18, .995), rgba(7, 9, 8, .995));
     box-shadow: 0 18px 42px rgba(0, 0, 0, .34), inset 0 1px rgba(255, 255, 255, .045);
-    transform-style: preserve-3d;
-    will-change: left, width, transform;
     transition:
       left .58s cubic-bezier(.16, 1, .3, 1),
       width .58s cubic-bezier(.16, 1, .3, 1),
@@ -10738,18 +10707,7 @@ html.contact-route .site-nav {
       0 46px 100px rgba(0, 0, 0, .56),
       0 18px 42px rgba(0, 0, 0, .34),
       inset 0 1px rgba(255, 255, 255, .065);
-    transform: translate3d(-50%, -50%, 82px) rotateX(var(--stack-tilt-x)) rotateY(var(--stack-tilt-y)) scale(1);
-  }
-
-  .hero-product-card.is-active::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 4;
-    border-radius: inherit;
-    opacity: .46;
-    pointer-events: none;
-    background: radial-gradient(circle 220px at var(--stack-glow-x) var(--stack-glow-y), rgba(108, 226, 167, .055), transparent 74%);
+    transform: translate3d(-50%, -50%, 0) scale(1);
   }
 
   .hero-product-tab {
@@ -10785,6 +10743,7 @@ html.contact-route .site-nav {
   }
 
   .hero-product-tab > span:last-child {
+    color: #ffffff;
     font-size: .67rem;
     font-weight: 700;
     letter-spacing: .075em;
@@ -10794,62 +10753,141 @@ html.contact-route .site-nav {
   }
 
   .hero-product-tab-icon {
-    position: relative;
     display: grid;
-    flex: 0 0 24px;
-    width: 24px;
-    height: 24px;
+    flex: 0 0 auto;
     place-items: center;
-    border: 1px solid rgba(93, 213, 151, .24);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .025);
+    color: rgba(126, 176, 152, .72);
+    transition: color .2s ease;
   }
 
-  .hero-product-tab-icon::before,
-  .hero-product-tab-icon::after,
-  .hero-product-tab-icon i {
-    content: '';
-    display: block;
-    width: 8px;
-    height: 1px;
-    border-radius: 999px;
-    background: #66dca1;
+  .hero-product-tab-icon svg {
+    width: 18px;
+    height: 18px;
   }
 
-  .hero-product-tab-icon::before { transform: translateY(-3px); }
-  .hero-product-tab-icon::after { transform: translateY(3px); }
-  .hero-product-tab-icon.is-device i { width: 9px; height: 7px; border: 1px solid #66dca1; background: transparent; }
-  .hero-product-tab-icon.is-evidence i { width: 7px; height: 7px; border-radius: 50%; }
-  .hero-product-tab-icon.is-handoff i { width: 8px; height: 5px; border-bottom: 1px solid #66dca1; border-left: 1px solid #66dca1; background: transparent; transform: rotate(-45deg); }
+  .hero-product-card.is-collapsed:hover .hero-product-tab-icon,
+  .hero-product-tab:focus-visible .hero-product-tab-icon {
+    color: rgba(150, 205, 178, .9);
+  }
 
   .hero-product-card-content {
     position: absolute;
-    inset: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
     z-index: 2;
     display: grid;
-    min-width: 460px;
+    /* Locked to the fully expanded width (relative to the stack, not the
+       animating card), so the layout never reflows while the card widens.
+       The card's growing edge simply reveals the finished content. */
+    width: calc(100cqw - 141px);
     grid-template-rows: 48px 220px minmax(0, 1fr);
     visibility: hidden;
     pointer-events: none;
-    opacity: 0;
-    transform: translate3d(14px, 0, 0) scale(.985);
-    transition:
-      opacity .22s ease,
-      transform .38s cubic-bezier(.16, 1, .3, 1),
-      visibility 0s .25s;
-  }
-
-  .hero-product-card[data-side='left'] .hero-product-card-content {
-    transform: translate3d(-14px, 0, 0) scale(.985);
+    transition: visibility 0s .32s;
   }
 
   .hero-product-card.is-active .hero-product-card-content {
     visibility: visible;
     pointer-events: auto;
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-    transition-delay: .12s, .08s, 0s;
+    transition-delay: 0s;
   }
+
+  /* Staggered content entrance, echoing the platform dropdown's cascade.
+     The card's growing edge wipes the frame in; these settle the pieces. */
+  .hero-product-card.is-active .hero-product-card-topline,
+  .hero-product-card.is-active .hero-product-visual,
+  .hero-product-card.is-active .hero-product-card-copy h2,
+  .hero-product-card.is-active .hero-product-card-copy p,
+  .hero-product-card.is-active .hero-product-card-actions li,
+  .hero-product-card.is-active .hero-product-card-actions > a {
+    animation: hero-card-item-in .5s cubic-bezier(.16, 1, .3, 1) both;
+  }
+
+  .hero-product-card.is-active .hero-product-card-topline { animation-delay: .06s; }
+  .hero-product-card.is-active .hero-product-visual { animation-delay: .12s; }
+  .hero-product-card.is-active .hero-product-card-copy h2 { animation-delay: .18s; }
+  .hero-product-card.is-active .hero-product-card-copy p { animation-delay: .24s; }
+  .hero-product-card.is-active .hero-product-card-actions li { animation-delay: .28s; }
+  .hero-product-card.is-active .hero-product-card-actions li:nth-child(2) { animation-delay: .33s; }
+  .hero-product-card.is-active .hero-product-card-actions > a { animation-delay: .38s; }
+
+  /* Inner scene detail: the ticket's progress row draws in, other scenes
+     populate with a gentle staggered fade. Runs after the visual arrives. */
+  .hero-product-card.is-active .hero-stack-ticket-head {
+    animation: hero-card-item-in .44s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .2s;
+  }
+  .hero-product-card.is-active .hero-stack-ticket-main {
+    animation: hero-card-item-in .46s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .26s;
+  }
+  .hero-product-card.is-active .hero-stack-ticket-signals > span {
+    animation: hero-card-item-in .4s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .hero-product-card.is-active .hero-stack-ticket-signals > span:nth-child(1) { animation-delay: .34s; }
+  .hero-product-card.is-active .hero-stack-ticket-signals > span:nth-child(3) { animation-delay: .46s; }
+  .hero-product-card.is-active .hero-stack-ticket-signals > span:nth-child(5) { animation-delay: .58s; }
+  .hero-product-card.is-active .hero-stack-ticket-signals i {
+    transform-origin: left center;
+    animation: hero-card-line-grow .46s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .hero-product-card.is-active .hero-stack-ticket-signals i:nth-child(2) { animation-delay: .4s; }
+  .hero-product-card.is-active .hero-stack-ticket-signals i:nth-child(4) { animation-delay: .52s; }
+
+  /* Device scene plays as a workflow: identify the device, spread the signal
+     lines outward, then each context chip lands in sequence. */
+  .hero-product-card.is-active .hero-stack-device-core {
+    animation: hero-device-core-in .5s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .16s;
+  }
+  .hero-product-card.is-active .hero-stack-scene-device::before {
+    animation: hero-device-line-a .5s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .36s;
+  }
+  .hero-product-card.is-active .hero-stack-scene-device::after {
+    animation: hero-device-line-b .5s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .44s;
+  }
+  .hero-product-card.is-active .hero-stack-context-chip {
+    animation: hero-chip-pop .44s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .hero-product-card.is-active .hero-stack-context-chip.is-identity { animation-delay: .58s; }
+  .hero-product-card.is-active .hero-stack-context-chip.is-health { animation-delay: .7s; }
+  .hero-product-card.is-active .hero-stack-context-chip.is-checkin { animation-delay: .82s; }
+  .hero-product-card.is-active .hero-stack-context-chip.is-compliance { animation-delay: .94s; }
+
+  .hero-product-card.is-active .hero-stack-evidence-title {
+    animation: hero-card-item-in .44s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .2s;
+  }
+  .hero-product-card.is-active .hero-stack-evidence-track span {
+    animation: hero-card-fade-in .4s ease both;
+  }
+  .hero-product-card.is-active .hero-stack-evidence-track span:nth-child(1) { animation-delay: .3s; }
+  .hero-product-card.is-active .hero-stack-evidence-track span:nth-child(2) { animation-delay: .36s; }
+  .hero-product-card.is-active .hero-stack-evidence-track span:nth-child(3) { animation-delay: .42s; }
+  .hero-product-card.is-active .hero-stack-evidence-track span:nth-child(4) { animation-delay: .48s; }
+  .hero-product-card.is-active .hero-stack-evidence-track span:nth-child(5) { animation-delay: .54s; }
+  .hero-product-card.is-active .hero-stack-evidence-labels {
+    animation: hero-card-item-in .44s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .58s;
+  }
+
+  .hero-product-card.is-active .hero-stack-ready-mark {
+    animation: hero-card-fade-in .5s ease both;
+    animation-delay: .2s;
+  }
+  .hero-product-card.is-active .hero-stack-ready-copy {
+    animation: hero-card-item-in .44s cubic-bezier(.16, 1, .3, 1) both;
+    animation-delay: .28s;
+  }
+  .hero-product-card.is-active .hero-stack-ready-rows > span {
+    animation: hero-card-item-in .4s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .hero-product-card.is-active .hero-stack-ready-rows > span:nth-child(1) { animation-delay: .36s; }
+  .hero-product-card.is-active .hero-stack-ready-rows > span:nth-child(2) { animation-delay: .44s; }
+  .hero-product-card.is-active .hero-stack-ready-rows > span:nth-child(3) { animation-delay: .52s; }
 
   .hero-product-card-topline {
     display: flex;
@@ -10894,8 +10932,6 @@ html.contact-route .site-nav {
     padding: 18px 22px 16px;
     overflow: hidden;
     background: linear-gradient(160deg, rgba(14, 17, 15, .98), rgba(6, 8, 7, .995));
-    transform: translate3d(var(--stack-parallax-x), var(--stack-parallax-y), 18px);
-    transition: transform .16s ease-out;
   }
 
   .hero-product-visual::before {
@@ -11017,8 +11053,8 @@ html.contact-route .site-nav {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    color: rgba(184, 205, 194, .58);
-    font-size: .58rem;
+    color: rgba(200, 218, 209, .82);
+    font-size: .66rem;
   }
 
   .hero-stack-ticket-head > span {
@@ -11034,7 +11070,7 @@ html.contact-route .site-nav {
     background: #64dfa2;
   }
 
-  .hero-stack-ticket-head b { color: rgba(221, 233, 227, .72); font-size: .58rem; }
+  .hero-stack-ticket-head b { color: rgba(230, 240, 235, .9); font-size: .66rem; }
 
   .hero-stack-ticket-main {
     display: grid;
@@ -11060,8 +11096,8 @@ html.contact-route .site-nav {
   }
 
   .hero-stack-ticket-main > div { display: grid; gap: 3px; }
-  .hero-stack-ticket-main small { color: rgba(179, 201, 189, .56); font-size: .57rem; }
-  .hero-stack-ticket-main strong { color: #edf6f1; font-size: .73rem; font-weight: 620; }
+  .hero-stack-ticket-main small { color: rgba(196, 216, 205, .78); font-size: .66rem; }
+  .hero-stack-ticket-main strong { color: #edf6f1; font-size: .82rem; font-weight: 620; }
   .hero-stack-ticket-signals { justify-content: flex-start; }
   .hero-stack-ticket-signals i { flex: 1; height: 1px; background: rgba(187, 201, 194, .15); }
 
@@ -11085,11 +11121,11 @@ html.contact-route .site-nav {
     top: 50%;
     left: 50%;
     display: grid;
-    width: 150px;
-    height: 100px;
+    width: 172px;
+    height: 108px;
     place-items: center;
     align-content: center;
-    gap: 5px;
+    gap: 6px;
     border: 1px solid rgba(190, 204, 197, .16);
     border-radius: 17px;
     background: rgba(6, 10, 8, .95);
@@ -11114,23 +11150,25 @@ html.contact-route .site-nav {
     border-top: 1px solid #67dca1;
   }
 
-  .hero-stack-device-core strong { color: rgba(234, 243, 238, .84); font-size: .62rem; }
-  .hero-stack-device-core small { color: rgba(178, 199, 188, .54); font-size: .54rem; }
+  .hero-stack-device-core strong { color: rgba(240, 247, 243, .96); font-size: .78rem; }
+  .hero-stack-device-core small { color: rgba(197, 215, 205, .8); font-size: .66rem; }
 
   .hero-stack-context-chip {
     position: absolute;
     z-index: 3;
-    padding: 6px 8px;
-    border: 1px solid rgba(190, 204, 197, .14);
+    padding: 7px 11px;
+    border: 1px solid rgba(190, 204, 197, .18);
     border-radius: 999px;
-    color: rgba(217, 229, 223, .7);
+    color: rgba(228, 238, 233, .92);
     background: rgba(6, 9, 7, .94);
-    font-size: .56rem;
+    font-size: .72rem;
+    font-weight: 600;
   }
 
   .hero-stack-context-chip.is-identity { top: 22px; left: 22px; }
-  .hero-stack-context-chip.is-health { top: 24px; right: 20px; color: #d9ad5f; }
-  .hero-stack-context-chip.is-checkin { right: 44px; bottom: 18px; }
+  .hero-stack-context-chip.is-health { top: 24px; right: 20px; color: #e2b96c; }
+  .hero-stack-context-chip.is-checkin { right: 30px; bottom: 20px; }
+  .hero-stack-context-chip.is-compliance { left: 26px; bottom: 20px; color: #7fdca6; }
 
   .hero-stack-scene-evidence {
     display: grid;
@@ -11139,8 +11177,8 @@ html.contact-route .site-nav {
   }
 
   .hero-stack-evidence-title { display: grid; gap: 5px; }
-  .hero-stack-evidence-title small { color: rgba(176, 198, 187, .55); font-size: .58rem; }
-  .hero-stack-evidence-title strong { color: #edf6f1; font-size: .8rem; font-weight: 620; }
+  .hero-stack-evidence-title small { color: rgba(197, 215, 205, .8); font-size: .66rem; }
+  .hero-stack-evidence-title strong { color: #edf6f1; font-size: .88rem; font-weight: 620; }
 
   .hero-stack-evidence-track {
     display: grid;
@@ -11175,8 +11213,8 @@ html.contact-route .site-nav {
   .hero-stack-evidence-labels {
     display: flex;
     justify-content: space-between;
-    color: rgba(177, 198, 187, .54);
-    font-size: .56rem;
+    color: rgba(196, 214, 204, .78);
+    font-size: .64rem;
   }
 
   .hero-stack-scene-handoff {
@@ -11202,10 +11240,10 @@ html.contact-route .site-nav {
   .hero-stack-ready-mark svg { width: 17px; height: 17px; }
 
   .hero-stack-ready-copy { display: grid; gap: 6px; }
-  .hero-stack-ready-copy strong { color: #eff7f3; font-size: .8rem; }
-  .hero-stack-ready-copy small { max-width: 28ch; color: rgba(183, 204, 193, .58); font-size: .58rem; line-height: 1.45; }
+  .hero-stack-ready-copy strong { color: #eff7f3; font-size: .88rem; }
+  .hero-stack-ready-copy small { max-width: 28ch; color: rgba(199, 217, 207, .78); font-size: .66rem; line-height: 1.45; }
   .hero-stack-ready-rows { display: flex; grid-column: 1 / -1; justify-content: space-between; gap: 8px; }
-  .hero-stack-ready-rows span { display: inline-flex; align-items: center; gap: 6px; color: rgba(211, 225, 218, .66); font-size: .56rem; }
+  .hero-stack-ready-rows span { display: inline-flex; align-items: center; gap: 6px; color: rgba(220, 232, 226, .82); font-size: .64rem; }
   .hero-stack-ready-rows i { width: 5px; height: 5px; border-radius: 50%; background: #66dca1; }
 }
 
@@ -11222,7 +11260,7 @@ html.contact-route .site-nav {
   }
 
   .hero-product-card { height: 420px; }
-  .hero-product-card-content { min-width: 440px; grid-template-rows: 46px 202px minmax(0, 1fr); }
+  .hero-product-card-content { width: calc(100cqw - 135px); grid-template-rows: 46px 202px minmax(0, 1fr); }
   .hero-product-card-body { padding: 17px 18px 18px; grid-template-columns: minmax(0, 1fr) 160px; gap: 16px; }
   .hero-product-card-copy h2 { font-size: 1.08rem; }
   .hero-product-card-copy p { font-size: .64rem; }
@@ -11293,7 +11331,10 @@ html.contact-route .site-nav {
     left: auto;
     flex: 0 0 var(--tab-width);
     width: var(--tab-width);
-    transform: translate3d(0, 0, var(--card-z)) scale(.965);
+    /* Flat, in-plane bars: no forward/back Z so no bar sits over another
+       and every thin bar keeps its own clear hover target. */
+    transform: translateY(6px);
+    opacity: .9;
     transition:
       flex-basis .58s cubic-bezier(.16, 1, .3, 1),
       width .58s cubic-bezier(.16, 1, .3, 1),
@@ -11303,17 +11344,10 @@ html.contact-route .site-nav {
       opacity .3s ease;
   }
 
-  .hero-product-card[data-side='left'] {
-    transform: translate3d(0, 0, var(--card-z)) rotateY(2.5deg) scale(.965);
-  }
-
-  .hero-product-card[data-side='right'] {
-    transform: translate3d(0, 0, var(--card-z)) rotateY(-2.5deg) scale(.965);
-  }
-
   .hero-product-card.is-collapsed:hover {
     flex-basis: 46px;
     width: 46px;
+    opacity: 1;
   }
 
   .hero-product-card.is-active,
@@ -11322,7 +11356,8 @@ html.contact-route .site-nav {
     left: auto;
     flex: 0 0 var(--expanded-width);
     width: var(--expanded-width);
-    transform: translate3d(0, 0, 52px) rotateX(var(--stack-tilt-x)) rotateY(var(--stack-tilt-y)) scale(1);
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -11333,10 +11368,54 @@ html.contact-route .site-nav {
   }
 }
 
+@keyframes hero-card-item-in {
+  from { opacity: 0; transform: translate3d(0, 9px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes hero-card-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes hero-card-line-grow {
+  from { opacity: 0; transform: scaleX(0); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+/* Device workflow keyframes. The line keyframes keep the element's own
+   translate+rotate so they draw outward instead of snapping to a new position. */
+@keyframes hero-device-core-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.86); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes hero-device-line-a {
+  from { opacity: 0; transform: translate(-50%, -50%) rotate(22deg) scaleX(0); }
+  to { opacity: 1; transform: translate(-50%, -50%) rotate(22deg) scaleX(1); }
+}
+
+@keyframes hero-device-line-b {
+  from { opacity: 0; transform: translate(-50%, -50%) rotate(-22deg) scaleX(0); }
+  to { opacity: 1; transform: translate(-50%, -50%) rotate(-22deg) scaleX(1); }
+}
+
+@keyframes hero-chip-pop {
+  from { opacity: 0; transform: scale(.62); }
+  62% { opacity: 1; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-product-card.is-active,
   .hero-product-card.is-active[data-side='left'],
   .hero-product-card.is-active[data-side='right'] {
-    transform: translate3d(0, 0, 52px) !important;
+    transform: none !important;
+  }
+
+  .hero-product-card.is-active .hero-product-card-content *,
+  .hero-product-card.is-active .hero-product-card-content *::before,
+  .hero-product-card.is-active .hero-product-card-content *::after {
+    animation: none !important;
   }
 }

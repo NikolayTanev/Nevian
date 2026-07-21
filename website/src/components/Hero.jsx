@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import { IconArrow, IconCheck } from './Icons.jsx';
+import { IconArrow, IconCheck, IconChat, IconDevice, IconBolt } from './Icons.jsx';
+import HeroFlowLines from './HeroFlowLines.jsx';
 
 const tickets = [
   {
@@ -73,6 +74,7 @@ const heroProductCards = [
   {
     key: 'request',
     tab: 'Request',
+    icon: <IconChat />,
     label: 'Request intake',
     status: 'Matched',
     title: 'Understand the request before it hits the queue.',
@@ -83,6 +85,7 @@ const heroProductCards = [
   {
     key: 'device',
     tab: 'Context',
+    icon: <IconDevice />,
     label: 'Device context',
     status: 'Live',
     title: 'Bring the device state into the conversation.',
@@ -93,6 +96,7 @@ const heroProductCards = [
   {
     key: 'evidence',
     tab: 'Evidence',
+    icon: <IconBolt />,
     label: 'Change correlation',
     status: '3 signals',
     title: 'Find the change behind the issue.',
@@ -103,6 +107,7 @@ const heroProductCards = [
   {
     key: 'handoff',
     tab: 'Handoff',
+    icon: <IconArrow />,
     label: 'Resolution brief',
     status: 'Ready',
     title: 'Give second line a ready-to-use brief.',
@@ -132,6 +137,7 @@ function HeroProductVisual({ kind }) {
         <span className="hero-stack-context-chip is-identity">Entra matched</span>
         <span className="hero-stack-context-chip is-health">2 failures</span>
         <span className="hero-stack-context-chip is-checkin">38 sec ago</span>
+        <span className="hero-stack-context-chip is-compliance">Compliant</span>
         <div className="hero-stack-device-core"><i /><strong>LATITUDE-5430</strong><small>Windows 11 · Managed</small></div>
       </div>
     );
@@ -156,46 +162,55 @@ function HeroProductVisual({ kind }) {
   );
 }
 
+// Pointer must travel this many px INTO a collapsed bar before it opens, so a
+// glancing edge-graze does not switch cards.
+const INTENT_TRAVEL = 8;
+// After a switch, ignore hover activations briefly so a single stray drift can
+// not skip you past the next card.
+const SWITCH_LOCKOUT_MS = 220;
+
 function HeroProductStack() {
   const [activeCard, setActiveCard] = useState(1);
-  const stackRef = useRef(null);
+  const lockUntilRef = useRef(0);
+  const enterInfoRef = useRef(null);
 
-  const activateCard = (index) => {
-    setActiveCard(index);
+  const activateCard = (index, { immediate = false } = {}) => {
+    if (!immediate && performance.now() < lockUntilRef.current) return;
+    setActiveCard((prev) => {
+      if (prev === index) return prev;
+      // Lock out further hover switches for a beat after this one lands.
+      lockUntilRef.current = performance.now() + SWITCH_LOCKOUT_MS;
+      return index;
+    });
   };
 
-  const moveStackLight = (event) => {
-    const stack = stackRef.current;
-    if (!stack) return;
-    const bounds = stack.getBoundingClientRect();
-    const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
-    const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
-    stack.style.setProperty('--stack-glow-x', `${x * 100}%`);
-    stack.style.setProperty('--stack-glow-y', `${y * 100}%`);
-    stack.style.setProperty('--stack-tilt-x', `${(0.5 - y) * 3}deg`);
-    stack.style.setProperty('--stack-tilt-y', `${(x - 0.5) * 4}deg`);
-    stack.style.setProperty('--stack-parallax-x', `${(x - 0.5) * 7}px`);
-    stack.style.setProperty('--stack-parallax-y', `${(y - 0.5) * 5}px`);
+  // Record where the pointer entered a collapsed bar.
+  const handleBarEnter = (index, event) => {
+    enterInfoRef.current = { index, x: event.clientX };
   };
 
-  const resetStackLight = () => {
-    const stack = stackRef.current;
-    if (!stack) return;
-    stack.style.setProperty('--stack-glow-x', '50%');
-    stack.style.setProperty('--stack-glow-y', '42%');
-    stack.style.setProperty('--stack-tilt-x', '0deg');
-    stack.style.setProperty('--stack-tilt-y', '0deg');
-    stack.style.setProperty('--stack-parallax-x', '0px');
-    stack.style.setProperty('--stack-parallax-y', '0px');
+  // Only open once the pointer has moved a deliberate distance into the bar.
+  const handleBarMove = (index, event) => {
+    if (index === activeCard) return;
+    const info = enterInfoRef.current;
+    if (!info || info.index !== index) {
+      enterInfoRef.current = { index, x: event.clientX };
+      return;
+    }
+    if (Math.abs(event.clientX - info.x) >= INTENT_TRAVEL) {
+      activateCard(index);
+    }
+  };
+
+  const clearIntent = () => {
+    enterInfoRef.current = null;
   };
 
   return (
     <div
-      ref={stackRef}
       className="hero-product-stack"
-      onPointerMove={moveStackLight}
-      onPointerLeave={resetStackLight}
       aria-label="Nevian product workflow"
+      onPointerLeave={clearIntent}
     >
       {heroProductCards.map((card, index) => {
         const isActive = activeCard === index;
@@ -211,7 +226,8 @@ function HeroProductStack() {
               '--card-z': `${-26 - distance * 18}px`,
               zIndex: isActive ? 8 : 7 - distance,
             }}
-            onPointerEnter={() => activateCard(index)}
+            onPointerEnter={(event) => handleBarEnter(index, event)}
+            onPointerMove={(event) => handleBarMove(index, event)}
           >
             <button
               type="button"
@@ -219,11 +235,10 @@ function HeroProductStack() {
               aria-label={`Open ${card.tab}`}
               aria-hidden={isActive}
               tabIndex={isActive ? -1 : 0}
-              onPointerEnter={() => activateCard(index)}
-              onFocus={() => activateCard(index)}
-              onClick={() => activateCard(index)}
+              onFocus={() => activateCard(index, { immediate: true })}
+              onClick={() => activateCard(index, { immediate: true })}
             >
-              <span className={`hero-product-tab-icon is-${card.key}`} aria-hidden="true"><i /></span>
+              <span className="hero-product-tab-icon" aria-hidden="true">{card.icon}</span>
               <span>{card.tab}</span>
             </button>
 
@@ -252,32 +267,16 @@ export default function Hero() {
   const [active, setActive] = useState('t1');
   const current = tickets.find((t) => t.id === active);
 
-  const moveSpotlight = (event) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const hero = event.currentTarget.closest('.hero-section');
-    const heroBounds = hero?.getBoundingClientRect();
-    const main = event.currentTarget.closest('main');
-    event.currentTarget.style.setProperty('--hero-spotlight-x', `${event.clientX - bounds.left}px`);
-    event.currentTarget.style.setProperty('--hero-spotlight-y', `${event.clientY - bounds.top}px`);
-    main?.style.setProperty('--hero-transition-x', `${event.clientX}px`);
-    if (hero && heroBounds) {
-      hero.style.setProperty('--hero-light-x', `${event.clientX - heroBounds.left}px`);
-      hero.style.setProperty('--hero-light-y', `${event.clientY - heroBounds.top}px`);
-    }
-  };
-
   return (
     <section id="top" className="hero-section">
       {/* Full-bleed artwork across the complete hero. */}
       <div aria-hidden="true" className="hero-background" />
+      {/* One continuous line rises from the logo seam, bends, and branches. */}
+      <HeroFlowLines />
       {/* The artwork dissolves directly into the following dark section. */}
       <div aria-hidden="true" className="hero-section-fade" />
 
-      <div
-        className="hero-content wrap"
-        onPointerEnter={moveSpotlight}
-        onPointerMove={moveSpotlight}
-      >
+      <div className="hero-content wrap">
         {/* Headline + CTAs, centered */}
         <div className="hero-copy hero-enter">
           <h1>
@@ -295,11 +294,7 @@ export default function Hero() {
         <HeroProductStack />
 
         {/* Interactive help-desk preview */}
-        <div
-          className="hero-demo-wrap hero-enter hero-enter-late"
-          onPointerEnter={moveSpotlight}
-          onPointerMove={moveSpotlight}
-        >
+        <div className="hero-demo-wrap hero-enter hero-enter-late">
           <div className="hero-demo-shell">
             {/* chrome bar */}
             <div className="hero-demo-chrome">

@@ -1,32 +1,57 @@
 import { useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
-const fitSteps = [
-  ['01', 'Show us the current setup', 'We look at your users, devices, and the support work taking up the most time.'],
-  ['02', 'Choose the first use case', 'Together, we decide where Nevian would be useful and what should stay with your team.'],
-  ['03', 'Plan the rollout', 'You leave with a specific next step and a realistic scope.'],
-];
+const ENDPOINT = 'https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/contact';
+const EMAIL = 'nevian.info@gmail.com';
 
 export default function ContactSection() {
-  const [status, setStatus] = useState('');
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState({ message: '', kind: '' });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const lines = [
-      `Name: ${data.get('firstName')} ${data.get('lastName')}`,
-      `Work email: ${data.get('email')}`,
-      `Company: ${data.get('company')}`,
-      `Company size: ${data.get('companySize')}`,
-      `Number of devices: ${data.get('devices')}`,
-      `Looking to improve: ${data.get('goal')}`,
+  const openEmailFallback = (data) => {
+    const subject = `Nevian walkthrough request: ${data.company || data.firstName || 'New request'}`;
+    const body = [
+      `Name: ${data.firstName || ''} ${data.lastName || ''}`,
+      `Work email: ${data.email || ''}`,
+      `Company: ${data.company || ''}`,
+      `Company size: ${data.companySize || ''}`,
+      `Number of devices: ${data.devices || ''}`,
+      `Looking to improve: ${data.goal || ''}`,
       '',
-      'Message:',
-      data.get('message'),
-    ];
+      data.message || '',
+    ].join('\n');
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
 
-    setStatus('Your request is ready in your email app.');
-    window.location.href = `mailto:nevian.info@gmail.com?subject=${encodeURIComponent('Nevian walkthrough request')}&body=${encodeURIComponent(lines.join('\n'))}`;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    if (data.website) {
+      // honeypot
+      form.reset();
+      setStatus({ message: 'Thanks. We received your request.', kind: 'success' });
+      return;
+    }
+
+    setSending(true);
+    setStatus({ message: 'Sending your request…', kind: '' });
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Request failed');
+      form.reset();
+      setStatus({ message: 'Thanks. We will get back to you shortly.', kind: 'success' });
+    } catch {
+      setStatus({ message: 'Opening your email app instead…', kind: 'success' });
+      openEmailFallback(data);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -35,18 +60,6 @@ export default function ContactSection() {
         <div className="contact-intro">
           <h2>See whether Nevian fits your team.</h2>
           <p>Tell us how support works today. We&apos;ll show you what Nevian could take on and where your team would stay involved.</p>
-
-          <div className="contact-fit-map" aria-label="What happens next">
-            {fitSteps.map(([number, title, description]) => (
-              <article key={number}>
-                <span>{number}</span>
-                <div>
-                  <h3>{title}</h3>
-                  <p>{description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
 
           <div className="contact-response-note">
             <IconCheck aria-hidden="true" />
@@ -123,13 +136,17 @@ export default function ContactSection() {
             </label>
           </div>
 
-          <button type="submit" className="contact-submit">
-            Send request <IconArrow aria-hidden="true" />
+          <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }}>
+            <label>Leave empty<input name="website" tabIndex={-1} autoComplete="off" /></label>
+          </div>
+
+          <button type="submit" className="contact-submit" disabled={sending}>
+            {sending ? 'Sending…' : 'Send request'} <IconArrow aria-hidden="true" />
           </button>
 
           <div className="contact-form-footer" aria-live="polite">
             <span>Your details are only used to respond to this request.</span>
-            {status && <strong><IconCheck aria-hidden="true" /> {status}</strong>}
+            {status.message && <strong><IconCheck aria-hidden="true" /> {status.message}</strong>}
           </div>
         </form>
       </div>

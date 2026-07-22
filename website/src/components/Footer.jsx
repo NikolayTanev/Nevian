@@ -79,7 +79,7 @@ export default function Footer({ showCta = true }) {
             <label htmlFor="newsletter-email">Email</label>
             <div>
               <input id="newsletter-email" name="newsletterEmail" type="email" placeholder="Enter your email" required />
-              <button type="submit">Subscribe <IconArrow aria-hidden="true" /></button>
+              <button type="submit">Subscribe</button>
             </div>
             <p aria-live="polite">
               {newsletterStatus && <><IconCheck aria-hidden="true" /> {newsletterStatus}</>}

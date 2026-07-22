@@ -7153,12 +7153,11 @@ html.contact-route .site-nav {
   outline: none;
   background: rgba(42, 143, 94, .075);
   box-shadow: 0 18px 42px rgba(0, 0, 0, .26);
-  transform: translateY(-3px);
 }
 
 .site-platform-preview {
   position: relative;
-  height: 126px;
+  height: 182px;
   overflow: hidden;
   border-bottom: 1px solid rgba(149, 177, 163, .11);
   background: radial-gradient(circle at 70% 20%, rgba(52, 202, 128, .14), transparent 48%), rgba(4, 10, 7, .54);
@@ -7166,7 +7165,7 @@ html.contact-route .site-nav {
 
 .site-platform-card-copy {
   display: grid;
-  min-height: 105px;
+  min-height: 80px;
   align-items: end;
   padding: 15px;
   grid-template-columns: minmax(0, 1fr) 18px;
@@ -7256,8 +7255,8 @@ html.contact-route .site-nav {
 .site-platform-preview-security span { position: relative; z-index: 1; display: grid; width: 48px; height: 48px; place-items: center; border: 1px solid rgba(121, 238, 179, .34); border-radius: 14px; color: #79e7af; background: rgba(9, 38, 24, .9); box-shadow: 0 0 30px rgba(49, 205, 126, .2); }
 .site-platform-preview-security svg { width: 23px; height: 23px; }
 
-.site-platform-preview-integrations { display: grid; padding: 20px; grid-template-columns: repeat(2, 38px); place-content: center; gap: 9px 12px; }
-.site-platform-preview-integrations img { width: 38px; height: 38px; padding: 9px; object-fit: contain; border: 1px solid rgba(149, 182, 165, .17); border-radius: 50%; background: rgba(235, 245, 240, .9); box-shadow: 0 8px 18px rgba(0, 0, 0, .24); }
+.site-platform-preview-integrations { display: grid; padding: 18px; grid-template-columns: repeat(2, auto); place-content: center; justify-items: center; align-items: center; gap: 26px 22px; }
+.site-platform-preview-integrations img { height: 26px; width: auto; max-width: 84px; object-fit: contain; filter: grayscale(1) invert(.78) contrast(.9) brightness(1.04); opacity: .9; }
 
 .site-nav-link:focus-visible,
 .site-nav-platform-trigger:focus-visible,
@@ -7364,8 +7363,8 @@ html.contact-route .site-nav {
 }
 
 .site-platform-preview-integrations img {
-  border-color: rgba(213, 222, 217, .18);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, .18);
+  border: 0;
+  box-shadow: none;
 }
 
 

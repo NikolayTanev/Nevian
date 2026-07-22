@@ -57,9 +57,9 @@ function CardPreview({ kind }) {
   return (
     <div className="site-platform-preview site-platform-preview-integrations" aria-hidden="true">
       <img src="/assets/integrations/servicenow.svg" alt="" />
-      <img src="/assets/integrations/microsoft-6.svg" alt="" />
+      <img src="/assets/integrations/azure-2.svg" alt="" />
       <img src="/assets/integrations/powershell.svg" alt="" />
-      <img src="/assets/integrations/azure-active-directory.svg" alt="" />
+      <img src="/assets/integrations/jira.svg" alt="" />
     </div>
   );
 }

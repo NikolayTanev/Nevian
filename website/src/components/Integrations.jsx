@@ -9,6 +9,7 @@ const logos = [
   { src: '/assets/integrations/azure-2.svg', alt: 'Microsoft Azure' },
   { src: '/assets/integrations/windows-darkblue-2012-svg.svg', alt: 'Windows' },
   { src: '/assets/integrations/azure-active-directory.svg', alt: 'Microsoft Entra ID' },
+  { src: '/assets/integrations/jira.svg', alt: 'Jira' },
 ];
 
 // Icon-only marks read small next to wordmarks, so scale them up a touch.

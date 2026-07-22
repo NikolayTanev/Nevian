@@ -14,6 +14,7 @@ export default defineConfig({
         contact: resolve(root, 'contact.html'),
         process: resolve(root, 'process.html'),
         hyperhedge: resolve(root, 'hyperhedge.html'),
+        scratch: resolve(root, 'scratch.html'),
       },
     },
   },

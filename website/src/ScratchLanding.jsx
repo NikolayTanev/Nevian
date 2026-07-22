@@ -533,7 +533,7 @@ export default function ScratchLanding() {
               <button type="button" onClick={() => setDemoRun((run) => run + 1)} aria-label="Restart demo" title="Restart demo">
                 <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 6.5A6 6 0 1 0 16 12M15.5 3v3.5H12" /></svg>
               </button>
-              <a href="/contact.html" aria-label="Open support" title="Open support">
+              <a href="#contact" aria-label="Open support" title="Open support">
                 <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11 4h5v5M16 4l-7 7M15 11v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4" /></svg>
               </a>
             </div>

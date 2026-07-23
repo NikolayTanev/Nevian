@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import PasswordResetDemo from './components/PasswordResetDemo.jsx';
 import Integrations from './components/Integrations.jsx';
+import FitSection from './components/FitSection.jsx';
 import ContactSection from './components/ContactSection.jsx';
 import Footer from './components/Footer.jsx';
 import PlatformMenu from './components/PlatformMenu.jsx';
@@ -556,6 +557,7 @@ export default function ScratchLanding() {
         </div>
       </section>
 
+      <FitSection />
       <ContactSection />
       <Footer showCta={false} />
     </main>

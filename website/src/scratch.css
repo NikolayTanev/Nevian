@@ -912,3 +912,117 @@ button { font: inherit; }
 .scratch-page .integrations-band::after { display: none; }
 /* No drop shadows on the form card (black-on-black, just adds fuzz). */
 .scratch-page .contact-form { box-shadow: none; }
+
+/* "Is Nevian right for your team?" fit section — an intro column plus numbered
+   pillar cards. Cards are black like the form card and invert to a white card
+   with black text on hover. Connected with hairline dividers (1px gap bleed). */
+.fit-section {
+  width: min(1360px, calc(100% - 72px));
+  margin: 0 auto;
+  padding-block: clamp(60px, 8vw, 120px);
+}
+.fit-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1fr 1fr 1fr;
+  gap: 1px;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.fit-intro,
+.fit-card {
+  background: #050505;
+  padding: clamp(28px, 2.6vw, 44px) clamp(24px, 2.4vw, 40px);
+}
+/* Intro column stays top-aligned. */
+.fit-intro { display: flex; flex-direction: column; gap: 16px; }
+.fit-intro h2 {
+  margin: 0;
+  color: #f7f7f5;
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.03em;
+}
+.fit-intro p { margin: 0; color: #a8b1ad; font-size: 14px; line-height: 1.5; }
+
+.fit-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(340px, 40vw, 460px);
+  overflow: hidden;
+  transition: background .3s ease;
+}
+/* Big, thick, outline-only number bleeding off the right edge of the card. */
+.fit-num {
+  position: absolute;
+  top: .12em;
+  right: -.05em;
+  color: transparent;
+  font-size: clamp(96px, 11vw, 168px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.04em;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, .16);
+  transition: -webkit-text-stroke-color .3s ease;
+  pointer-events: none;
+  user-select: none;
+}
+.fit-card-title {
+  position: relative;
+  z-index: 1;
+  /* Push the title + body group to the bottom of the card. */
+  margin: auto 0 8px;
+  color: #f4f7f5;
+  font-size: clamp(24px, 2vw, 34px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  transition: color .3s ease;
+}
+/* Fixed body height so all three titles land on the same baseline regardless
+   of how much text each card carries. */
+.fit-card-body { position: relative; z-index: 1; min-height: clamp(104px, 10.5vw, 128px); }
+.fit-check-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.fit-check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #c3ccc7;
+  font-size: 13.5px;
+  line-height: 1.4;
+  transition: color .3s ease;
+}
+.fit-check { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 1px; color: #57e39b; transition: color .3s ease; }
+.fit-card-body p { margin: 0; color: #c3ccc7; font-size: 13.5px; line-height: 1.35; transition: color .3s ease; }
+.fit-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 18px;
+  color: #57e39b;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color .3s ease;
+}
+
+/* Hover: invert to a white card with black text. */
+.fit-card:hover { background: #fff; }
+.fit-card:hover .fit-card-title,
+.fit-card:hover .fit-check-list li,
+.fit-card:hover .fit-card-body p,
+.fit-card:hover .fit-check,
+.fit-card:hover .fit-cta { color: #0a0b0b; }
+.fit-card:hover .fit-num { -webkit-text-stroke-color: rgba(10, 11, 11, .18); }
+
+@media (max-width: 900px) {
+  .fit-section { width: calc(100% - 36px); }
+  .fit-grid { grid-template-columns: 1fr; }
+  .fit-card { min-height: 0; }
+  /* Single column: no need to force content to the bottom. */
+  .fit-card-title { margin-top: 0; }
+  .fit-card-body { min-height: 0; }
+}

@@ -123,7 +123,7 @@ function HeroProductVisual({ kind }) {
       <div className="hero-stack-scene hero-stack-scene-request">
         <div className="hero-stack-ticket-head"><span><i /> New request</span><b>TKT-0044</b></div>
         <div className="hero-stack-ticket-main">
-          <span>LM</span>
+          <span><img src="/assets/female.jpg" alt="" /></span>
           <div><small>Linda M. · Finance</small><strong>Laptop crashes after sign-in</strong></div>
         </div>
         <div className="hero-stack-ticket-signals"><span>Identity</span><i /><span>Device</span><i /><span>Recent activity</span></div>

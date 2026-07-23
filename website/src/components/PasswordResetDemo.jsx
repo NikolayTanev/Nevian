@@ -7,19 +7,10 @@ const demoUser = {
   email: 'linda.mogridge@contoso.com',
 };
 
-// Neutral avatar: the user's initials on a solid colour, no photo.
-const demoInitials = demoUser.name
-  .split(/\s+/)
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((word) => word[0])
-  .join('')
-  .toUpperCase();
-
 function UserAvatar({ phone = false }) {
   return (
     <i className={`password-user-avatar${phone ? ' is-phone' : ''}`} aria-hidden="true">
-      {demoInitials}
+      <img src="/assets/female.jpg" alt="" />
     </i>
   );
 }

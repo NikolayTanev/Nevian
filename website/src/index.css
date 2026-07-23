@@ -11041,6 +11041,7 @@ html.contact-route .site-nav {
     width: 36px;
     height: 36px;
     place-items: center;
+    overflow: hidden;
     border-radius: 10px;
     color: #06120c;
     background: #6bdca4;
@@ -11048,6 +11049,8 @@ html.contact-route .site-nav {
     font-weight: 700;
     letter-spacing: .01em;
   }
+
+  .hero-stack-ticket-main > span img { width: 100%; height: 100%; object-fit: cover; }
 
   .hero-stack-ticket-main > div { display: grid; gap: 3px; }
   .hero-stack-ticket-main small { color: rgba(203, 221, 212, .82); font-size: .68rem; }

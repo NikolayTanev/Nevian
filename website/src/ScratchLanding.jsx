@@ -364,7 +364,7 @@ function HumanHandoff() {
         <p>Needs a person? Nevian hands off the ticket with everything already in context.</p>
       </div>
       <div className="bento-handoff-agent">
-        <span className="bento-handoff-avatar">AR</span>
+        <span className="bento-handoff-avatar"><img src="/assets/male.jpg" alt="" /></span>
         <span className="bento-handoff-meta">
           <b>Alex Rivera <i className="bento-handoff-online" /></b>
           <small>Senior IT Engineer</small>

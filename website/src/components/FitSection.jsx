@@ -7,7 +7,7 @@ const fitCards = [
   {
     num: '002',
     title: 'Fits your stack',
-    body: 'Microsoft 365 or hybrid, with identity verified before anything runs.',
+    body: 'Microsoft 365 or hybrid, with identity verified before anything runs. Designed to follow and update your knowledge base.',
   },
   {
     num: '003',

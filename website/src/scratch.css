@@ -897,6 +897,14 @@ button { font: inherit; }
 /* Form card blends with the page black (like the bento cards); only the inputs
    are a touch brighter. */
 .scratch-page .contact-form { border-color: rgba(255, 255, 255, .07); background: #050505; }
+.scratch-page .contact-form .nv-select-trigger {
+  border-color: rgba(255, 255, 255, .09);
+  background: rgba(255, 255, 255, .035);
+}
+.scratch-page .contact-form .nv-select-list {
+  border-color: rgba(255, 255, 255, .09);
+  background: #0a0b0b;
+}
 .scratch-page .contact-form input,
 .scratch-page .contact-form select,
 .scratch-page .contact-form textarea {

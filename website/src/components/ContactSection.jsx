@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
+import SelectField from './SelectField.jsx';
 
 const ENDPOINT = 'https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/contact';
 const EMAIL = 'nevian.info@gmail.com';
@@ -96,39 +97,42 @@ export default function ContactSection() {
             </label>
             <label>
               <span>Company size</span>
-              <div className="contact-select">
-                <select name="companySize" defaultValue="1 to 25 employees" required>
-                  <option>1 to 25 employees</option>
-                  <option>26 to 100 employees</option>
-                  <option>101 to 500 employees</option>
-                  <option>501 to 1,000 employees</option>
-                  <option>1,000+ employees</option>
-                </select>
-              </div>
+              <SelectField
+                name="companySize"
+                defaultValue="1 to 25 employees"
+                required
+                options={[
+                  '1 to 25 employees',
+                  '26 to 100 employees',
+                  '101 to 500 employees',
+                  '501 to 1,000 employees',
+                  '1,000+ employees',
+                ]}
+              />
             </label>
             <label>
               <span>Number of devices</span>
-              <div className="contact-select">
-                <select name="devices" defaultValue="Under 25" required>
-                  <option>Under 25</option>
-                  <option>25 to 100</option>
-                  <option>101 to 500</option>
-                  <option>501 to 1,000</option>
-                  <option>1,000+</option>
-                </select>
-              </div>
+              <SelectField
+                name="devices"
+                defaultValue="Under 25"
+                required
+                options={['Under 25', '25 to 100', '101 to 500', '501 to 1,000', '1,000+']}
+              />
             </label>
             <label className="contact-field-wide">
               <span>What are you looking to improve?</span>
-              <div className="contact-select">
-                <select name="goal" defaultValue="Faster ticket resolution" required>
-                  <option>Faster ticket resolution</option>
-                  <option>Better endpoint visibility</option>
-                  <option>Safe IT automation</option>
-                  <option>A unified admin workflow</option>
-                  <option>Something else</option>
-                </select>
-              </div>
+              <SelectField
+                name="goal"
+                defaultValue="Faster ticket resolution"
+                required
+                options={[
+                  'Faster ticket resolution',
+                  'Better endpoint visibility',
+                  'Safe IT automation',
+                  'A unified admin workflow',
+                  'Something else',
+                ]}
+              />
             </label>
             <label className="contact-field-wide">
               <span>Message</span>

@@ -4380,6 +4380,92 @@ html.contact-route .site-nav {
   transform: translateY(-70%) rotate(45deg);
 }
 
+/* Custom dropdown — replaces the native <select> so the open option list
+   matches the dark form instead of the OS default. */
+.nv-select { position: relative; }
+
+.nv-select-trigger {
+  display: flex;
+  width: 100%;
+  height: 47px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 13px;
+  border: 1px solid rgba(181, 198, 189, .14);
+  border-radius: 9px;
+  outline: 0;
+  color: rgba(239, 247, 243, .88);
+  background: rgba(255, 255, 255, .022);
+  font: inherit;
+  font-size: .79rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
+}
+
+.nv-select-trigger span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nv-select-caret {
+  width: 14px;
+  height: 14px;
+  margin-left: 10px;
+  flex: 0 0 auto;
+  color: rgba(197, 220, 208, .6);
+  transition: transform .2s ease;
+}
+
+.nv-select.is-open .nv-select-trigger,
+.nv-select-trigger:focus-visible {
+  border-color: rgba(92, 181, 136, .46);
+  background: rgba(255, 255, 255, .032);
+  box-shadow: 0 0 0 2px rgba(76, 158, 116, .055);
+}
+
+.nv-select.is-open .nv-select-caret { transform: rotate(180deg); }
+
+.nv-select-list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 244px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid rgba(181, 198, 189, .16);
+  border-radius: 11px;
+  background: #0b120f;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .55);
+  animation: nv-select-in .14s ease;
+}
+
+@keyframes nv-select-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nv-select-list li {
+  padding: 9px 11px;
+  border-radius: 7px;
+  color: rgba(226, 238, 232, .82);
+  font-size: .79rem;
+  cursor: pointer;
+  transition: background-color .14s ease, color .14s ease;
+}
+
+.nv-select-list li:hover { background: rgba(255, 255, 255, .05); color: #f2faf6; }
+
+.nv-select-list li.is-selected {
+  color: #6fe0ad;
+  background: rgba(87, 227, 155, .1);
+}
+
 .contact-submit {
   display: flex;
   width: 100%;

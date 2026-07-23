@@ -24,7 +24,10 @@ export default function SelectField({ name, options, defaultValue, required }) {
     };
   }, [open]);
 
-  const choose = (option) => {
+  const choose = (option, event) => {
+    // The field is wrapped in a <label>; without this, clicking an option makes
+    // the label forward a synthetic click to the trigger and reopen the list.
+    event.preventDefault();
     setValue(option);
     setOpen(false);
   };
@@ -52,7 +55,7 @@ export default function SelectField({ name, options, defaultValue, required }) {
               role="option"
               aria-selected={option === value}
               className={option === value ? 'is-selected' : ''}
-              onClick={() => choose(option)}
+              onClick={(event) => choose(option, event)}
             >
               {option}
             </li>

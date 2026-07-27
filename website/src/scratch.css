@@ -843,18 +843,15 @@ button { font: inherit; }
   gap: clamp(14px, 1.7vw, 22px);
   padding: 0 clamp(22px, 2.4vw, 38px);
 }
-.bento-handoff-note { display: flex; align-items: flex-start; gap: 11px; }
+.bento-handoff-note { display: flex; align-items: center; gap: 11px; }
 .bento-handoff-mark {
   display: grid;
   place-items: center;
   width: 30px;
   height: 30px;
   flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, .08);
-  border-radius: 8px;
-  background: #0e1512;
 }
-.bento-handoff-mark img { width: 19px; height: 19px; object-fit: contain; }
+.bento-handoff-mark img { width: 28px; height: 28px; object-fit: contain; }
 .bento-handoff-note p { margin: 0; color: #c9d2ce; font-size: 13.5px; line-height: 1.42; }
 .bento-handoff-agent {
   display: flex;
@@ -1441,3 +1438,258 @@ button { font: inherit; }
 .dc-presets-when { padding: 3px 9px; border-radius: 6px; font-size: 10.5px; font-weight: 600; white-space: nowrap; }
 .dc-presets-when.is-sched { color: #7fe0ac; background: rgba(87, 227, 155, .12); }
 .dc-presets-when.is-ondemand { color: #8b928f; background: rgba(255, 255, 255, .05); }
+
+/* ===========================================================================
+   Identity verification page (/identity-verification.html). Reuses the device
+   page's showcase window + feature grid; adds the verification console body and
+   the step-up / directory / approval / risk panel visuals.
+   =========================================================================== */
+
+/* --- Verification console (hero focus) --- */
+.idv-secure { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid rgba(87, 227, 155, .3); border-radius: 7px; color: #7fe0ac; background: rgba(87, 227, 155, .1); font-size: 11px; font-weight: 600; }
+.idv-secure svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.idv-window-body { display: grid; grid-template-columns: 1fr 1fr; min-height: 360px; }
+.idv-req { display: flex; flex-direction: column; gap: clamp(18px, 2vw, 26px); padding: clamp(24px, 2.6vw, 40px); border-right: 1px solid rgba(255, 255, 255, .07); }
+.idv-req-user { display: flex; align-items: center; gap: 13px; }
+.idv-req-avatar { width: 46px; height: 46px; flex-shrink: 0; overflow: hidden; border-radius: 50%; }
+.idv-req-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.idv-req-user b { display: block; color: #eef2f0; font-size: 16px; font-weight: 600; }
+.idv-req-user small { color: #818987; font-size: 12.5px; }
+.idv-req-ask { display: flex; flex-direction: column; gap: 5px; padding: 14px 15px; border: 1px solid rgba(255, 255, 255, .07); border-radius: 12px; background: rgba(255, 255, 255, .02); }
+.idv-req-label { color: #767d7b; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.idv-req-value { color: #e2ece7; font-size: 14px; font-weight: 600; }
+.idv-req-meta { display: grid; gap: 10px; }
+.idv-req-meta span { display: inline-flex; align-items: center; gap: 9px; color: #8b928f; font-size: 12.5px; }
+.idv-req-meta svg { width: 15px; height: 15px; flex-shrink: 0; fill: none; stroke: #6f7773; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+.idv-check { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(18px, 2vw, 26px); padding: clamp(24px, 2.6vw, 40px); }
+.idv-check .bento-auth { height: auto; padding: 0; }
+.idv-steps { width: 100%; max-width: 300px; display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; }
+.idv-steps li { display: flex; align-items: center; gap: 11px; color: #c3ccc7; font-size: 13px; }
+.idv-steps-check { display: grid; place-items: center; width: 19px; height: 19px; flex-shrink: 0; border: 1px solid rgba(87, 227, 155, .34); border-radius: 50%; color: #57e39b; background: rgba(87, 227, 155, .12); }
+.idv-steps-check svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.idv-result { display: inline-flex; align-items: center; gap: 9px; padding: 9px 16px; border: 1px solid rgba(87, 227, 155, .3); border-radius: 10px; color: #7fe0ac; background: rgba(87, 227, 155, .1); font-size: 14px; font-weight: 600; }
+.idv-result svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- Step-up MFA push (wide panel) --- */
+.idv-push { display: flex; height: 100%; align-items: center; justify-content: center; padding: clamp(24px, 2.5vw, 44px); }
+.idv-push-card { width: min(360px, 100%); display: flex; flex-direction: column; gap: 14px; padding: 16px 17px; border: 1px solid rgba(255, 255, 255, .09); border-radius: 14px; background: #0b0c0c; box-shadow: 0 20px 44px rgba(0, 0, 0, .4); }
+.idv-push-head { display: flex; align-items: center; gap: 11px; }
+.idv-push-mark { display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; }
+.idv-push-mark img { width: 30px; height: 30px; object-fit: contain; }
+.idv-push-id b { display: block; color: #eef2f0; font-size: 14.5px; font-weight: 600; }
+.idv-push-id small { color: #818987; font-size: 12px; }
+.idv-push-meta { color: #767d7b; font-size: 12px; }
+.idv-push-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 2px; }
+.idv-push-deny, .idv-push-approve { display: grid; place-items: center; padding: 9px 0; border-radius: 9px; font-size: 12.5px; font-weight: 600; }
+.idv-push-deny { border: 1px solid rgba(255, 255, 255, .1); color: #b3bab7; }
+.idv-push-approve { background: var(--scratch-accent); color: #fff; }
+
+/* --- Directory match --- */
+.idv-dir { display: flex; height: 100%; flex-direction: column; justify-content: center; gap: 15px; padding: clamp(22px, 2.2vw, 34px) clamp(22px, 2.4vw, 36px); }
+.idv-dir-provider { display: inline-flex; align-items: center; gap: 10px; color: #eef2f0; font-size: 14px; font-weight: 600; }
+.idv-dir-provider img { width: 22px; height: 22px; object-fit: contain; }
+.idv-dir ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.idv-dir li { display: grid; grid-template-columns: 74px 1fr auto; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .06); border-radius: 10px; background: rgba(255, 255, 255, .022); }
+.idv-dir li span { color: #767d7b; font-size: 11.5px; }
+.idv-dir li b { color: #e2ece7; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.idv-dir li i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; color: #57e39b; background: rgba(87, 227, 155, .12); }
+.idv-dir li i svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- Manager approval --- */
+.idv-approval { display: flex; height: 100%; flex-direction: column; justify-content: center; gap: 14px; padding: 0 clamp(22px, 2.4vw, 38px); }
+.idv-approval-line { color: #9aa2a0; font-size: 13px; }
+.idv-approval-line b { color: #e2ece7; font-weight: 600; }
+.idv-approval-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid rgba(255, 255, 255, .09); border-radius: 12px; background: #0b0c0c; }
+.idv-approval-avatar { width: 38px; height: 38px; flex-shrink: 0; overflow: hidden; border-radius: 50%; }
+.idv-approval-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.idv-approval-meta b { display: block; color: #eef3f0; font-size: 13.5px; font-weight: 600; }
+.idv-approval-meta small { color: #818987; font-size: 11.5px; }
+.idv-approval-status { padding: 4px 10px; border: 1px solid rgba(230, 199, 102, .3); border-radius: 7px; color: #e6c766; background: rgba(230, 199, 102, .1); font-size: 11px; font-weight: 600; }
+
+/* --- Risk / held-for-review --- */
+.idv-risk { display: flex; height: 100%; flex-direction: column; justify-content: center; gap: 15px; padding: 0 clamp(22px, 2.4vw, 38px); }
+.idv-risk-badge { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; padding: 6px 12px; border: 1px solid rgba(230, 199, 102, .3); border-radius: 8px; color: #e6c766; background: rgba(230, 199, 102, .1); font-size: 12.5px; font-weight: 600; }
+.idv-risk-badge svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.idv-risk ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.idv-risk li { display: flex; align-items: center; gap: 10px; color: #c3ccc7; font-size: 13px; }
+.idv-risk li i { width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: #e6c766; box-shadow: 0 0 8px rgba(230, 199, 102, .5); }
+
+@media (max-width: 720px) {
+  .idv-window-body { grid-template-columns: 1fr; min-height: 0; }
+  .idv-req { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .07); }
+}
+
+/* ===========================================================================
+   Integrations page (/integrations.html) — a simple connected grid of cards:
+   a short description on top, the logo + name and an arrow anchored at the
+   bottom (Framer "how teams win" layout, in Nevian's theme).
+   =========================================================================== */
+.intg-section { width: min(1360px, calc(100% - 72px)); margin: clamp(44px, 5vw, 72px) auto 0; }
+.intg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.intg-card {
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(210px, 22vw, 250px);
+  padding: clamp(24px, 2.4vw, 34px) clamp(22px, 2.2vw, 30px);
+  background: #050505;
+  transition: background .25s ease;
+}
+.intg-card:hover { background: #0a0b0b; }
+.intg-desc { margin: 0; color: #8b928f; font-size: 14px; line-height: 1.5; }
+.intg-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 26px; }
+.intg-brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+/* Recolor the mixed-brand logos to a uniform light grey. */
+.intg-logo { width: auto; height: 20px; max-width: 150px; object-fit: contain; filter: grayscale(1) invert(.78) contrast(.9) brightness(1.04); opacity: .9; }
+/* Icon marks that sit next to a text name. */
+.intg-logo.is-icon { height: 22px; max-width: 44px; }
+/* Each wordmark SVG has different internal padding, so heights are tuned per
+   logo to read at a consistent cap height (like the homepage marquee). */
+.intg-logo[data-logo='servicenow'] { height: 14px; }
+.intg-logo[data-logo='microsoft-6'] { height: 18px; }
+.intg-logo[data-logo='jira'] { height: 27px; }
+.intg-logo[data-logo='windows-server'] { height: 23px; }
+.intg-logo[data-logo='windows-darkblue-2012-svg'] { height: 23px; }
+.intg-brand b { color: #e6ece9; font-size: 15px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+.intg-brand-cta { color: var(--scratch-accent); font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.intg-card.is-cta:hover .intg-brand-cta { color: var(--scratch-accent-hover); }
+
+@media (max-width: 900px) {
+  .intg-section { width: calc(100% - 36px); }
+  .intg-grid { grid-template-columns: repeat(2, 1fr); }
+  .intg-card { min-height: 0; }
+}
+@media (max-width: 560px) {
+  .intg-grid { grid-template-columns: 1fr; }
+}
+
+/* ===========================================================================
+   Smart routing page (/smart-routing.html). The routing graph is the hero
+   focus; feature panels explain classification, agents, sources, and priority.
+   =========================================================================== */
+
+/* The hero visual reuses only the STRUCTURE of the shared Architecture diagram.
+   Drop its heading copy and textured background, and center the diagram on the
+   page black so just the node/connector graph shows. */
+.feature-page .architecture-section { background: transparent; min-height: 0; border-top: 0; }
+.feature-page .architecture-section::before,
+.feature-page .architecture-section::after { display: none; }
+.feature-page .architecture-copy { display: none; }
+.feature-page .architecture-wrap {
+  display: block;
+  grid-template-columns: none;
+  width: min(1120px, calc(100% - 72px));
+  min-height: 0;
+  margin: 0 auto;
+  /* Keep space above the diagram, but trim the gap below it (~50% less). */
+  padding: clamp(28px, 4vw, 56px) 0 clamp(6px, 0.8vw, 12px);
+}
+.feature-page .architecture-section { padding-bottom: 0; }
+/* Halve the gap between the diagram and the following section. */
+.feature-page .architecture-section + .feature-bento { margin-top: clamp(22px, 3vw, 44px); }
+.feature-page .architecture-diagram {
+  width: 100%;
+  max-width: 1060px;
+  height: 560px;
+  margin: 0 auto;
+  transform: none;
+}
+/* The top tabs cycle through label variants (e.g. Servers -> Infrastructure),
+   so widen the bar and give each column room for its longest variant. */
+.feature-page .architecture-tabs {
+  left: 24%;
+  width: 72%;
+  grid-template-columns: 1fr 1.2fr 1.5fr 1.2fr;
+}
+
+/* --- Request classification (wide panel) --- */
+.rt-classify { display: flex; height: 100%; flex-direction: column; justify-content: center; gap: 16px; padding: clamp(24px, 2.5vw, 40px) clamp(24px, 2.6vw, 44px); }
+.rt-classify-req { display: flex; align-items: center; gap: 13px; padding: 15px 17px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 13px; background: rgba(255, 255, 255, .022); }
+.rt-classify-quote { font-size: 34px; line-height: 0; color: #57e39b; opacity: .5; }
+.rt-classify-req b { display: block; color: #eef2f0; font-size: 15px; font-weight: 600; }
+.rt-classify-req small { color: #818987; font-size: 12.5px; }
+.rt-classify-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.rt-classify-tag { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 8px; color: #d3d9d7; font-size: 12px; }
+.rt-classify-tag em { color: #767d7b; font-style: normal; }
+.rt-classify-conf { display: inline-flex; align-items: center; padding: 5px 11px; border: 1px solid rgba(87, 227, 155, .28); border-radius: 8px; color: #7fe0ac; background: rgba(87, 227, 155, .1); font-size: 12px; font-weight: 600; }
+.rt-classify-route { display: inline-flex; align-items: center; gap: 9px; color: #9aa2a0; font-size: 13.5px; }
+.rt-classify-route b { color: #eef2f0; font-weight: 600; }
+.rt-classify-route svg { width: 17px; height: 17px; fill: none; stroke: #57e39b; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- Agent roster --- */
+.rt-agents { display: flex; height: 100%; flex-direction: column; justify-content: center; gap: 11px; padding: clamp(22px, 2.2vw, 34px) clamp(22px, 2.2vw, 32px); }
+.rt-agent { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid rgba(255, 255, 255, .06); border-radius: 11px; background: rgba(255, 255, 255, .022); }
+.rt-agent-dot { width: 9px; height: 9px; flex-shrink: 0; border-radius: 50%; background: #57e39b; box-shadow: 0 0 8px rgba(87, 227, 155, .55); }
+.rt-agent-meta b { display: block; color: #eef2f0; font-size: 13.5px; font-weight: 600; }
+.rt-agent-meta small { color: #818987; font-size: 12px; }
+
+/* --- Source context chips --- */
+.rt-sources { display: flex; height: 100%; flex-wrap: wrap; align-content: center; gap: 10px; padding: 0 clamp(22px, 2.4vw, 38px); }
+.rt-source { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 9px; background: rgba(255, 255, 255, .022); color: #d3d9d7; font-size: 13px; }
+.rt-source i { width: 7px; height: 7px; border-radius: 50%; background: #57e39b; box-shadow: 0 0 8px rgba(87, 227, 155, .5); }
+
+/* --- Priority routing --- */
+.rt-priority { display: flex; height: 100%; flex-direction: column; justify-content: center; gap: 12px; padding: 0 clamp(22px, 2.4vw, 38px); }
+.rt-priority-row { display: flex; align-items: center; gap: 12px; }
+.rt-priority-badge { flex-shrink: 0; width: 66px; text-align: center; padding: 4px 0; border-radius: 7px; font-size: 11px; font-weight: 600; }
+.rt-priority-badge.is-urgent { color: #f08a5d; background: rgba(240, 138, 93, .12); border: 1px solid rgba(240, 138, 93, .28); }
+.rt-priority-badge.is-normal { color: #7fe0ac; background: rgba(87, 227, 155, .12); border: 1px solid rgba(87, 227, 155, .28); }
+.rt-priority-badge.is-low { color: #8b928f; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); }
+.rt-priority-label { color: #dfe7e3; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+@media (max-width: 900px) {
+  .routing-stage { height: clamp(320px, 70vw, 420px); }
+}
+
+/* ===========================================================================
+   Audit trail page (/audit-trail.html) — intentionally lean: a compact
+   audit-log window, three short points, and a "captured on every line" grid.
+   =========================================================================== */
+.audit-showcase { width: min(1360px, calc(100% - 72px)); margin: clamp(32px, 4vw, 56px) auto 0; }
+.audit-toolbtns { display: inline-flex; gap: 8px; }
+.audit-toolbtn { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 8px; background: rgba(255, 255, 255, .03); color: #c2c9c6; font-size: 12px; font-weight: 600; cursor: pointer; transition: color .16s ease, border-color .16s ease, background .16s ease; }
+.audit-toolbtn:hover { color: #eef2f0; border-color: rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .05); }
+.audit-toolbtn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.audit-log { padding: 6px 0; }
+.audit-log-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 13px clamp(16px, 2vw, 24px);
+  border-bottom: 1px solid rgba(255, 255, 255, .05);
+}
+.audit-log-row:last-child { border-bottom: 0; }
+.audit-log-check { display: grid; place-items: center; width: 20px; height: 20px; flex-shrink: 0; border: 1px solid rgba(87, 227, 155, .34); border-radius: 50%; color: #57e39b; background: rgba(87, 227, 155, .12); }
+.audit-log-check svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.audit-log-main { min-width: 0; }
+.audit-log-main b { display: block; color: #e9eeec; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.audit-log-main small { color: #767d7b; font-size: 12px; }
+.audit-log-kind { padding: 3px 9px; border-radius: 6px; font-size: 10.5px; font-weight: 600; white-space: nowrap; }
+.audit-log-kind.is-verify, .audit-log-kind.is-action { color: #7fe0ac; background: rgba(87, 227, 155, .12); }
+.audit-log-kind.is-approval { color: #e6c766; background: rgba(230, 199, 102, .12); }
+.audit-log-kind.is-system { color: #8b928f; background: rgba(255, 255, 255, .05); }
+.audit-log-time { color: #767d7b; font-size: 11.5px; white-space: nowrap; }
+
+/* Three short highlight cards. */
+.feature-caps-grid.audit-points { grid-template-columns: repeat(3, 1fr); }
+.audit-points .feature-cap { padding: clamp(22px, 2.2vw, 30px) clamp(20px, 2vw, 26px); }
+.audit-points .feature-cap-icon { margin-bottom: 16px; }
+.audit-points .feature-cap h4 { font-size: 15px; }
+.audit-points .feature-cap p { font-size: 13px; }
+
+@media (max-width: 700px) {
+  .audit-showcase { width: calc(100% - 36px); }
+  .feature-caps-grid.audit-points { grid-template-columns: 1fr; }
+  .audit-log-kind { display: none; }
+}

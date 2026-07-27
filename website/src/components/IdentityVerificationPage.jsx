@@ -21,7 +21,6 @@ function VerificationConsole() {
     <div className="device-window idv-window">
       <div className="device-window-bar">
         <div className="device-window-brand">
-          <img src="/assets/logo.png" alt="" />
           <span>Verification</span>
         </div>
         <div className="device-window-title">Request · <b>#4821</b></div>
@@ -54,7 +53,6 @@ function VerificationConsole() {
               </li>
             ))}
           </ul>
-          <div className="idv-result"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10" /></svg> Identity verified</div>
         </div>
       </div>
     </div>

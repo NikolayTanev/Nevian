@@ -50,43 +50,243 @@ export function OsMark({ meta, className = '' }) {
   );
 }
 
-export function DeviceContextTable() {
-  const rows = [
+// Rows shown by the static (decorative) version of the table on the landing
+// bento card.
+const previewDevices = [
+  { device: 'NEV-LT-042', meta: 'Windows 11 · Finance', health: 'Healthy', risk: 'Low', seen: '2m ago' },
+  { device: 'NEV-LT-118', meta: 'Windows 11 · Sales', health: 'Patch pending', risk: 'Low', seen: '5m ago' },
+  { device: 'NEV-MB-207', meta: 'macOS 14 · Design', health: 'Healthy', risk: 'Low', seen: '11m ago' },
+  { device: 'NEV-SRV-03', meta: 'Windows Server · DC', health: 'Healthy', risk: 'Medium', seen: '1m ago' },
+  { device: 'NEV-LT-311', meta: 'Windows 11 · Support', health: 'Reboot due', risk: 'Low', seen: '18m ago' },
+  { device: 'NEV-LT-204', meta: 'Windows 11 · Ops', health: 'Healthy', risk: 'Low', seen: '3m ago' },
+];
+
+// Tree sources for the interactive version. Groups expand to their leaves; a
+// leaf selects which set of rows the table shows.
+const fleetTree = [
+  {
+    id: 'endpoints',
+    label: 'Endpoints',
+    items: [
+      { id: 'laptops', label: 'Laptops', count: 128 },
+      { id: 'desktops', label: 'Desktops', count: 64 },
+    ],
+  },
+  {
+    id: 'servers',
+    label: 'Servers',
+    items: [
+      { id: 'servers-windows', label: 'Windows', count: 12 },
+      { id: 'servers-hyperv', label: 'Hypervisors', count: 4 },
+    ],
+  },
+  {
+    id: 'identity',
+    label: 'Identity',
+    items: [
+      { id: 'identity-dc', label: 'Controllers', count: 3 },
+      { id: 'identity-entra', label: 'Entra ID', count: 1 },
+    ],
+  },
+  {
+    id: 'cloud',
+    label: 'Cloud',
+    items: [
+      { id: 'cloud-m365', label: 'Microsoft 365', count: 1 },
+      { id: 'cloud-azure', label: 'Azure', count: 2 },
+    ],
+  },
+];
+
+const fleetDevices = {
+  laptops: [
     { device: 'NEV-LT-042', meta: 'Windows 11 · Finance', health: 'Healthy', risk: 'Low', seen: '2m ago' },
     { device: 'NEV-LT-118', meta: 'Windows 11 · Sales', health: 'Patch pending', risk: 'Low', seen: '5m ago' },
     { device: 'NEV-MB-207', meta: 'macOS 14 · Design', health: 'Healthy', risk: 'Low', seen: '11m ago' },
-    { device: 'NEV-SRV-03', meta: 'Windows Server · DC', health: 'Healthy', risk: 'Medium', seen: '1m ago' },
     { device: 'NEV-LT-311', meta: 'Windows 11 · Support', health: 'Reboot due', risk: 'Low', seen: '18m ago' },
     { device: 'NEV-LT-204', meta: 'Windows 11 · Ops', health: 'Healthy', risk: 'Low', seen: '3m ago' },
-  ];
+  ],
+  desktops: [
+    { device: 'NEV-DT-011', meta: 'Windows 11 · Reception', health: 'Healthy', risk: 'Low', seen: '1m ago' },
+    { device: 'NEV-DT-046', meta: 'Windows 11 · Workshop', health: 'Patch pending', risk: 'Medium', seen: '7m ago' },
+    { device: 'NEV-DT-052', meta: 'Windows 10 · Lab', health: 'Reboot due', risk: 'Low', seen: '22m ago' },
+  ],
+  'servers-windows': [
+    { device: 'NEV-SRV-03', meta: 'Windows Server · DC', health: 'Healthy', risk: 'Medium', seen: '1m ago' },
+    { device: 'NEV-SRV-07', meta: 'Windows Server · File', health: 'Healthy', risk: 'Low', seen: '2m ago' },
+    { device: 'NEV-SRV-12', meta: 'Windows Server · Print', health: 'Patch pending', risk: 'Low', seen: '4m ago' },
+  ],
+  'servers-hyperv': [
+    { device: 'NEV-HV-01', meta: 'Windows Server · Hyper-V', health: 'Healthy', risk: 'Low', seen: '1m ago' },
+    { device: 'NEV-HV-02', meta: 'Windows Server · Hyper-V', health: 'Healthy', risk: 'Low', seen: '1m ago' },
+  ],
+  'identity-dc': [
+    { device: 'DC-WAW-01', meta: 'Windows Server · AD DS', health: 'Healthy', risk: 'Low', seen: 'now' },
+    { device: 'DC-WAW-02', meta: 'Windows Server · AD DS', health: 'Healthy', risk: 'Low', seen: 'now' },
+    { device: 'DC-KRK-01', meta: 'Windows Server · AD DS', health: 'Sync delayed', risk: 'Medium', seen: '6m ago' },
+  ],
+  'identity-entra': [
+    { device: 'acme.onmicrosoft.com', meta: 'Windows · Entra ID tenant', health: 'Synced', risk: 'Low', seen: 'now' },
+  ],
+  'cloud-m365': [
+    { device: 'Microsoft 365 · Acme', meta: 'Windows · Intune enrolled', health: 'Healthy', risk: 'Low', seen: '3m ago' },
+  ],
+  'cloud-azure': [
+    { device: 'nev-prod-rg', meta: 'Windows · Azure subscription', health: 'Healthy', risk: 'Low', seen: '5m ago' },
+    { device: 'nev-test-rg', meta: 'Windows · Azure subscription', health: 'Idle', risk: 'Low', seen: '31m ago' },
+  ],
+};
+
+const fleetTools = [['+', 'Add device'], ['⇅', 'Sort'], ['≣', 'Columns'], ['⌕', 'Search']];
+
+const fleetSignals = [
+  { label: 'Patch KB5039 applied', device: 'NEV-LT-042 · Windows 11', state: 'Completed', severity: 'Low', time: '2m ago' },
+  { label: 'Disk usage crossed 60%', device: 'NEV-LT-118 · Windows 11', state: 'Watching', severity: 'Low', time: '9m ago' },
+  { label: 'New sign-in · Finance app', device: 'NEV-MB-207 · macOS 14', state: 'Verified', severity: 'Low', time: '1h ago' },
+  { label: 'Reboot pending', device: 'NEV-LT-311 · Windows 11', state: 'Queued', severity: 'Medium', time: '3h ago' },
+  { label: 'Agent reconnected', device: 'NEV-SRV-03 · Windows Server', state: 'Completed', severity: 'Low', time: '4h ago' },
+];
+
+// One device row. Rendered as a button in the interactive version so it can be
+// selected with a click or the keyboard.
+function FleetRow({ row, interactive, selected, onSelect }) {
+  const cells = (
+    <>
+      <span className="bento-cms-cell-device"><OsMark meta={row.meta} className="bento-cms-cell-os" /><b>{row.device}</b><small>{row.meta}</small></span>
+      <span className="bento-cms-cell-health"><i /> {row.health}</span>
+      <span className={`bento-cms-cell-risk is-${row.risk.toLowerCase()}`}>{row.risk}</span>
+      <span className="bento-cms-cell-seen">{row.seen}</span>
+    </>
+  );
+
+  if (!interactive) return <div className="bento-cms-row">{cells}</div>;
 
   return (
-    <div className="bento-cms" aria-hidden="true">
+    <button
+      type="button"
+      className={`bento-cms-row ${selected ? 'is-selected' : ''}`}
+      aria-pressed={selected}
+      onClick={onSelect}
+    >{cells}</button>
+  );
+}
+
+// The CMS-style fleet table. Static and decorative on the landing bento card;
+// pass `interactive` (device context page) to let the tabs, tree sources, and
+// rows respond to clicks.
+export function DeviceContextTable({ interactive = false }) {
+  const [tab, setTab] = useState('devices');
+  const [openGroups, setOpenGroups] = useState(['endpoints']);
+  const [source, setSource] = useState('laptops');
+  const [selected, setSelected] = useState(null);
+
+  const rows = interactive ? (fleetDevices[source] || []) : previewDevices;
+
+  const toggleGroup = (id) => setOpenGroups((open) => (
+    open.includes(id) ? open.filter((groupId) => groupId !== id) : [...open, id]
+  ));
+
+  const pickSource = (id) => {
+    setSource(id);
+    setSelected(null);
+  };
+
+  const staticTree = (
+    <>
+      <div className="bento-cms-tree-group is-open"><span>▾ Endpoints</span></div>
+      <div className="bento-cms-tree-item">Laptops <em>128</em></div>
+      <div className="bento-cms-tree-item is-active">Desktops <em>64</em></div>
+      <div className="bento-cms-tree-group"><span>▸ Servers</span></div>
+      <div className="bento-cms-tree-group"><span>▸ Identity</span></div>
+      <div className="bento-cms-tree-group"><span>▸ Cloud</span></div>
+    </>
+  );
+
+  const interactiveTree = fleetTree.map((group) => {
+    const open = openGroups.includes(group.id);
+    return (
+      <div key={group.id}>
+        <button
+          type="button"
+          className={`bento-cms-tree-group ${open ? 'is-open' : ''}`}
+          aria-expanded={open}
+          onClick={() => toggleGroup(group.id)}
+        ><span>{open ? '▾' : '▸'} {group.label}</span></button>
+        {open && group.items.map((item) => (
+          <button
+            type="button"
+            key={item.id}
+            className={`bento-cms-tree-item ${source === item.id ? 'is-active' : ''}`}
+            aria-pressed={source === item.id}
+            onClick={() => pickSource(item.id)}
+          >{item.label} <em>{item.count}</em></button>
+        ))}
+      </div>
+    );
+  });
+
+  return (
+    <div className={`bento-cms ${interactive ? 'is-interactive' : ''}`} aria-hidden={interactive ? undefined : 'true'}>
       <div className="bento-cms-toolbar">
-        <div className="bento-cms-tabs"><span className="is-active">Devices</span><span>Signals</span></div>
-        <div className="bento-cms-tools"><i>+</i><i>⇅</i><i>≣</i><i>⌕</i></div>
+        <div className="bento-cms-tabs">
+          {interactive ? (
+            ['devices', 'signals'].map((id) => (
+              <button
+                type="button"
+                key={id}
+                className={tab === id ? 'is-active' : ''}
+                aria-pressed={tab === id}
+                onClick={() => setTab(id)}
+              >{id === 'devices' ? 'Devices' : 'Signals'}</button>
+            ))
+          ) : (
+            <><span className="is-active">Devices</span><span>Signals</span></>
+          )}
+        </div>
+        {interactive ? (
+          /* The tool buttons aren't a real product surface, so they point at
+             the demo form instead. */
+          <div className="bento-cms-tools">
+            {fleetTools.map(([glyph, label]) => (
+              <a href="#contact" key={label} aria-label={`${label} — book a demo`}><i aria-hidden="true">{glyph}</i></a>
+            ))}
+          </div>
+        ) : (
+          <div className="bento-cms-tools" aria-hidden="true"><i>+</i><i>⇅</i><i>≣</i><i>⌕</i></div>
+        )}
       </div>
       <div className="bento-cms-body">
         <aside className="bento-cms-tree">
-          <div className="bento-cms-tree-group is-open"><span>▾ Endpoints</span></div>
-          <div className="bento-cms-tree-item">Laptops <em>128</em></div>
-          <div className="bento-cms-tree-item is-active">Desktops <em>64</em></div>
-          <div className="bento-cms-tree-group"><span>▸ Servers</span></div>
-          <div className="bento-cms-tree-group"><span>▸ Identity</span></div>
-          <div className="bento-cms-tree-group"><span>▸ Cloud</span></div>
+          {interactive ? interactiveTree : staticTree}
           <div className="bento-cms-tree-add">+ Add source</div>
         </aside>
-        <div className="bento-cms-table">
-          <div className="bento-cms-thead"><span>Device</span><span>Health</span><span>Risk</span><span>Last seen</span></div>
-          {rows.map((row) => (
-            <div className="bento-cms-row" key={row.device}>
-              <span className="bento-cms-cell-device"><OsMark meta={row.meta} className="bento-cms-cell-os" /><b>{row.device}</b><small>{row.meta}</small></span>
-              <span className="bento-cms-cell-health"><i /> {row.health}</span>
-              <span className={`bento-cms-cell-risk is-${row.risk.toLowerCase()}`}>{row.risk}</span>
-              <span className="bento-cms-cell-seen">{row.seen}</span>
-            </div>
-          ))}
-        </div>
+        {interactive && tab === 'signals' ? (
+          <div className="bento-cms-table">
+            <div className="bento-cms-thead"><span>Signal</span><span>State</span><span>Severity</span><span>Seen</span></div>
+            {fleetSignals.map((signal) => (
+              <div className="bento-cms-row" key={signal.label}>
+                <span className="bento-cms-cell-device"><OsMark meta={signal.device} className="bento-cms-cell-os" /><b>{signal.label}</b><small>{signal.device}</small></span>
+                <span className="bento-cms-cell-health"><i /> {signal.state}</span>
+                <span className={`bento-cms-cell-risk is-${signal.severity.toLowerCase()}`}>{signal.severity}</span>
+                <span className="bento-cms-cell-seen">{signal.time}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bento-cms-table">
+            <div className="bento-cms-thead"><span>Device</span><span>Health</span><span>Risk</span><span>Last seen</span></div>
+            {rows.map((row) => (
+              <FleetRow
+                key={row.device}
+                row={row}
+                interactive={interactive}
+                selected={selected === row.device}
+                onSelect={() => setSelected((current) => (current === row.device ? null : row.device))}
+              />
+            ))}
+            {interactive && rows.length === 0 && <div className="bento-cms-empty">No devices in this source yet.</div>}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -410,6 +410,28 @@ button { font: inherit; }
 .bento-cms-cell-risk.is-low { color: #7fe0ac; background: rgba(87, 227, 155, .12); }
 .bento-cms-cell-risk.is-medium { color: #e6c766; background: rgba(230, 199, 102, .12); }
 
+/* Interactive variant (device context page): same visual, but the tabs, tree
+   sources, and rows are real buttons. Reset the button chrome first, then
+   restate the styling the static spans/divs get. */
+/* Keep the reset free of display/padding so each element's own rule (grid row,
+   flex tree item) still applies. */
+.bento-cms.is-interactive button { appearance: none; -webkit-appearance: none; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.bento-cms.is-interactive .bento-cms-tabs button { padding: 5px 11px; border-radius: 7px; color: #7f8785; font-size: 12px; font-weight: 500; transition: color .16s ease, background .16s ease; }
+.bento-cms.is-interactive .bento-cms-tabs button:hover { color: #cfd5d3; }
+.bento-cms.is-interactive .bento-cms-tabs button.is-active { color: #eef2f0; background: rgba(255, 255, 255, .07); }
+.bento-cms.is-interactive .bento-cms-tools a { display: block; border-radius: 6px; transition: background .16s ease; }
+.bento-cms.is-interactive .bento-cms-tools a:hover i { color: #eef2f0; background: rgba(255, 255, 255, .1); }
+.bento-cms.is-interactive .bento-cms-tools i { transition: color .16s ease, background .16s ease; }
+.bento-cms.is-interactive .bento-cms-tree-group { width: 100%; border-radius: 6px; transition: color .16s ease, background .16s ease; }
+.bento-cms.is-interactive .bento-cms-tree-group:hover { background: rgba(255, 255, 255, .04); }
+.bento-cms.is-interactive .bento-cms-tree-item { width: calc(100% - 12px); transition: color .16s ease, background .16s ease; }
+.bento-cms.is-interactive .bento-cms-tree-item:hover { color: #eef2f0; background: rgba(255, 255, 255, .04); }
+.bento-cms.is-interactive .bento-cms-row { width: 100%; border-bottom: 1px solid rgba(255, 255, 255, .045); transition: background .16s ease; }
+.bento-cms.is-interactive .bento-cms-row:hover { background: rgba(255, 255, 255, .03); }
+.bento-cms.is-interactive .bento-cms-row.is-selected { background: rgba(87, 227, 155, .07); box-shadow: inset 2px 0 0 #57e39b; }
+.bento-cms.is-interactive :focus-visible { outline: 2px solid rgba(87, 227, 155, .55); outline-offset: -2px; }
+.bento-cms-empty { padding: 20px 16px; color: #767d7b; font-size: 12.5px; }
+
 /* Device context card: let the table bleed off the right and bottom (cut off,
    not fit to height) and fade to black on those edges, like the Framer card. */
 .scratch-bento-context .scratch-bento-media {
@@ -1269,17 +1291,18 @@ button { font: inherit; }
   background: #0c0d0d;
 }
 .device-window-brand { display: inline-flex; align-items: center; gap: 8px; justify-self: start; padding: 6px 10px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 9px; background: rgba(255, 255, 255, .03); color: #eef2f0; font-size: 13px; font-weight: 600; }
-.device-window-brand img { width: 17px; height: 17px; object-fit: contain; }
 .device-window-brand svg { width: 13px; height: 13px; fill: none; stroke: #8b928f; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .device-window-title { color: #8b928f; font-size: 12.5px; }
 .device-window-title b { color: #cfd5d3; font-weight: 600; }
 .device-window-actions { display: inline-flex; align-items: center; gap: 8px; justify-self: end; }
-.device-window-live { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid rgba(87, 227, 155, .3); border-radius: 7px; color: #7fe0ac; background: rgba(87, 227, 155, .1); font-size: 11px; font-weight: 600; }
-.device-window-live i { width: 6px; height: 6px; border-radius: 50%; background: #57e39b; box-shadow: 0 0 8px rgba(87, 227, 155, .7); animation: bentoInsightsLive 1.6s ease-in-out infinite; }
 .device-window-actions button { display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 1px solid rgba(255, 255, 255, .09); border-radius: 8px; background: rgba(255, 255, 255, .03); color: #a6adaa; cursor: pointer; transition: color .16s ease, border-color .16s ease; }
 .device-window-actions button:hover { color: #eef2f0; border-color: rgba(255, 255, 255, .2); }
 .device-window-actions svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .device-window-body { padding: 0; }
+
+/* On the device page the table's own toolbar is the window's top bar, so give
+   it the bar's height and background. */
+.device-window .bento-cms-toolbar { height: 54px; padding: 0 14px; border-bottom: 1px solid rgba(255, 255, 255, .07); background: #0c0d0d; }
 
 /* Render the shared device table full-size and flush inside the window. */
 .device-window .bento-cms {
@@ -1289,7 +1312,10 @@ button { font: inherit; }
   border-radius: 0;
   background: transparent;
 }
-.device-window .bento-cms-body { grid-template-rows: auto; }
+/* Keep the window a steady, roomier height whichever source is selected
+   (some sources only have one or two rows). */
+.device-window .bento-cms-body { grid-template-rows: auto; min-height: 420px; }
+.device-window .bento-cms-row { height: 54px; }
 
 /* --- Device-page feature panel visuals --- */
 /* Single device profile. */
@@ -1469,8 +1495,6 @@ button { font: inherit; }
 .idv-steps li { display: flex; align-items: center; gap: 11px; color: #c3ccc7; font-size: 13px; }
 .idv-steps-check { display: grid; place-items: center; width: 19px; height: 19px; flex-shrink: 0; border: 1px solid rgba(87, 227, 155, .34); border-radius: 50%; color: #57e39b; background: rgba(87, 227, 155, .12); }
 .idv-steps-check svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.idv-result { display: inline-flex; align-items: center; gap: 9px; padding: 9px 16px; border: 1px solid rgba(87, 227, 155, .3); border-radius: 10px; color: #7fe0ac; background: rgba(87, 227, 155, .1); font-size: 14px; font-weight: 600; }
-.idv-result svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 /* --- Step-up MFA push (wide panel) --- */
 .idv-push { display: flex; height: 100%; align-items: center; justify-content: center; padding: clamp(24px, 2.5vw, 44px); }

@@ -297,21 +297,9 @@ export default function DeviceContextPage() {
 
       <section className="device-showcase" aria-label="Device context dashboard">
         <div className="device-window">
-          <div className="device-window-bar">
-            <div className="device-window-brand">
-              <img src="/assets/logo.png" alt="" />
-              <span>Devices</span>
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
-            </div>
-            <div className="device-window-title">Fleet · <b>main</b></div>
-            <div className="device-window-actions">
-              <span className="device-window-live"><i /> Live</span>
-              <button type="button" aria-label="Refresh"><svg viewBox="0 0 20 20"><path d="M15.5 6.5A6 6 0 1 0 16 12M15.5 3v3.5H12" /></svg></button>
-              <button type="button" aria-label="Settings"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.4" /><path d="M10 3v2M10 15v2M3 10h2M15 10h2M5 5l1.5 1.5M13.5 13.5 15 15M15 5l-1.5 1.5M6.5 13.5 5 15" /></svg></button>
-            </div>
-          </div>
+          {/* The table's own toolbar (tabs + tools) doubles as the window bar. */}
           <div className="device-window-body">
-            <DeviceContextTable />
+            <DeviceContextTable interactive />
           </div>
         </div>
       </section>

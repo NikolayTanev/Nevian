@@ -22,7 +22,7 @@ const bentoCards = [
   { area: 'audit', label: 'Audit trail', href: '/audit-trail.html' },
   { area: 'routing', label: 'Smart routing', href: '/smart-routing.html' },
   { area: 'security', label: 'Security', href: '/#password-reset' },
-  { area: 'insights', label: 'Insights', href: '/#how' },
+  { area: 'insights', label: 'Insights', href: '/insights.html' },
   { area: 'handoff', label: 'Human handoff', href: '/#how' },
 ];
 

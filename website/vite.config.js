@@ -20,6 +20,7 @@ export default defineConfig({
         integrations: resolve(root, 'integrations.html'),
         'smart-routing': resolve(root, 'smart-routing.html'),
         'audit-trail': resolve(root, 'audit-trail.html'),
+        insights: resolve(root, 'insights.html'),
       },
     },
   },

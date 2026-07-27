@@ -1693,3 +1693,91 @@ button { font: inherit; }
   .feature-caps-grid.audit-points { grid-template-columns: 1fr; }
   .audit-log-kind { display: none; }
 }
+
+/* ===========================================================================
+   Insights page (/insights.html) — a full "Support analytics" dashboard as the
+   hero, then Framer-style alternating feature rows and a metrics grid.
+   =========================================================================== */
+.ins-showcase { width: min(1360px, calc(100% - 72px)); margin: clamp(32px, 4vw, 56px) auto 0; }
+.ins-range { padding: 5px 12px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 8px; color: #c2c9c6; font-size: 12px; font-weight: 600; }
+.ins-range.is-ghost { color: #767d7b; }
+
+.ins-body { padding: clamp(20px, 2.2vw, 32px) clamp(20px, 2.4vw, 36px) clamp(22px, 2.4vw, 34px); }
+.ins-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; padding-bottom: clamp(16px, 1.8vw, 24px); border-bottom: 1px solid rgba(255, 255, 255, .06); }
+.ins-stats > div { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.ins-stats span { display: inline-flex; align-items: center; gap: 6px; color: #8b928f; font-size: 12px; white-space: nowrap; }
+.ins-stats strong { color: #eef2f0; font-size: clamp(22px, 2.1vw, 30px); font-weight: 700; letter-spacing: -.02em; }
+.ins-stats .is-muted span, .ins-stats .is-muted strong { color: rgba(230, 238, 234, .34); }
+.ins-live { width: 6px; height: 6px; border-radius: 50%; background: #57e39b; box-shadow: 0 0 8px rgba(87, 227, 155, .7); animation: bentoInsightsLive 1.6s ease-in-out infinite; }
+
+/* Chart */
+.ins-chart { position: relative; height: clamp(180px, 20vw, 250px); margin-top: clamp(16px, 1.8vw, 24px); }
+.ins-chart-axis { position: absolute; left: 0; z-index: 1; color: #6b716f; font-size: 10.5px; }
+.ins-chart-axis-top { top: -2px; }
+.ins-chart-axis-mid { top: 44%; }
+.ins-chart svg {
+  width: 100%; height: 100%; display: block;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
+}
+.ins-chart-grid { stroke: rgba(255, 255, 255, .05); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ins-chart-line1 { fill: none; stroke: #57e39b; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 5px rgba(87, 227, 155, .4)); }
+.ins-chart-line2 { fill: none; stroke: #3fd0d8; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; stroke-opacity: .82; vector-effect: non-scaling-stroke; }
+.ins-chart-dates { display: flex; justify-content: space-between; margin-top: 6px; color: #6b716f; font-size: 11px; }
+.ins-chart-tip {
+  position: absolute; top: 8%; left: 58%;
+  padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 10px;
+  background: rgba(12, 14, 13, .92); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, .5);
+}
+.ins-chart-tip > span { display: block; margin-bottom: 7px; color: #9aa2a0; font-size: 10px; }
+.ins-chart-tip div { display: flex; align-items: center; gap: 8px; color: #cfd5d3; font-size: 11px; }
+.ins-chart-tip div + div { margin-top: 4px; }
+.ins-chart-tip b { margin-left: 18px; color: #eef2f0; font-weight: 600; }
+.ins-chart-tip i { width: 7px; height: 7px; border-radius: 2px; }
+.ins-chart-tip .ins-dot1 { background: #57e39b; }
+.ins-chart-tip .ins-dot2 { background: #3fd0d8; }
+
+/* Breakdown lists (filled share bars behind each row, Framer style) */
+.ins-split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 2.4vw, 40px); margin-top: clamp(20px, 2.2vw, 30px); }
+.ins-list-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
+.ins-list-head span { color: #eef2f0; font-size: 14px; font-weight: 600; }
+.ins-list-head em { color: #767d7b; font-size: 11.5px; font-style: normal; }
+.ins-list ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ins-list li {
+  position: relative; display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 12px; border-radius: 8px; overflow: hidden;
+  background: rgba(255, 255, 255, .03);
+}
+.ins-list li::before {
+  content: ''; position: absolute; inset: 0 auto 0 0; width: var(--pct, 0%);
+  background: rgba(87, 227, 155, .13);
+}
+.ins-list-label { position: relative; color: #dfe7e3; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ins-list-val { position: relative; color: #eef2f0; font-size: 13px; font-weight: 600; flex-shrink: 0; padding-left: 12px; }
+
+/* Alternating feature rows */
+.ins-features { width: min(1360px, calc(100% - 72px)); margin: clamp(56px, 7vw, 104px) auto 0; display: grid; gap: clamp(48px, 6vw, 96px); }
+.ins-feature { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 72px); align-items: center; }
+.ins-feature.is-flip .ins-feature-copy { order: 2; }
+.ins-feature-copy h3 { margin: 0; color: #f4f7f5; font-size: clamp(24px, 2.4vw, 34px); font-weight: 700; line-height: 1.08; letter-spacing: -.03em; }
+.ins-feature-copy p { margin: 14px 0 0; color: #9aa2a0; font-size: clamp(14px, 1.1vw, 16px); line-height: 1.55; }
+.ins-feature-link { display: inline-flex; align-items: center; gap: 7px; margin-top: 20px; color: var(--scratch-accent); font-size: 14px; font-weight: 600; }
+.ins-feature-link svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+.ins-feature-link:hover svg { transform: translateX(3px); }
+.ins-mini { padding: clamp(20px, 2vw, 30px); border: 1px solid rgba(255, 255, 255, .08); border-radius: 16px; background: #090a0a; }
+.ins-mini .ins-stats { grid-template-columns: repeat(3, 1fr); border-bottom: 0; padding-bottom: 0; }
+.ins-mini .ins-stats > div:nth-child(n+4) { display: none; }
+.ins-mini-chart { padding-bottom: clamp(24px, 2.4vw, 34px); }
+.ins-mini-lists { display: grid; gap: 22px; }
+
+@media (max-width: 1000px) {
+  .ins-stats { grid-template-columns: repeat(3, 1fr); row-gap: 18px; }
+  .ins-feature { grid-template-columns: 1fr; }
+  .ins-feature.is-flip .ins-feature-copy { order: 0; }
+}
+@media (max-width: 720px) {
+  .ins-showcase, .ins-features { width: calc(100% - 36px); }
+  .ins-stats { grid-template-columns: repeat(2, 1fr); }
+  .ins-split { grid-template-columns: 1fr; gap: 22px; }
+}

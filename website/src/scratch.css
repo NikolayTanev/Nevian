@@ -2,6 +2,11 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: auto; background: #050505; }
 body { margin: 0; min-width: 320px; background: #050505; color: #f7f7f5; font-family: Inter, Arial, sans-serif; }
+/* Vite emits index.css (Tailwind) AFTER this file in the production build, so
+   its base `body { color: <near-black> }` would win a specificity tie and turn
+   every inherited-color element black. `html body` outranks it in both
+   orders. */
+html body { color: #f7f7f5; background: #050505; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; }
 .scratch-page { min-height: 100vh; overflow-x: clip; background: #050505; }

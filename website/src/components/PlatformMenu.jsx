@@ -18,7 +18,7 @@ const platformCards = [
     key: 'security',
     title: 'Security',
     description: 'Review verification, approval, and audit controls.',
-    href: '/#password-reset',
+    href: '/security.html',
   },
   {
     key: 'integrations',

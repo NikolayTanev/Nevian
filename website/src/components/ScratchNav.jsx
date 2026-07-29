@@ -4,7 +4,7 @@ import PlatformMenu from './PlatformMenu.jsx';
 const mobilePlatformLinks = [
   ['Platform overview', '/#features'],
   ['Workflow', '/#how'],
-  ['Security', '/#password-reset'],
+  ['Security', '/security.html'],
   ['Integrations', '/#integrations'],
 ];
 

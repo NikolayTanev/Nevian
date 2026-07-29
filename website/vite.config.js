@@ -21,6 +21,8 @@ export default defineConfig({
         'smart-routing': resolve(root, 'smart-routing.html'),
         'audit-trail': resolve(root, 'audit-trail.html'),
         insights: resolve(root, 'insights.html'),
+        security: resolve(root, 'security.html'),
+        'human-handoff': resolve(root, 'human-handoff.html'),
       },
     },
   },

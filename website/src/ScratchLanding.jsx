@@ -21,9 +21,9 @@ const bentoCards = [
   { area: 'integrations', label: 'Integrations', href: '/integrations.html' },
   { area: 'audit', label: 'Audit trail', href: '/audit-trail.html' },
   { area: 'routing', label: 'Smart routing', href: '/smart-routing.html' },
-  { area: 'security', label: 'Security', href: '/#password-reset' },
+  { area: 'security', label: 'Security', href: '/security.html' },
   { area: 'insights', label: 'Insights', href: '/insights.html' },
-  { area: 'handoff', label: 'Human handoff', href: '/#how' },
+  { area: 'handoff', label: 'Human handoff', href: '/human-handoff.html' },
 ];
 
 export default function ScratchLanding() {

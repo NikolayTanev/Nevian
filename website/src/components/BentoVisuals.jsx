@@ -559,7 +559,6 @@ export function AuditTrail() {
 
 // "Human handoff" card: Nevian escalates to a human agent with full context.
 export function HumanHandoff() {
-  const shared = ['Identity & device context', 'Full conversation history', 'Actions already attempted'];
   return (
     <div className="bento-handoff" aria-hidden="true">
       <div className="bento-handoff-note">
@@ -574,11 +573,6 @@ export function HumanHandoff() {
         </span>
         <span className="bento-handoff-status">Assigned</span>
       </div>
-      <ul className="bento-handoff-context">
-        {shared.map((item) => (
-          <li key={item}><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10" /></svg>{item}</li>
-        ))}
-      </ul>
     </div>
   );
 }

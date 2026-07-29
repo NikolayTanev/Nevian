@@ -1,7 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
-const phaseDurations = [1400, 2600, 2850, 1200, 2500, 1200, 2150, 2400, 1200, 2750, 1200, 1750, 2700, 2200, 2400, 1200, 2800];
+// Phase map: 0 idle · 1 user types · 2 agent replies · 3 click "Verify with
+// Microsoft" · 4-5 pick a verification method · 6-7 approve the push · 8
+// completing · 9 verified · 10 thanks · 11-13 close the ticket.
+// No sign-in screens: the user forgot their password, so Nevian asks for a
+// step-up MFA challenge instead of a password.
+const phaseDurations = [1400, 2600, 2850, 1200, 2400, 1200, 2750, 1200, 1750, 2700, 2200, 2400, 1200, 2800];
 const demoUser = {
   name: 'Linda Mogridge',
   email: 'linda.mogridge@contoso.com',
@@ -36,8 +41,8 @@ function MiniIcon({ type }) {
 
 function PersistentCursor({ frameRef, phase }) {
   const cursorRef = useRef(null);
-  const clicking = [3, 5, 6, 8, 10, 15].includes(phase);
-  const clickDelay = phase === 6 ? 1.62 : .68;
+  const clicking = [3, 5, 7, 12].includes(phase);
+  const clickDelay = .68;
 
   useLayoutEffect(() => {
     const frame = frameRef.current;
@@ -90,66 +95,6 @@ function PersistentCursor({ frameRef, phase }) {
   );
 }
 
-function TypedValue({ value, delay = 280, duration = 1450 }) {
-  const [length, setLength] = useState(0);
-
-  useEffect(() => {
-    setLength(0);
-    let interval = 0;
-    const start = window.setTimeout(() => {
-      const step = Math.max(38, duration / value.length);
-      interval = window.setInterval(() => {
-        setLength((current) => {
-          if (current >= value.length) {
-            window.clearInterval(interval);
-            return current;
-          }
-          return current + 1;
-        });
-      }, step);
-    }, delay);
-
-    return () => {
-      window.clearTimeout(start);
-      window.clearInterval(interval);
-    };
-  }, [delay, duration, value]);
-
-  return (
-    <span className="password-ms-live-value">
-      {value.slice(0, length)}<i aria-hidden="true" />
-    </span>
-  );
-}
-
-function EmailPane({ password = false, phase }) {
-  const clicking = (phase === 5 && !password) || (phase === 6 && password);
-
-  return (
-    <div className="password-ms-signin">
-      <div className="password-ms-card">
-        <MicrosoftMark />
-        <h3>{password ? 'Enter password' : 'Sign in'}</h3>
-        {password && <div className="password-ms-account">{demoUser.email}</div>}
-        <div className={`password-ms-field ${password ? 'is-password' : ''}`}>
-          <TypedValue value={password ? '••••••••••••' : demoUser.email} duration={password ? 1200 : 1550} />
-        </div>
-        {!password && <p>No account? <b>Create one!</b></p>}
-        <a>{password ? 'Forgot my password' : "Can't access your account?"}</a>
-        <div className="password-ms-actions">
-          <button type="button" className="is-back">Back</button>
-          <button type="button" className={`is-next${clicking ? ` is-clicking${password ? ' is-late-click' : ''}` : ''}`} data-password-cursor-target="true">
-            {password ? 'Sign in' : 'Next'}
-          </button>
-        </div>
-      </div>
-              {!password && (
-        <div className="password-ms-options"><MiniIcon type="phone" /> Other ways to sign in</div>
-      )}
-    </div>
-  );
-}
-
 function IdentityPane({ phase }) {
   const methods = [
     ['shield', 'Approve a request on my Microsoft Authenticator app'],
@@ -166,7 +111,7 @@ function IdentityPane({ phase }) {
         <h3>Verify your identity</h3>
         <div className="password-ms-methods">
           {methods.map(([icon, label], index) => (
-            <button key={label} type="button" className={`${index === 0 ? 'is-target' : ''}${index === 0 && phase === 8 ? ' is-clicking' : ''}`} data-password-cursor-target={index === 0 ? 'true' : undefined}>
+            <button key={label} type="button" className={`${index === 0 ? 'is-target' : ''}${index === 0 && phase === 5 ? ' is-clicking' : ''}`} data-password-cursor-target={index === 0 ? 'true' : undefined}>
               <MiniIcon type={icon} />
               <span>{label}</span>
               <IconArrow />
@@ -186,11 +131,11 @@ function AuthenticatorPane({ selected, phase }) {
       <div className="password-mfa-request">
         <MicrosoftMark />
         <span>← {demoUser.email}</span>
-        <h3>Approve sign in</h3>
-        <p>Tap the number you see below in your Microsoft Authenticator app to sign in.</p>
+        <h3>Approve password reset</h3>
+        <p>Tap the number you see below in your Microsoft Authenticator app to confirm this reset.</p>
         <strong>28</strong>
         <small>No numbers in the app? Make sure you&apos;re using the latest version.</small>
-        <a>Or, sign in another way.</a>
+        <a>Or, verify another way.</a>
       </div>
 
       <div className="password-phone">
@@ -206,7 +151,7 @@ function AuthenticatorPane({ selected, phase }) {
           <div><i>NV</i><span>Nevian Demo<small>Passwordless</small></span><b>›</b></div>
         </div>
         <div className="password-phone-approval">
-          <strong>Approve sign in?</strong>
+          <strong>Approve password reset?</strong>
           <span>Contoso Corporation</span>
           <small>{demoUser.email}</small>
           <button type="button" className={selected ? 'is-selected' : ''} data-password-cursor-target="true">
@@ -236,10 +181,13 @@ function SigningPane() {
 export default function PasswordResetDemo() {
   const sectionRef = useRef(null);
   const demoFrameRef = useRef(null);
+  const messagesRef = useRef(null);
+  const threadRef = useRef(null);
   const [phase, setPhase] = useState(0);
   const [inView, setInView] = useState(false);
   const [run, setRun] = useState(0);
   const [showAgentReply, setShowAgentReply] = useState(false);
+  const [threadShift, setThreadShift] = useState(0);
 
   useEffect(() => {
     let wasActive = false;
@@ -284,25 +232,43 @@ export default function PasswordResetDemo() {
     return () => window.clearTimeout(settle);
   }, [phase, run]);
 
+  // The chat panel is a fixed height, so once the thread outgrows it we slide it
+  // up by exactly the overflow — a real "scrolled to the newest message" instead
+  // of dropping earlier bubbles to make room.
+  useLayoutEffect(() => {
+    const viewport = messagesRef.current;
+    const thread = threadRef.current;
+    if (!viewport || !thread) return undefined;
+
+    const sync = () => {
+      const overflow = viewport.scrollHeight - viewport.clientHeight;
+      setThreadShift(overflow > 2 ? overflow : 0);
+    };
+
+    sync();
+
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const resizeObserver = new ResizeObserver(sync);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(thread);
+    return () => resizeObserver.disconnect();
+  }, [phase, run]);
+
   const replay = () => {
     setPhase(0);
     setRun((value) => value + 1);
   };
 
-  const microsoftMode = phase < 4 || phase > 11
+  const microsoftMode = phase < 4 || phase > 8
     ? 'hidden'
     : phase <= 5
-      ? 'email'
-      : phase === 6
-        ? 'password'
-        : phase <= 8
-          ? 'identity'
-          : phase <= 10
-            ? 'authenticator'
-            : 'signing';
+      ? 'identity'
+      : phase <= 7
+        ? 'authenticator'
+        : 'signing';
   const messageCloseup = phase === 1;
   const conversationFocused = phase >= 2;
-  const progress = phase < 4 ? 0 : phase < 7 ? 1 : phase < 11 ? 2 : 3;
+  const progress = phase < 4 ? 0 : phase < 6 ? 1 : phase < 9 ? 2 : 3;
 
   return (
     <section ref={sectionRef} id="password-reset" className="password-demo-section">
@@ -322,10 +288,11 @@ export default function PasswordResetDemo() {
             <div className={`password-demo-workspace ${conversationFocused ? 'is-conversation-focused' : ''}`}>
               <main className="password-demo-chat">
                 <header>
-                  <div><span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span><b>Nevian</b><small><i /> Online, helping with account access</small></div>
+                  <div><span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span><b>Nevian</b><small><i /> Online</small></div>
                   <button type="button">•••</button>
                 </header>
-                <div className="password-demo-messages">
+                <div ref={messagesRef} className={`password-demo-messages ${threadShift ? 'is-scrolled' : ''}`}>
+                  <div ref={threadRef} className="password-demo-thread" style={{ '--password-thread-shift': `${-threadShift}px` }}>
                   <div className="password-demo-date">Today</div>
 
                   {phase >= 1 && (
@@ -335,13 +302,15 @@ export default function PasswordResetDemo() {
                     </div>
                   )}
 
-                  {showAgentReply && phase < 12 && (
+                  {showAgentReply && (
                     <div className="password-chat-row is-agent">
                       <span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span>
                       <div className="password-chat-bubble is-agent">
-                        <b>I can help with that.</b>
-                        <p>Before resetting your password, I need to verify your identity securely with Microsoft.</p>
-                        {phase <= 3 && (
+                        <b>I can reset that.</b>
+                        <p>Microsoft needs to confirm it&apos;s you first.</p>
+                        {phase > 3 ? (
+                          <span className="password-verify-button is-done"><IconCheck /> Verified with Microsoft</span>
+                        ) : (
                           <button type="button" className={`password-verify-button${phase === 3 ? ' is-clicking' : ''}`} data-password-cursor-target={phase === 3 ? 'true' : undefined}>
                             <MiniIcon type="shield" /> Verify with Microsoft <IconArrow />
                           </button>
@@ -350,34 +319,33 @@ export default function PasswordResetDemo() {
                     </div>
                   )}
 
-                  {phase >= 12 && (
+                  {phase >= 9 && (
                     <div className="password-chat-row is-agent password-chat-success">
                       <span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span>
-                      <div className="password-chat-bubble is-agent" data-password-cursor-target={phase === 12 ? 'true' : undefined}>
-                        <span className="password-success-label"><IconCheck /> Identity verified</span>
-                        <b>You&apos;re all set.</b>
-                        <p>When they next sign in, Microsoft will ask them to choose a new password. No technician needed.</p>
+                      <div className="password-chat-bubble is-agent" data-password-cursor-target={phase === 9 ? 'true' : undefined}>
+                        <b>Done, your password is reset.</b>
+                        <p>Microsoft will ask you to choose a new one at your next sign-in.</p>
                       </div>
                     </div>
                   )}
 
-                  {phase >= 13 && (
+                  {phase >= 10 && (
                     <div className="password-chat-row is-user password-chat-thanks">
-                      <div className="password-chat-bubble is-user" data-password-cursor-target={phase === 13 ? 'true' : undefined}>Perfect, thank you!</div><UserAvatar />
+                      <div className="password-chat-bubble is-user" data-password-cursor-target={phase === 10 ? 'true' : undefined}>Great, thanks.</div><UserAvatar />
                     </div>
                   )}
 
-                  {phase >= 14 && (
+                  {phase >= 11 && (
                     <div className="password-chat-row is-agent password-chat-close">
                       <span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span>
-                      <div key={phase >= 16 ? 'closed' : 'choice'} className="password-chat-bubble is-agent password-close-state" data-password-cursor-target={phase >= 16 ? 'true' : undefined}>
-                        {phase < 16 ? (
+                      <div key={phase >= 13 ? 'closed' : 'choice'} className="password-chat-bubble is-agent password-close-state" data-password-cursor-target={phase >= 13 ? 'true' : undefined}>
+                        {phase < 13 ? (
                           <>
-                            <b>Happy to help.</b>
-                            <p>Would you like me to close this ticket?</p>
+                            <b>Anything else?</b>
+                            <p>If not, I&apos;ll close this out.</p>
                             <div className="password-close-actions">
-                              <button type="button" className={`is-close${phase === 15 ? ' is-clicking' : ''}`} data-password-cursor-target="true">
-                                <IconCheck /> Close ticket
+                              <button type="button" className={`is-close${phase === 12 ? ' is-clicking' : ''}`} data-password-cursor-target="true">
+                                Close ticket
                               </button>
                               <button type="button" className="is-more">I need more help</button>
                             </div>
@@ -385,15 +353,23 @@ export default function PasswordResetDemo() {
                         ) : (
                           <>
                             <span className="password-success-label"><IconCheck /> Ticket closed</span>
-                            <b>Conversation complete.</b>
-                            <p>The resolution has been saved to the audit trail.</p>
+                            <p>Every step is on the record in the audit trail.</p>
                           </>
                         )}
                       </div>
                     </div>
                   )}
+                  </div>
                 </div>
-                <div className="password-demo-composer" data-password-cursor-target={phase === 0 ? 'true' : undefined}><span>Message Nevian AI…</span><button type="button">↑</button></div>
+                <div className="password-demo-composer" data-password-cursor-target={phase === 0 ? 'true' : undefined}>
+                  <button type="button" className="is-attach" aria-label="Attach a document">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>
+                  </button>
+                  <span>Message Nevian AI…</span>
+                  <button type="button" className="is-send" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+                  </button>
+                </div>
               </main>
 
               <aside className="password-demo-context">
@@ -408,10 +384,8 @@ export default function PasswordResetDemo() {
           <div className={`password-microsoft-layer ${microsoftMode !== 'hidden' ? 'is-visible' : ''}`}>
             {microsoftMode !== 'hidden' && (
               <div key={microsoftMode} className={`password-microsoft-scene is-${microsoftMode}`}>
-                {microsoftMode === 'email' && <EmailPane phase={phase} />}
-                {microsoftMode === 'password' && <EmailPane password phase={phase} />}
                 {microsoftMode === 'identity' && <IdentityPane phase={phase} />}
-                {microsoftMode === 'authenticator' && <AuthenticatorPane selected={phase === 10} phase={phase} />}
+                {microsoftMode === 'authenticator' && <AuthenticatorPane selected={phase === 7} phase={phase} />}
                 {microsoftMode === 'signing' && <SigningPane />}
               </div>
             )}
@@ -420,7 +394,7 @@ export default function PasswordResetDemo() {
           <PersistentCursor frameRef={demoFrameRef} phase={phase} />
 
           <div className="password-demo-progress">
-            {['Request', 'Sign in', 'Verify', phase >= 16 ? 'Closed' : 'Reset ready'].map((label, index) => (
+            {['Request', 'Verify', 'Approve', phase >= 13 ? 'Closed' : 'Reset done'].map((label, index) => (
               <div key={label} className={`${progress === index ? 'is-active' : ''} ${progress > index ? 'is-done' : ''}`}>
                 <i>{progress > index ? <IconCheck /> : index + 1}</i><span>{label}</span>
               </div>

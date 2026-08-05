@@ -22,10 +22,14 @@ export default function FitSection() {
     <section className="fit-section" aria-labelledby="fit-heading">
       <div className="fit-grid">
         <div className="fit-intro">
-          <h2 id="fit-heading">Is Nevian right for your team?</h2>
+          <h2 id="fit-heading">Who is Nevian for?</h2>
           <p>
-            Nevian is built for IT teams that want to eliminate repetitive support
-            work without sacrificing security or control.
+            Nevian is designed for internal IT teams and service desks with
+            recurring requests such as password resets, account unlocks, access
+            approvals, software installs, endpoint checks, and routine fixes. It is
+            a strong fit when the team wants faster resolution while retaining
+            policy controls, approvals, audit history, and human ownership of
+            exceptions.
           </p>
         </div>
 

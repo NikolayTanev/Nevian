@@ -93,7 +93,7 @@ export default function Footer({ showCta = true }) {
               <img src="/assets/logo.png" alt="" />
               <span>Nevian</span>
             </a>
-            <p>Context-rich IT support and safe automation for lean teams.</p>
+            <p>Context-rich IT support and safe automation for every IT team.</p>
           </div>
 
           {footerGroups.map((group) => (

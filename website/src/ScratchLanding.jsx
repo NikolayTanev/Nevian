@@ -26,6 +26,31 @@ const bentoCards = [
   { area: 'handoff', label: 'Human handoff', href: '/human-handoff.html' },
 ];
 
+// Answer-first FAQ for discovery/evaluation queries (AEO). Keep answers visible
+// and factual; add FAQ structured data only after the same copy is verified.
+const homeFaqs = [
+  {
+    q: 'What is AI-powered IT support automation?',
+    a: 'AI-powered IT support automation uses request understanding, identity and device context, policies, and approved workflows to complete routine support work. Nevian can carry a request from intake through verification, action, audit, and closure, while handing exceptions to a person.',
+  },
+  {
+    q: 'What IT requests can Nevian automate?',
+    a: 'Nevian is designed for repeatable requests such as password and MFA resets, account unlocks, approved access changes, software installs, account provisioning, endpoint checks, routine remediations, and status updates. Available actions depend on the connected systems and policies your team approves.',
+  },
+  {
+    q: 'Does Nevian replace the IT team?',
+    a: 'No. Nevian handles approved, repeatable work and escalates requests that need judgment, unavailable access, additional approval, or investigation. The receiving engineer gets the identity, device context, conversation, attempted actions, diagnostics, and audit history.',
+  },
+  {
+    q: 'Which systems does Nevian work with?',
+    a: 'Nevian works with Microsoft 365, Microsoft Entra ID, Azure, PowerShell, Windows, Windows Server, Jira, and ServiceNow. Available actions depend on the connected product, licensing, and the permissions your team approves.',
+  },
+  {
+    q: 'How long does Nevian take to deploy?',
+    a: 'Deployment depends on the workflows, systems, policies, and approval requirements in scope. Nevian begins with discovery, selects a focused first rollout, connects the required systems, tests each workflow with the IT team, and expands after the initial workflows are validated.',
+  },
+];
+
 export default function ScratchLanding() {
   const [demoRun, setDemoRun] = useState(0);
   const [workloadReduction, setWorkloadReduction] = useState(0);
@@ -86,7 +111,7 @@ export default function ScratchLanding() {
         <a className="scratch-release scratch-release-mobile" href="#how">Nevian AI <span>See it resolve a request</span><ArrowIcon /></a>
         <div className="scratch-hero-copy">
           <h1 aria-label="Cut routine IT workload by up to 60%">Cut routine IT workload by up to <strong aria-hidden="true">{workloadReduction}%</strong></h1>
-          <p>Nevian combines identity, endpoint context, and policy-aware automation to resolve repetitive requests safely before they enter your team&apos;s queue.</p>
+          <p>Nevian is an AI-powered IT support platform. It verifies the requester, checks live device and directory context, follows your policies, completes approved actions, and hands exceptions to the right person with a full audit trail.</p>
           <div className="scratch-actions">
             <a className="scratch-primary" href="#contact">Book a demo</a>
           </div>
@@ -115,7 +140,7 @@ export default function ScratchLanding() {
       <Integrations />
 
       <section className="scratch-bento" id="features" aria-label="The Nevian platform">
-        <h2 className="scratch-bento-title">Not just a chatbot,<br />a full platform</h2>
+        <h2 className="scratch-bento-title">One platform for AI-powered IT support,<br />endpoint context, and secure automation</h2>
         <div className="scratch-bento-grid">
           {bentoCards.map((card) => (
             <article key={card.area} className={`scratch-bento-card scratch-bento-${card.area}`}>
@@ -127,6 +152,22 @@ export default function ScratchLanding() {
       </section>
 
       <FitSection />
+
+      <section className="sec-faq" aria-label="Frequently asked questions">
+        <h2 className="feature-caps-title">Frequently asked<br />questions</h2>
+        <div className="sec-faq-list">
+          {homeFaqs.map((item) => (
+            <details className="sec-faq-item" key={item.q}>
+              <summary>
+                {item.q}
+                <span className="sec-faq-mark" aria-hidden="true" />
+              </summary>
+              <p>{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
       <ContactSection />
       <Footer showCta={false} />
     </main>

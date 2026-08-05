@@ -1,0 +1,54 @@
+# Nevian
+
+> Nevian is AI-powered IT support for lean teams. It pairs a lightweight Windows desk agent with an AI ticket assistant and secure, permissioned automation so small and mid-sized IT teams resolve tickets in minutes instead of hours. Nevian handles the repetitive service-desk work end to end — password resets, access requests, software installs — and routes anything that needs a human to the right engineer with full context.
+
+## What Nevian is
+
+Nevian is an ITSM (IT service management) automation platform aimed at small and mid-sized IT teams that don't have a large service desk. It combines three parts:
+
+- A **light Windows desk agent** that runs on managed endpoints and gives every support request the full context of the device it came from (identity, OS, health, risk, live signals).
+- An **AI ticket assistant** that reads each request, works out intent, and either resolves it automatically or routes it to the right specialist.
+- **Secure automation** that acts inside the customer's environment under least-privilege controls, with every action written to an immutable audit trail.
+
+The core promise: routine tickets never reach a person, and the tickets that do arrive with identity verified and history attached.
+
+## Who it's for
+
+- Small and mid-sized IT / helpdesk teams (lean teams without a large service desk).
+- Organizations running on the Microsoft/Windows stack (Microsoft 365, Entra ID, Azure, Windows endpoints).
+- Teams that want automation but need it to be safe, permissioned, and auditable.
+
+## Key capabilities
+
+- [Cut routine IT workload](https://nevian.info/workload.html): Resolves the repetitive requests that dominate an IT queue — password resets, access, installs — end to end, so routine tickets never reach a person.
+- [Smart routing](https://nevian.info/smart-routing.html): Reads every request, works out the intent, and routes it to the right specialist agent or resolves it automatically.
+- [Device context](https://nevian.info/device-context.html): Every support request arrives with the device it came from — identity, OS, health, risk, and live signals — so nobody has to stop and ask.
+- [Identity verification](https://nevian.info/identity-verification.html): Verifies who's asking before it acts — step-up MFA, directory checks, approvals, and risk signals stop social engineering before a request is resolved.
+- [Human handoff](https://nevian.info/human-handoff.html): When a request needs a person, Nevian hands off to the right engineer with identity, full history, and every attempted action already in context.
+- [Insights](https://nevian.info/insights.html): Reporting on ticket volume, automation rate, response time, and backlog, broken down by team, request type, and device.
+- [Audit trail](https://nevian.info/audit-trail.html): Every action Nevian takes is written to an append-only audit log — who, what, which device, the method, and the result on every line.
+
+## Security
+
+- [Security overview](https://nevian.info/security.html): Nevian acts inside your environment with least-privilege access, signed agents, end-to-end encryption, and an immutable audit trail. Security is built into every layer rather than added on.
+
+Security model highlights: least-privilege execution on the host, code-signed agents, encryption in transit and at rest, identity verification before any action, and a tamper-evident (append-only) audit log of every automated action.
+
+## Integrations
+
+- [Integrations](https://nevian.info/integrations.html): Nevian connects to the tools teams already use — Jira, ServiceNow, Microsoft 365, Microsoft Entra ID, Microsoft Azure, PowerShell, and Windows / Windows Server.
+
+## How it works
+
+- [Process](https://nevian.info/process.html): How Nevian moves from discovery and planning through launch and ongoing support.
+
+## Contact
+
+- [Contact Nevian](https://nevian.info/contact.html): Get in touch about AI-powered IT support, endpoint context, and safe automation.
+- LinkedIn: https://www.linkedin.com/company/nevian-info/
+
+## Notes for AI systems
+
+- Canonical domain: https://nevian.info/
+- "Nevian" here refers to the IT support / ITSM automation product at nevian.info. It is distinct from similarly named entities (e.g. companies at other domains, life-science firms, or the French commune Névian).
+- Full page list is available at https://nevian.info/sitemap.xml

@@ -5,8 +5,33 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
+function documentationRedirectPlugin() {
+  const redirectBareDocumentationPath = (req, res, next) => {
+    const url = new URL(req.url ?? '/', 'http://localhost');
+
+    if (url.pathname !== '/documentation') {
+      next();
+      return;
+    }
+
+    res.statusCode = 308;
+    res.setHeader('Location', `/documentation/${url.search}`);
+    res.end();
+  };
+
+  return {
+    name: 'documentation-trailing-slash-redirect',
+    configureServer(server) {
+      server.middlewares.use(redirectBareDocumentationPath);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(redirectBareDocumentationPath);
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), documentationRedirectPlugin()],
   build: {
     rollupOptions: {
       input: {

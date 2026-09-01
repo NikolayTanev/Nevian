@@ -22,6 +22,7 @@ export default defineConfig({
         'audit-trail': resolve(root, 'audit-trail.html'),
         insights: resolve(root, 'insights.html'),
         security: resolve(root, 'security.html'),
+        documentation: resolve(root, 'documentation/index.html'),
         'human-handoff': resolve(root, 'human-handoff.html'),
       },
     },

@@ -10,7 +10,7 @@ html body { color: #f7f7f5; background: #050505; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; }
 .scratch-page { min-height: 100vh; overflow-x: clip; background: #050505; }
-.scratch-nav { position: sticky; z-index: 100; top: 0; width: 100%; height: 56px; padding-inline: max(36px, calc((100% - 1360px) / 2)); display: flex; align-items: center; gap: 40px; background: rgba(5,5,5,.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.scratch-nav { position: sticky; z-index: 100; top: 0; width: 100%; height: 56px; padding-inline: max(36px, calc((100% - 1360px) / 2)); display: flex; align-items: center; gap: 40px; background: #050505; }
 .scratch-brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 650; letter-spacing: -.04em; }
 .scratch-brand img { width: 24px; height: 24px; object-fit: contain; }
 .scratch-links { display: flex; align-items: center; gap: 30px; color: #9b9b9b; font-size: 13px; }
@@ -113,7 +113,10 @@ button { font: inherit; }
   padding: 0;
   border: 0;
   border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
   background: transparent;
+  box-shadow: none;
   color: #9b9b9b;
   font-size: 13px;
   font-weight: 400;

@@ -5,6 +5,30 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
+const documentationRoutes = [
+  'onboard-first-device',
+  'deployment-checklist',
+  'devices',
+  'agent-architecture',
+  'automations',
+  'identity-and-access',
+  'audit-trail',
+  'api-overview',
+  'authentication',
+  'webhooks',
+  'rate-limits',
+  'troubleshooting',
+  'security',
+  'agent-releases',
+];
+
+const documentationInputs = Object.fromEntries(
+  documentationRoutes.map((route) => [
+    `documentation-${route}`,
+    resolve(root, `documentation/${route}/index.html`),
+  ]),
+);
+
 function documentationRedirectPlugin() {
   const redirectBareDocumentationPath = (req, res, next) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
@@ -48,6 +72,7 @@ export default defineConfig({
         insights: resolve(root, 'insights.html'),
         security: resolve(root, 'security.html'),
         documentation: resolve(root, 'documentation/index.html'),
+        ...documentationInputs,
         'human-handoff': resolve(root, 'human-handoff.html'),
       },
     },

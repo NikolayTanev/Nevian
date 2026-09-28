@@ -12,6 +12,8 @@ Nevian is an ITSM (IT service management) automation platform aimed at small and
 
 The core promise: routine tickets never reach a person, and the tickets that do arrive with identity verified and history attached.
 
+- [About Nevian](https://nevian.info/documentation/): Product overview in documentation — what Nevian is, the core workflow, organization and trust model, and supported environments.
+
 ## Who it's for
 
 - Small and mid-sized IT / helpdesk teams (lean teams without a large service desk).
@@ -40,7 +42,7 @@ Security model highlights: least-privilege execution on the host, code-signed ag
 
 ## How it works
 
-- [Process](https://nevian.info/process.html): How Nevian moves from discovery and planning through launch and ongoing support.
+- [Workflow](https://nevian.info/#how): How Nevian takes a request from intake through verification, action, and audit.
 
 ## Contact
 

@@ -31,7 +31,6 @@ export default function ScratchNav() {
             onOpenChange={setPlatformOpen}
             onNavigate={() => setPlatformOpen(false)}
           />
-          <a href="/process.html">Process</a>
           <a href="/#contact">Contact</a>
         </div>
         <div className="scratch-nav-actions">
@@ -55,7 +54,6 @@ export default function ScratchNav() {
         <div className={`scratch-mobile-platform ${mobilePlatformOpen ? 'is-open' : ''}`}>
           {mobilePlatformLinks.map(([label, href]) => <a href={href} key={label}>{label}</a>)}
         </div>
-        <a href="/process.html">Process</a>
         <a href="/#contact">Contact</a>
       </div>
     </>

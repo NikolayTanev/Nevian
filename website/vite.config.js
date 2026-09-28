@@ -61,7 +61,6 @@ export default defineConfig({
       input: {
         main: resolve(root, 'index.html'),
         contact: resolve(root, 'contact.html'),
-        process: resolve(root, 'process.html'),
         hyperhedge: resolve(root, 'hyperhedge.html'),
         workload: resolve(root, 'workload.html'),
         'device-context': resolve(root, 'device-context.html'),

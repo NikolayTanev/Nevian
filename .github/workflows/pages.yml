@@ -32,6 +32,8 @@ jobs:
         run: npm ci
       - name: Build website
         working-directory: website
+        env:
+          VITE_CONTACT_ENDPOINT: ${{ secrets.CONTACT_ENDPOINT }}
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

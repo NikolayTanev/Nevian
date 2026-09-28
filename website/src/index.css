@@ -4507,6 +4507,12 @@ html.contact-route .site-nav {
   outline-offset: 4px;
 }
 
+.contact-submit:disabled {
+  cursor: wait;
+  opacity: .58;
+  pointer-events: none;
+}
+
 .contact-form-footer {
   display: flex;
   min-height: 21px;
@@ -4524,6 +4530,10 @@ html.contact-route .site-nav {
   gap: 5px;
   color: rgba(105, 220, 161, .72);
   font-weight: 650;
+}
+
+.contact-form-footer strong.is-error {
+  color: rgba(239, 139, 105, .88);
 }
 
 .contact-form-footer svg {
@@ -8503,7 +8513,6 @@ html.contact-route .site-nav {
   .integrations-band {
     padding-top: 1.75rem !important;
     padding-bottom: 1.75rem !important;
-    border-bottom: 1px solid rgba(126, 174, 151, .08);
   }
 
   .integrations-band::after {

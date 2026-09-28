@@ -8,7 +8,7 @@ const footerGroups = [
       ['Home', '/'],
       ['How it works', '/#how'],
       ['Platform', '/#features'],
-      ['Contact', '/contact.html'],
+      ['Contact', '/#contact'],
     ],
   },
   {
@@ -25,16 +25,16 @@ const footerGroups = [
     links: [
       ['Workflow', '/#how'],
       ['Integrations', '/#how'],
-      ['Book a walkthrough', '/contact.html'],
-      ['Support', 'mailto:nevian.info@gmail.com'],
+      ['Book a walkthrough', '/#contact'],
+      ['Support', 'mailto:contact@nevian.info'],
     ],
   },
   {
     title: 'Company',
     links: [
-      ['About Nevian', '/'],
-      ['Contact us', '/contact.html'],
-      ['Email', 'mailto:nevian.info@gmail.com'],
+      ['About Nevian', '/documentation/'],
+      ['Contact us', '/#contact'],
+      ['Email', 'mailto:contact@nevian.info'],
     ],
   },
 ];
@@ -47,7 +47,7 @@ export default function Footer({ showCta = true }) {
     event.preventDefault();
     const email = new FormData(event.currentTarget).get('newsletterEmail');
     setNewsletterStatus('Your email draft is ready.');
-    window.location.href = `mailto:nevian.info@gmail.com?subject=${encodeURIComponent('Nevian newsletter')}&body=${encodeURIComponent(`Please add ${email} to the Nevian newsletter.`)}`;
+    window.location.href = `mailto:contact@nevian.info?subject=${encodeURIComponent('Nevian newsletter')}&body=${encodeURIComponent(`Please add ${email} to the Nevian newsletter.`)}`;
   };
 
   return (
@@ -63,7 +63,7 @@ export default function Footer({ showCta = true }) {
             <div className="footer-cta-content">
               <h2 id="footer-cta-title">Ready to dive in?</h2>
               <p>See where Nevian can remove repetitive work from your support workflow.</p>
-              <a href="/contact.html" className="footer-cta-button">
+              <a href="/#contact" className="footer-cta-button">
                 Book a walkthrough <IconArrow aria-hidden="true" />
               </a>
             </div>
@@ -110,7 +110,7 @@ export default function Footer({ showCta = true }) {
 
         <div className="footer-bottom">
           <span>© {year} Nevian. All rights reserved.</span>
-          <a href="mailto:nevian.info@gmail.com">nevian.info@gmail.com</a>
+          <a href="mailto:contact@nevian.info">contact@nevian.info</a>
         </div>
       </div>
     </footer>

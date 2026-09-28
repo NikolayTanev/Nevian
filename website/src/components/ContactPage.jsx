@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import Nav from './Nav.jsx';
 import ContactSelect from './ContactSelect.jsx';
 import { IconArrow, IconCheck } from './Icons.jsx';
-
-const ENDPOINT = 'https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/contact';
-const EMAIL = 'nevian.info@gmail.com';
+import { EMAIL, submitContact } from '../lib/submitContact.js';
 
 const details = [
   'A focused 30 minute walkthrough',
@@ -38,29 +36,13 @@ function focusInvalidField(field) {
 }
 
 export default function ContactPage() {
-  const [sending, setSending] = useState(false);
   const [status, setStatus] = useState({ message: '', kind: '' });
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add('contact-route');
     return () => document.documentElement.classList.remove('contact-route');
   }, []);
-
-  const openEmailFallback = (data) => {
-    const subject = `Nevian contact: ${data.company || data.firstName || 'New request'}`;
-    const body = [
-      `Name: ${data.firstName || ''} ${data.lastName || ''}`,
-      `Work email: ${data.email || ''}`,
-      `Company: ${data.company || ''}`,
-      `Company size: ${data.companySize || ''}`,
-      `Managed devices: ${data.devices || ''}`,
-      `Goal: ${data.goal || ''}`,
-      '',
-      data.message || '',
-    ].join('\n');
-
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -84,22 +66,22 @@ export default function ContactPage() {
 
     form.classList.remove('has-validation-errors');
     setSending(true);
-    setStatus({ message: 'Sending your request...', kind: '' });
+    setStatus({ message: 'Sending…', kind: 'success' });
 
     try {
-      const response = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) throw new Error('Request failed');
-
+      const result = await submitContact(data, { subjectPrefix: 'Nevian contact' });
       form.reset();
-      setStatus({ message: 'Thanks. We will get back to you shortly.', kind: 'success' });
-    } catch {
-      setStatus({ message: 'Opening your email app instead...', kind: 'success' });
-      openEmailFallback(data);
+      setStatus({
+        message: result.openedMail
+          ? 'Opening your email app…'
+          : 'Thanks. We received your request.',
+        kind: 'success',
+      });
+    } catch (error) {
+      setStatus({
+        message: error.message || `We could not send your request. Email ${EMAIL} instead.`,
+        kind: 'error',
+      });
     } finally {
       setSending(false);
     }
@@ -216,7 +198,7 @@ export default function ContactPage() {
               </div>
 
               <button className="contact-page-submit" type="submit" disabled={sending}>
-                {sending ? 'Sending...' : 'Send request'} <IconArrow aria-hidden="true" />
+                {sending ? 'Sending…' : 'Send request'} {sending ? null : <IconArrow aria-hidden="true" />}
               </button>
 
               <div className={`contact-page-status ${status.kind ? `is-${status.kind}` : ''}`} aria-live="polite">

@@ -54,14 +54,14 @@ button { font: inherit; }
 .scratch-browser-tools { justify-self: end; display: flex; gap: 9px; }
 .scratch-browser-tools i { width: 18px; height: 18px; border: 1px solid #444; border-radius: 4px; }
 .scratch-demo { height: 668px; overflow: hidden; background: #090a0a; }
-.scratch-demo .password-demo-section { padding: 0 !important; min-height: 0 !important; background: transparent !important; }
+.scratch-demo .password-demo-section { padding: 0 !important; min-height: 0 !important; background: transparent !important; border: 0 !important; }
 .scratch-demo .password-demo-shell { width: 100% !important; max-width: none !important; margin: 0 !important; }
 .scratch-demo .password-demo-heading { display: none !important; }
 .scratch-demo .password-demo-frame { --password-chat-inset: 26px; border: 0 !important; border-radius: 0 !important; height: 668px; min-height: 0; aspect-ratio: auto; box-shadow: none !important; }
 .scratch-demo .password-demo-progress { display: none !important; }
 .scratch-demo .password-demo-camera { top: 0; right: 0; bottom: 0; left: 0; transform-origin: 100% 0; }
 .scratch-demo .password-demo-camera.is-message-closeup { transform: scale(2.55); }
-.scratch-page .integrations-band { background: #050505; }
+.scratch-page .integrations-band { background: #050505; border-bottom: 0; }
 .scratch-page .integrations-band::after { background: linear-gradient(180deg, #050505 0%, rgba(5,5,5,.94) 34%, rgba(5,5,5,.48) 68%, rgba(5,5,5,0) 100%); }
 
 @media (max-width: 760px) {
@@ -80,15 +80,193 @@ button { font: inherit; }
   .scratch-hero-copy p { max-width: 560px; margin-top: 14px; font-size: 16px; line-height: 1.38; }
   .scratch-actions { margin-top: 30px; gap: 10px; }
   .scratch-actions a { min-height: 52px; padding: 0 17px; font-size: 15px; }
-  .scratch-stage { width: calc(100% - 36px); margin-top: 116px; }
-  .scratch-browser { min-height: 470px; width: 145%; border-radius: 10px 10px 4px 4px; transform-origin: top left; }
-  .scratch-browser-bar { height: 37px; grid-template-columns: 1fr minmax(150px, 240px) 1fr; padding: 0 10px; }
-  .scratch-browser-dots { gap: 4px; }
-  .scratch-browser-dots i { width: 7px; height: 7px; }
-  .scratch-browser-address { height: 22px; font-size: 8px; }
-  .scratch-browser-tools i { width: 12px; height: 12px; }
-  .scratch-demo { height: 560px; zoom: .72; }
-  .scratch-demo .password-demo-frame { height: auto; aspect-ratio: 16 / 9; min-height: 720px; }
+  .scratch-stage { width: calc(100% - 36px); margin-top: 48px; display: flex; justify-content: center; }
+  .scratch-browser {
+    display: flex;
+    flex-direction: column;
+    width: min(360px, 100%);
+    min-height: 0;
+    height: min(720px, calc(100svh - 132px));
+    max-height: 740px;
+    aspect-ratio: 9 / 19.4;
+    overflow: hidden;
+    border: 10px solid #121314;
+    border-radius: 44px;
+    background: #0c0d0d;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, .55);
+    transform: none;
+  }
+  .scratch-browser::before {
+    content: '';
+    position: absolute;
+    z-index: 8;
+    top: 8px;
+    left: 50%;
+    width: 88px;
+    height: 22px;
+    border-radius: 12px;
+    background: #0c0d0d;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .scratch-browser::after {
+    content: '';
+    position: absolute;
+    z-index: 8;
+    bottom: 7px;
+    left: 50%;
+    width: 112px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, .32);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .scratch-browser-bar {
+    position: absolute;
+    z-index: 9;
+    top: 12px;
+    left: 22px;
+    right: auto;
+    display: block;
+    width: max-content;
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    grid-template-columns: none;
+    pointer-events: none;
+  }
+  .scratch-browser-bar::before {
+    content: '9:41';
+    color: #eef2f0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .scratch-browser-dots,
+  .scratch-browser-address,
+  .scratch-browser-tools { display: none !important; }
+  .scratch-demo {
+    position: relative;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    zoom: 1;
+    overflow: hidden;
+    background: #0c0d0d;
+  }
+  .scratch-demo .password-demo-section,
+  .scratch-demo .password-demo-shell,
+  .scratch-demo .password-demo-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-width: none;
+    margin: 0;
+    aspect-ratio: auto;
+  }
+  .scratch-demo .password-demo-camera {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: none !important;
+    transition: none;
+  }
+  .scratch-demo .password-demo-camera.is-message-closeup,
+  .scratch-demo .password-demo-camera.is-auth-open {
+    transform: none !important;
+  }
+  .scratch-demo .password-microsoft-layer { bottom: 0; }
+  .scratch-demo .password-demo-chat {
+    grid-template-rows: 76px minmax(0, 1fr) 72px;
+  }
+  .scratch-demo .password-demo-chat > header {
+    min-height: 76px;
+    align-items: flex-end;
+    padding: 0 16px 11px;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: #0c0d0d;
+  }
+  .scratch-demo .password-demo-chat > header > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scratch-demo .password-demo-chat > header .password-demo-agent-mark {
+    grid-row: auto;
+    align-self: center;
+  }
+  .scratch-demo .password-demo-chat > header b {
+    display: block;
+    margin: 0;
+    padding-top: 1px;
+    line-height: 1;
+    transform: none;
+  }
+  .scratch-demo .password-demo-composer {
+    margin: 4px 14px 26px;
+  }
+  .scratch-demo .password-mfa-pair {
+    width: 100%;
+    height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .scratch-demo .password-mfa-request { display: none; }
+  .scratch-demo .password-phone {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    justify-self: stretch;
+  }
+  .scratch-demo .password-ms-identity-frame {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    box-shadow: none;
+    background: #0875c9;
+  }
+  .scratch-demo .password-ms-identity {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 24px 20px 28px;
+  }
+  .scratch-demo .password-ms-signing {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    box-shadow: none;
+  }
+  .scratch-demo .password-microsoft-scene { width: 100%; height: 100%; }
+  .scratch-demo .password-phone-status,
+  .scratch-demo .password-phone-speaker,
+  .scratch-demo .password-phone-home { display: none; }
+  .scratch-demo .password-phone-header {
+    height: 76px;
+    justify-content: center;
+    padding: 28px 16px 10px;
+  }
+  .scratch-demo .password-phone-header span,
+  .scratch-demo .password-phone-header b {
+    display: none !important;
+  }
+  .scratch-demo .password-phone-approval {
+    top: 118px;
+    width: min(220px, 78%);
+    padding: 18px 18px 14px;
+  }
 }
 
 @media (max-width: 420px) {
@@ -98,7 +276,17 @@ button { font: inherit; }
   .scratch-hero-copy p { font-size: 14px; }
   .scratch-actions { flex-direction: column; align-items: stretch; }
   .scratch-actions a { width: 100%; }
-  .scratch-stage { margin-top: 86px; }
+  .scratch-stage { margin-top: 40px; }
+  .scratch-browser {
+    width: min(340px, 100%);
+    height: min(680px, calc(100svh - 118px));
+    border-width: 8px;
+    border-radius: 38px;
+  }
+  .scratch-demo .password-demo-camera.is-message-closeup,
+  .scratch-demo .password-demo-camera.is-auth-open {
+    transform: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -249,9 +437,7 @@ button { font: inherit; }
 
 @media (max-width: 760px) {
   .scratch-signup { background: var(--scratch-accent); color: var(--scratch-accent-ink); }
-  .scratch-browser-tools button,
-  .scratch-browser-tools a { width: 22px; height: 22px; border-radius: 4px; }
-  .scratch-browser-tools svg { width: 11px; height: 11px; }
+  .scratch-browser-tools { display: none; }
 }
 
 .scratch-signup,
@@ -512,6 +698,54 @@ button { font: inherit; }
     grid-template-areas: none;
   }
   .scratch-bento-card { grid-area: auto !important; }
+  /* Same idea as the device-context card: fade the panel into black so the
+     bottom label stays readable over the last vitals bar. */
+  .scratch-bento-triage .scratch-bento-media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  }
+  .scratch-bento-triage::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 76px;
+    background: linear-gradient(to top, #050505 0%, #050505 46%, rgba(5, 5, 5, .78) 74%, transparent);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .scratch-bento-triage .scratch-bento-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+  }
+  .scratch-bento-triage .bento-vitals {
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 18px 20px 0;
+  }
+  .scratch-bento-triage .bento-vitals ul { gap: 12px; }
+  .scratch-bento-handoff .bento-handoff-note { display: none; }
+  .scratch-bento-handoff .bento-handoff { padding: 0 16px; }
+  .scratch-bento-insights .bento-insights-stats {
+    gap: 8px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+  }
+  .scratch-bento-insights .bento-insights-stats span {
+    font-size: 8px;
+    line-height: 1.2;
+    gap: 3px;
+    white-space: normal;
+  }
+  .scratch-bento-insights .bento-insights-stats strong { font-size: 16px; }
+  .scratch-bento-insights .bento-insights-live { width: 4px; height: 4px; }
 }
 
 /* --- Card 3: identity verification (fingerprint scan -> green check) --- */
@@ -766,7 +1000,14 @@ button { font: inherit; }
   overflow: hidden;
 }
 .scratch-bento-routing .scratch-bento-label { position: absolute; bottom: 0; left: 0; z-index: 3; }
-.bento-routing { position: absolute; inset: 0; }
+.scratch-bento-routing .bento-routing {
+  inset: 2px 6px 38px;
+}
+.bento-routing {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+}
 .bento-routing-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
 .bento-routing-paths path { fill: none; stroke: rgba(103, 214, 154, .5); stroke-width: 1; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
 .bento-routing-node {
@@ -774,35 +1015,54 @@ button { font: inherit; }
   transform: translate(-50%, -50%);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  /* Equal width for every chip so both columns align edge-to-edge. */
-  min-width: 148px;
   justify-content: center;
+  gap: clamp(2px, 1.4cqi, 6px);
+  box-sizing: border-box;
+  /* 34% keeps inner edges on the 40%/60% path anchors at every card size. */
+  width: 34%;
+  min-width: 0;
+  padding: clamp(2px, 2.4cqh, 6px) clamp(5px, 2.2cqi, 11px);
   border: 1px solid rgba(255, 255, 255, .09);
-  border-radius: 9px;
+  border-radius: clamp(7px, 2cqi, 9px);
   background: #0b110e;
   color: #eaf3ee;
-  font-size: 13px;
+  font-size: clamp(9px, min(2.9cqi, 9cqh), 13px);
   font-weight: 500;
   white-space: nowrap;
 }
-.bento-routing-node svg { width: 15px; height: 15px; fill: none; stroke: #5cd894; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.bento-routing-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bento-routing-node svg {
+  width: clamp(10px, min(3.2cqi, 10cqh), 15px);
+  height: clamp(10px, min(3.2cqi, 10cqh), 15px);
+  flex-shrink: 0;
+  fill: none;
+  stroke: #5cd894;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
-.bento-routing-src { padding: 6px 11px; font-size: 12.5px; border-color: rgba(255, 255, 255, .08); background: #0a0f0c; }
-.bento-routing-src svg { width: 14px; height: 14px; }
+.bento-routing-src { border-color: rgba(255, 255, 255, .08); background: #0a0f0c; }
 .bento-routing-core {
   position: absolute;
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: clamp(26px, 9.4cqi, 42px);
+  height: clamp(26px, 9.4cqi, 42px);
   border: 1px solid rgba(255, 255, 255, .12);
-  border-radius: 12px;
+  border-radius: clamp(8px, 2.6cqi, 12px);
   background: #0b110e;
 }
-.bento-routing-core img { width: 22px; height: 22px; object-fit: contain; }
+.bento-routing-core img {
+  width: clamp(14px, 5cqi, 22px);
+  height: clamp(14px, 5cqi, 22px);
+  object-fit: contain;
+}
 
 /* --- Card 8: audit trail (timeline of recorded actions) --- */
 .bento-audit {

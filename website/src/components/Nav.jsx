@@ -13,7 +13,6 @@ const navigation = [
   { label: 'Home', href: '/#top', key: 'home' },
   { label: 'Workflow', href: '/#how', key: 'workflow' },
   { label: 'Platform', href: '/#features', key: 'platform' },
-  { label: 'Process', href: '/process.html', key: 'process' },
   { label: 'Contact', href: '/contact.html', key: 'contact' },
 ];
 

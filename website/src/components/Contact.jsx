@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { useReveal } from '../hooks/useReveal.js';
 
-const ENDPOINT = 'https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/contact';
-const EMAIL = 'nevian.info@gmail.com';
+const EMAIL = 'contact@nevian.info';
 
 export default function Contact() {
   const [ref, shown] = useReveal();
   const [status, setStatus] = useState({ msg: '', kind: '' });
-  const [sending, setSending] = useState(false);
 
-  const mailtoFallback = (data) => {
+  const openEmail = (data) => {
     const subject = `Nevian contact: ${data.company || data.firstName || 'New lead'}`;
     const body = [
       `Name: ${data.firstName || ''} ${data.lastName || ''}`,
@@ -23,7 +21,7 @@ export default function Contact() {
     window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
@@ -43,28 +41,8 @@ export default function Contact() {
       return;
     }
 
-    setSending(true);
-    setStatus({ msg: 'Sending your request…', kind: '' });
-    try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        form.reset();
-        setStatus({ msg: 'Thanks. We received your request and will get back to you shortly.', kind: 'ok' });
-      } else {
-        const payload = await res.json().catch(() => ({}));
-        setStatus({ msg: payload.error || `Something went wrong. Please email ${EMAIL}.`, kind: 'err' });
-      }
-    } catch {
-      // network/CORS failure — fall back to the visitor's email client
-      setStatus({ msg: 'Opening your email app instead…', kind: 'ok' });
-      mailtoFallback(data);
-    } finally {
-      setSending(false);
-    }
+    setStatus({ msg: 'Opening your email app…', kind: 'ok' });
+    openEmail(data);
   };
 
   const field = 'rounded-xl border border-border-2 bg-bg px-3.5 py-2.5 font-sans text-text outline-none transition focus:border-accent focus:ring-4 focus:ring-accent-soft';
@@ -122,8 +100,8 @@ export default function Contact() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
-            <button type="submit" disabled={sending} className="btn btn-primary text-base disabled:opacity-60">
-              {sending ? 'Sending…' : 'Send request'}
+            <button type="submit" className="btn btn-primary text-base">
+              Send request
             </button>
             {status.msg && (
               <span className={`text-sm ${status.kind === 'ok' ? 'text-accent-deep' : status.kind === 'err' ? 'text-danger' : 'text-muted'}`}>

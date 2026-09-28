@@ -1,28 +1,11 @@
 import { useState } from 'react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 import SelectField from './SelectField.jsx';
-
-const ENDPOINT = 'https://fcbttikoce.execute-api.eu-central-1.amazonaws.com/contact';
-const EMAIL = 'nevian.info@gmail.com';
+import { EMAIL, submitContact } from '../lib/submitContact.js';
 
 export default function ContactSection() {
-  const [sending, setSending] = useState(false);
   const [status, setStatus] = useState({ message: '', kind: '' });
-
-  const openEmailFallback = (data) => {
-    const subject = `Nevian walkthrough request: ${data.company || data.firstName || 'New request'}`;
-    const body = [
-      `Name: ${data.firstName || ''} ${data.lastName || ''}`,
-      `Work email: ${data.email || ''}`,
-      `Company: ${data.company || ''}`,
-      `Company size: ${data.companySize || ''}`,
-      `Number of devices: ${data.devices || ''}`,
-      `Looking to improve: ${data.goal || ''}`,
-      '',
-      data.message || '',
-    ].join('\n');
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  };
+  const [sending, setSending] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -30,26 +13,28 @@ export default function ContactSection() {
     const data = Object.fromEntries(new FormData(form).entries());
 
     if (data.website) {
-      // honeypot
       form.reset();
       setStatus({ message: 'Thanks. We received your request.', kind: 'success' });
       return;
     }
 
     setSending(true);
-    setStatus({ message: 'Sending your request…', kind: '' });
+    setStatus({ message: 'Sending…', kind: 'success' });
+
     try {
-      const response = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error('Request failed');
+      const result = await submitContact(data, { subjectPrefix: 'Nevian walkthrough request' });
       form.reset();
-      setStatus({ message: 'Thanks. We will get back to you shortly.', kind: 'success' });
-    } catch {
-      setStatus({ message: 'Opening your email app instead…', kind: 'success' });
-      openEmailFallback(data);
+      setStatus({
+        message: result.openedMail
+          ? 'Opening your email app…'
+          : 'Thanks. We received your request.',
+        kind: 'success',
+      });
+    } catch (error) {
+      setStatus({
+        message: error.message || `We could not send your request. Email ${EMAIL} instead.`,
+        kind: 'error',
+      });
     } finally {
       setSending(false);
     }
@@ -66,8 +51,8 @@ export default function ContactSection() {
             <IconCheck aria-hidden="true" />
             Usually replies within one business day
           </div>
-          <a className="contact-email-link" href="mailto:nevian.info@gmail.com">
-            Prefer email? <strong>nevian.info@gmail.com</strong>
+          <a className="contact-email-link" href={`mailto:${EMAIL}`}>
+            Prefer email? <strong>{EMAIL}</strong>
           </a>
         </div>
 
@@ -145,12 +130,17 @@ export default function ContactSection() {
           </div>
 
           <button type="submit" className="contact-submit" disabled={sending}>
-            {sending ? 'Sending…' : 'Send request'} <IconArrow aria-hidden="true" />
+            {sending ? 'Sending…' : 'Send request'} {sending ? null : <IconArrow aria-hidden="true" />}
           </button>
 
           <div className="contact-form-footer" aria-live="polite">
             <span>Your details are only used to respond to this request.</span>
-            {status.message && <strong><IconCheck aria-hidden="true" /> {status.message}</strong>}
+            {status.message && (
+              <strong className={status.kind === 'error' ? 'is-error' : ''}>
+                {status.kind === 'success' ? <IconCheck aria-hidden="true" /> : null}
+                {status.message}
+              </strong>
+            )}
           </div>
         </form>
       </div>

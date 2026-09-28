@@ -15,7 +15,7 @@ export const documentationGroups = [
   {
     label: 'Get started',
     items: [
-      { slug: 'introduction', label: 'Introduction' },
+      { slug: 'introduction', label: 'About' },
       { slug: 'onboard-first-device', label: 'Onboard your first device' },
       { slug: 'deployment-checklist', label: 'Deployment checklist' },
     ],
@@ -246,7 +246,7 @@ X-Nevian-Signature: <hmac-sha256-hex>`;
 export const documentationPages = {
   introduction: {
     group: 'Get started',
-    title: 'Introduction',
+    title: 'About Nevian',
     summary: 'Understand how Nevian connects your help desk, Windows endpoints, support workflows, and identity systems in one operator workspace.',
     sections: [
       {

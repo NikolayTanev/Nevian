@@ -113,7 +113,7 @@ const heroProductCards = [
     title: 'Give second line a ready-to-use brief.',
     description: 'The right team receives the summary, evidence, and ownership without repeating the investigation.',
     bullets: ['Six evidence items attached', 'EUC support assigned'],
-    href: '/contact.html',
+    href: '/#contact',
   },
 ];
 
@@ -280,7 +280,7 @@ export default function Hero() {
           </h1>
           <p>Nevian handles common requests, gathers device details, and shows your team exactly what happened.</p>
           <div className="hero-actions">
-            <a href="/contact.html" className="hero-button hero-button-primary">Book a demo</a>
+            <a href="/#contact" className="hero-button hero-button-primary">Book a demo</a>
             <a href="#how" className="hero-button hero-button-secondary">
               See how it works <IconArrow className="h-4 w-4" />
             </a>
@@ -300,7 +300,7 @@ export default function Hero() {
                 <i />
               </span>
               <span className="hero-demo-title"><img src="/assets/logo.png" alt="" /> Nevian <i /> Help desk</span>
-              <a href="/contact.html" className="hero-demo-link">Open workspace <IconArrow className="h-3.5 w-3.5" /></a>
+              <a href="/#contact" className="hero-demo-link">Open workspace <IconArrow className="h-3.5 w-3.5" /></a>
             </div>
 
             {/* body */}

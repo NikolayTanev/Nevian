@@ -13,7 +13,7 @@ const navigation = [
   { label: 'Home', href: '/#top', key: 'home' },
   { label: 'Workflow', href: '/#how', key: 'workflow' },
   { label: 'Platform', href: '/#features', key: 'platform' },
-  { label: 'Contact', href: '/contact.html', key: 'contact' },
+  { label: 'Contact', href: '/#contact', key: 'contact' },
 ];
 
 const trackedSections = [
@@ -231,7 +231,7 @@ export default function Nav({ current = 'home' }) {
 
         <div className="site-nav-spacer" />
 
-        <a href="/contact.html" className="site-nav-cta hidden text-sm sm:inline-flex">
+        <a href="/#contact" className="site-nav-cta hidden text-sm sm:inline-flex">
           Book a demo
         </a>
 
@@ -327,7 +327,7 @@ export default function Nav({ current = 'home' }) {
             </div>
 
             <div className="site-nav-mobile-footer">
-              <a href="/contact.html" onClick={() => setMobile(false)} className="site-nav-mobile-cta">
+              <a href="/#contact" onClick={() => setMobile(false)} className="site-nav-mobile-cta">
                 <span>Book a demo</span>
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10m-4-4 4 4-4 4" /></svg>
               </a>

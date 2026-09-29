@@ -43,7 +43,7 @@ NevianMain/
 
 `Contact.jsx` POSTs to the Nevian AWS endpoint. If that call fails
 (network/CORS), it falls back to opening the visitor's email client
-pre-filled to `nevian.info@gmail.com`. A hidden honeypot field drops bots.
+pre-filled to `contact@nevian.info`. A hidden honeypot field drops bots.
 
 ## Notes
 

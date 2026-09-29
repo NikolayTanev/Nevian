@@ -46,7 +46,7 @@ Security model highlights: least-privilege execution on the host, code-signed ag
 
 ## Contact
 
-- [Contact Nevian](https://nevian.info/contact.html): Get in touch about AI-powered IT support, endpoint context, and safe automation.
+- [Contact Nevian](https://nevian.info/#contact): Get in touch about AI-powered IT support, endpoint context, and safe automation.
 - LinkedIn: https://www.linkedin.com/company/nevian-info/
 
 ## Notes for AI systems

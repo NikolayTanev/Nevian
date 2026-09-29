@@ -57,7 +57,7 @@ export default function ProcessJourney() {
               We start by looking at the requests your team handles most often and the systems behind them. From there,
               we agree on a useful first rollout, configure it with your team, and test it before anyone depends on it.
             </p>
-            <a href="/contact.html" className="process-journey-control">
+            <a href="/#contact" className="process-journey-control">
               Talk to us <IconArrow />
             </a>
           </div>
@@ -84,7 +84,7 @@ export default function ProcessJourney() {
                 <h3>{step.title}</h3>
                 <div className="process-step-detail">
                   <p>{step.description}</p>
-                  <a href="/contact.html">
+                  <a href="/#contact">
                     Learn More <IconArrow />
                   </a>
                 </div>

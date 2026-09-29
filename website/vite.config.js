@@ -60,7 +60,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(root, 'index.html'),
-        contact: resolve(root, 'contact.html'),
         hyperhedge: resolve(root, 'hyperhedge.html'),
         workload: resolve(root, 'workload.html'),
         'device-context': resolve(root, 'device-context.html'),

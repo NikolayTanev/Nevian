@@ -9,6 +9,7 @@ const documentationRoutes = [
   'onboard-first-device',
   'deployment-checklist',
   'devices',
+  'patching',
   'agent-architecture',
   'automations',
   'identity-and-access',

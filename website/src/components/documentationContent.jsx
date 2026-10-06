@@ -24,6 +24,7 @@ export const documentationGroups = [
     label: 'Platform',
     items: [
       { slug: 'devices', label: 'Devices' },
+      { slug: 'patching', label: 'Software patching' },
       { slug: 'agent-architecture', label: 'Agent architecture' },
       { slug: 'automations', label: 'Automations', nested: true },
       { slug: 'identity-and-access', label: 'Identity & access' },
@@ -230,6 +231,17 @@ base_url = "https://support.example.com"
 commands_enabled = true`;
 
 const selfTestCommand = String.raw`& "C:\ProgramData\Nevian\desk-agent.exe" --api-selftest`;
+
+const wingetCommands = String.raw`# Scan (read-only)
+winget export -o <temp>.json --include-versions --source winget
+winget upgrade --source winget [--include-unknown]
+
+# Update cycle, one call per approved package
+winget upgrade --id "<Id>" --exact --source winget [--include-unknown] --silent --accept-package-agreements
+winget install --id "<Id>" --exact --scope machine --source winget --silent --accept-package-agreements
+
+# Software library search
+winget search "<query>" --source winget --count 60`;
 
 const signatureShape = `deviceId
 timestamp
@@ -687,6 +699,290 @@ export const documentationPages = {
           <PageCards items={[
             { slug: 'agent-architecture', title: 'Understand the data path', description: 'See how identity, telemetry, presence, and command delivery fit together.', icon: 'device' },
             { slug: 'security', title: 'Review device security', description: 'Understand the controls and deployment responsibilities around endpoint management.', icon: 'shield' },
+          ]} />
+        </>,
+      },
+    ],
+  },
+
+  patching: {
+    group: 'Platform',
+    title: 'Software patching',
+    summary: 'Keep third-party Windows applications up to date with WinGet-based patch policies: schedules, approvals, overrides, reboot behavior, and a full activity log.',
+    sections: [
+      {
+        id: 'patching-overview',
+        title: 'What software patching does',
+        content: <>
+          <p>
+            Software patching keeps third-party applications on Windows endpoints current, for example browsers, PDF readers, runtimes, conferencing tools and archivers. A <strong>patch policy</strong> decides which software is managed, when devices scan for updates, which updates are approved, when approved updates are installed, and what happens if an update needs a restart. Microsoft’s Windows Package Manager (<strong>WinGet</strong>) does the installing, running on the device under the Nevian agent.
+          </p>
+          <DataTable
+            columns={['Where', 'What you do there']}
+            rows={[
+              { cells: [<strong>Patching → Software patches</strong>, 'Compliance overview, and the Pending, Approved, Rejected, Installed and Failed patch lists. Approve or reject for policies, Apply now, Export CSV.'] },
+              { cells: [<strong>Patching → Policies</strong>, 'Create and edit policies. Settings covers schedules, notifications, reboot options, approvals, overrides and WinGet. Software lists the managed products. Devices shows who uses the policy.'] },
+              { cells: [<strong>Patching → Activities</strong>, 'Every scan and update job, with its trigger, outcome and per-package results.'] },
+              { cells: [<strong>Fleet → select devices</strong>, 'Assign or remove a policy, and run a software scan or update on several devices at once.'] },
+              { cells: [<strong>Fleet → device → Software patching</strong>, 'Device status, the device’s patches, approve or reject for this device or its policy, Apply now, and recent activity.'] },
+              { cells: [<strong>Fleet → device → Run → Patching</strong>, 'Software scan or software update on one device.'] },
+            ]}
+          />
+          <p>
+            All patching screens and API routes require the <code>patch.manage</code> capability, which owners and admins have. Data stays inside your organization: every route checks that the device belongs to your organization.
+          </p>
+        </>,
+      },
+      {
+        id: 'patching-requirements',
+        title: 'Requirements',
+        content: <>
+          <Checklist items={[
+            'Windows 10 version 2004 (build 19041) or later, or Windows 11, with Microsoft App Installer, which provides WinGet. The agent finds winget.exe in the machine-wide App Installer package, because the per-user alias does not exist for the SYSTEM account.',
+            'A Nevian agent release that includes software patching. Older agents can be assigned a policy, but they do not report installed packages and ignore update requests.',
+            'The device must be online for a scan or update to start. With “Run update immediately, if missed”, a missed update window runs as soon as the device reconnects.',
+            'Only machine-wide installs can be patched. Per-user application instances are outside the agent’s reach, the same limitation the WinGet integration has in other RMM products.',
+          ]} />
+          <Callout tone="warning" title="Packages come from the public WinGet repository">
+            <p>Microsoft reviews and malware-scans submissions to the WinGet community repository. Nevian does not re-validate packages. Choose the products you add to a policy deliberately, and pilot new policies on a small group of devices first.</p>
+          </Callout>
+        </>,
+      },
+      {
+        id: 'patching-quick-start',
+        title: 'Quick start',
+        step: 'Setup',
+        content: <>
+          <ol>
+            <li>Open <strong>Patching → Policies → New policy</strong>, name the policy, and leave <strong>Enable software patching</strong> on.</li>
+            <li>Under <strong>Software → Add software</strong>, pick products from the Software library, for example Chrome, 7-Zip or Adobe Reader. Alternatively, turn on <strong>Update all available software</strong> in the WinGet card.</li>
+            <li>Check the <strong>Scan schedule</strong> (default 8:00 AM device time) and the <strong>Update schedule</strong> (default 5:00 PM device time). Leave at least an hour between them.</li>
+            <li>Choose <strong>Reboot options</strong> and, if unlisted software should be patched as well, turn on <strong>Approvals</strong>.</li>
+            <li><strong>Save</strong>. In <strong>Fleet</strong>, select devices, choose the policy in the bulk bar, and click <strong>Apply policy</strong>.</li>
+            <li>Run <strong>Software scan</strong> on one device and review the results in its <strong>Software patching</strong> panel or under <strong>Patching → Software patches</strong>.</li>
+            <li>Approve anything left <strong>Pending</strong>, then wait for the update window or run <strong>Software update</strong>.</li>
+          </ol>
+          <p>The scheduler plans each device’s first scan and update within about a minute of the policy being assigned.</p>
+        </>,
+      },
+      {
+        id: 'policy-settings',
+        title: 'Policy settings',
+        content: <>
+          <p>The <strong>Settings</strong> tab of a policy has the cards below. Cards marked <Status tone="planned">Stored only</Status> are saved with the policy but do not change behavior yet.</p>
+          <DataTable
+            columns={['Card', 'Setting', 'Behavior']}
+            rows={[
+              { cells: ['Scan schedule', 'Schedule, time and time zone, stagger', 'When devices look for available updates. See Schedules below.'] },
+              { cells: ['', 'Scan immediately', 'When you save the policy, a scan starts on every online device that uses it.'] },
+              { cells: ['', 'Apply immediately', 'After a scheduled or on-save scan finds approved patches, an update cycle starts right away, without a second scan.'] },
+              { cells: ['Update schedule', 'Schedule, time and time zone, stagger', 'When approved patches are installed. Every update cycle scans first, so it works with current data.'] },
+              { cells: ['', 'Run update immediately, if missed', 'If the device was offline at the scheduled time, the update runs when it reconnects. Otherwise the window is skipped and logged.'] },
+              { cells: ['', 'Pre-stage updates', <Status tone="planned">Stored only</Status>] },
+              { cells: ['', 'Maintenance mode (suppress notifications)', <Status tone="planned">Stored only</Status>] },
+              { cells: ['Update notifications', 'Notify then close / Auto close / Do not close', <><Status tone="planned">Stored only</Status> WinGet cannot close running applications. Updates for software that is open fail with “application running state” and are retried next cycle.</>] },
+              { cells: ['Reboot options', 'Logged-in user, not logged-in user', 'Applied only when an installed patch reports that it needs a restart. See Reboots below.'] },
+              { cells: ['Approvals', 'Critical and Recommended patches: Approve, Manual or Reject', 'The default decision for software that is not on the Software tab. When this is off, that software is reported as “Not in policy” and never installed.'] },
+              { cells: ['Approval overrides', 'Approve or reject a specific patch', 'Wins over every other rule in this policy. Approve or reject for policies on the Software patches page adds entries here.'] },
+              { cells: ['WinGet', 'Update all available software to the latest version', 'Approves every update WinGet detects and bypasses product rules and default approvals. Patch overrides still apply.'] },
+              { cells: ['', 'Attempt to update even if the current version is unknown', 'Runs WinGet with --include-unknown for both scan and update.'] },
+            ]}
+          />
+          <p>Turning off <strong>Enable software patching</strong> stops scheduled work for the policy. Its devices then report everything as “Not in policy”, and Software update is refused. A technician can still use Apply now.</p>
+        </>,
+      },
+      {
+        id: 'patching-schedules',
+        title: 'Schedules, time zones and stagger',
+        content: <>
+          <DataTable
+            columns={['Frequency', 'You choose', 'Runs']}
+            rows={[
+              { cells: ['Daily', 'Weekdays', 'Every selected weekday at the set time.'] },
+              { cells: ['Weekly', 'Weeks of the month (1st to 4th, Last) and weekdays', 'For example, the 2nd and 4th Tuesday.'] },
+              { cells: ['Monthly', 'Days of the month (1 to 31, Last) and months', 'A day that does not exist in a short month runs on that month’s last day.'] },
+            ]}
+          />
+          <p>A schedule without any selected day is rejected when you save.</p>
+          <p>
+            <strong>Time zone.</strong> “Device local time”, the default, uses the time zone each agent reports in its inventory. Common Windows time zones map to IANA zones, so daylight-saving changes are handled. Any other zone falls back to the reported UTC offset. You can also pin a schedule to a fixed zone such as Europe/Berlin.
+          </p>
+          <p>
+            <strong>Stagger over.</strong> Each device adds a random delay, to the minute, within the window you set (up to 23 h 59 m), so a fleet does not download and install at the same moment. A new delay is drawn for every run.
+          </p>
+          <p>
+            The scheduler runs once a minute. It claims each due slot atomically, so a slot never runs twice, and it starts at most one patch job per device at a time. If a scan and an update fall due together, only the update runs, because it scans first anyway. Each device’s next scan and update times are shown in its Software patching panel and on the policy’s Devices tab.
+          </p>
+        </>,
+      },
+      {
+        id: 'software-and-library',
+        title: 'Software and the Software library',
+        content: <>
+          <p>The <strong>Software</strong> tab lists the products a policy manages. <strong>Add software</strong> opens the Software library, which combines three sources:</p>
+          <ul>
+            <li><strong>Library.</strong> A curated list of common business applications with their WinGet IDs and a Critical or Recommended classification.</li>
+            <li><strong>Seen on devices.</strong> Every WinGet package your agents have reported as installed, with the number of devices it is on.</li>
+            <li><strong>WinGet catalog.</strong> <em>Search WinGet catalog</em> runs a live <code>winget search</code> through one of your online devices. You can also add any package by its WinGet ID, such as <code>Publisher.Package</code>.</li>
+          </ul>
+          <p>Select products and click <strong>Edit</strong> to set, per product:</p>
+          <DataTable
+            columns={['Option', 'Effect']}
+            rows={[
+              { cells: ['Critical patches / Recommended patches', 'Approve, Manual (left Pending for a technician) or Reject, for this product’s updates.'] },
+              { cells: ['Classify updates as', 'Which of the two rules above applies. WinGet publishes no severity, so the library pre-classifies high-exposure titles (browsers, PDF readers, Java and .NET runtimes, conferencing, remote access, VPN, archivers) as Critical.'] },
+              { cells: ['Install if application not present', 'Yes: the product is installed machine-wide on devices that do not have it. No: the missing installer is listed as Rejected, and you can approve it later per device or per policy.'] },
+              { cells: ['Enable self-service', <Status tone="planned">Stored only</Status>] },
+            ]}
+          />
+        </>,
+      },
+      {
+        id: 'approvals',
+        title: 'How a patch is approved',
+        content: <>
+          <p>
+            A patch is one update of one package to one version. Its ID is <code>WinGetId@version</code>, for example <code>Google.Chrome@154.0.8037.98</code>. Installers use <code>WinGetId@install</code>. Rejecting a patch therefore rejects only that version. The next release is evaluated again.
+          </p>
+          <p>The decision closest to the device wins:</p>
+          <ol>
+            <li><strong>Device override</strong>: Approve or reject for device, in the Fleet device panel.</li>
+            <li><strong>Policy override</strong>: Approve or reject for policy or for policies, or the Approval overrides card.</li>
+            <li><strong>Update all available software</strong>, if it is turned on.</li>
+            <li><strong>Product rule</strong>: the product’s Critical or Recommended setting on the Software tab.</li>
+            <li><strong>Default approvals</strong>: the Approvals card, for software that is not on the Software tab.</li>
+            <li>Otherwise <strong>Not in policy</strong>: the update is visible but never installed by a policy.</li>
+          </ol>
+          <p>Changing a policy, an override or an assignment re-evaluates the patches already detected, so you do not have to wait for the next scan.</p>
+          <DataTable
+            columns={['Status', 'Meaning']}
+            rows={[
+              { cells: [<Status>Pending</Status>, 'The rule is Manual. A technician has to approve or reject it.'] },
+              { cells: [<Status>Approved</Status>, 'Installed in the next update cycle.'] },
+              { cells: [<Status>Rejected</Status>, 'Never installed by a policy. Apply now can still install it.'] },
+              { cells: [<Status>Installed</Status>, 'Installed by Nevian. Shows when and by whom: Scheduled update, Apply immediately, or Technician: name. Kept for 180 days.'] },
+              { cells: [<Status>Failed</Status>, 'The last attempt failed. Still approved, so it is retried every update cycle. The error is shown.'] },
+              { cells: [<Status tone="planned">Not in policy</Status>, 'Found by a scan but not covered by the policy, or the device has no enabled policy.'] },
+            ]}
+          />
+          <p>Patches that a later scan no longer finds disappear from the lists, for example because the application updated itself or a newer version replaced them. Installed history stays.</p>
+        </>,
+      },
+      {
+        id: 'running-patches',
+        title: 'Scans, updates and Apply now',
+        content: <>
+          <DataTable
+            columns={['Action', 'Where', 'What happens']}
+            rows={[
+              { cells: ['Software scan', 'Device Run menu or panel, Fleet bulk bar, policy Devices tab', 'The agent reports installed packages and available upgrades. Patch statuses are recalculated. Nothing is installed.'] },
+              { cells: ['Software update', 'Same places', 'A scan, then installation of every approved (and failed-but-approved) patch and approved installer. Requires an enabled policy.'] },
+              { cells: ['Apply now', 'Software patches page (all affected devices), device panel (this device)', 'Installs the selected patches immediately, outside the schedule and approvals. Meant for zero-day fixes.'] },
+              { cells: ['Approve or reject for policies', 'Software patches page', 'Adds a policy override to every policy whose devices have the patch.'] },
+              { cells: ['Approve or reject for device or policy', 'Fleet device panel', 'Adds a device-level or policy-level override. Clear device override removes it again.'] },
+            ]}
+          />
+          <p>
+            Scans and updates run as background jobs. The request returns at once, and the result appears in Activities, in the device panel and in the dashboard as soon as the agent reports back. Updates can take many minutes. Only one patch job runs per device at a time. A second request is refused with “A patch job is already running on this device”.
+          </p>
+        </>,
+      },
+      {
+        id: 'patching-reboots',
+        title: 'Reboots and pending reboot',
+        content: <>
+          <p>A device has a <strong>pending reboot</strong> when any of these is true:</p>
+          <ul>
+            <li>Windows servicing has a reboot pending (Component Based Servicing).</li>
+            <li>Windows Update requires a restart.</li>
+            <li>A patch Nevian installed asked for a restart, and the device has not rebooted since.</li>
+          </ul>
+          <Callout title="While a reboot is pending, scan and update cycles do not run">
+            <p>The device panel shows the reason, and jobs are logged as Skipped. Patching resumes automatically after the device restarts.</p>
+          </Callout>
+          <p>Reboot options run only when an installed patch requires a restart:</p>
+          <DataTable
+            columns={['User state', 'Option', 'Behavior on the device']}
+            rows={[
+              { cells: ['Logged in', 'Prompt to reboot until reboot accepted', 'A Yes/No dialog in the user’s session, repeated at the chosen interval. Optional: force a restart (with 5 minutes’ notice) after N declined prompts, and custom dialog text.'] },
+              { cells: ['', 'Notify the user, then reboot', 'Windows shows a restart notice, then restarts after the chosen delay.'] },
+              { cells: ['', 'Automatically reboot', 'Restarts after the chosen delay.'] },
+              { cells: ['', 'Do nothing', 'The device stays pending reboot until someone restarts it.'] },
+              { cells: ['Not logged in', 'Attempt to reboot until successful', 'Restarts now and retries at the chosen interval if the machine is still up.'] },
+              { cells: ['', 'Reboot immediately', 'Restarts now.'] },
+              { cells: ['', 'Do nothing', 'No restart.'] },
+            ]}
+          />
+        </>,
+      },
+      {
+        id: 'dashboard-and-activities',
+        title: 'Dashboard, reports and activity',
+        content: <>
+          <p><strong>Software patches</strong> shows:</p>
+          <ul>
+            <li>Devices with an enabled policy.</li>
+            <li>Patching compliance: devices with no pending, approved or failed patches.</li>
+            <li>Patches installed: installed as a share of all non-rejected patches.</li>
+            <li>Devices pending reboot.</li>
+            <li>Failed patches.</li>
+          </ul>
+          <p>
+            Below that are the five status lists, one line per patch with its device count. Click the count to see the individual devices and what decided each patch. <strong>Export CSV</strong> downloads the current list. Widgets show the top devices by outstanding and failed patches, the most common failure reasons, and recent activity.
+          </p>
+          <p>
+            <strong>Activities</strong> lists every job: start time, device, policy, Software scan or Software update, who or what triggered it (Scheduled, Scheduled after a missed window, Scan or Apply immediately, Apply now, Technician), status (Completed, Partially failed, Failed, Skipped, Offline, Timed out) and a summary. <em>Details</em> shows each package with its action, result, WinGet result code and message.
+          </p>
+        </>,
+      },
+      {
+        id: 'patching-agent',
+        title: 'What runs on the device',
+        content: <>
+          <p>The agent runs WinGet as LocalSystem. Each call also passes <code>--accept-source-agreements --disable-interactivity</code>:</p>
+          <CodeBlock label="WinGet calls made by the agent" language="text" code={wingetCommands} />
+          <ul>
+            <li>The installed list comes from <code>winget export</code> (JSON, full IDs). Upgrades are read from the <code>winget upgrade</code> table in a language-independent way.</li>
+            <li>Every package is installed in its own call, so one failure does not stop the rest. Each call has a 20-minute limit.</li>
+            <li>Patch work runs in the background on the agent, so remote terminal and other actions keep working during an update. Results that finish while the connection is down are sent on reconnect.</li>
+            <li>Installing software and patch reboots are only accepted with a valid server signature (HMAC, timestamp and nonce), the same protection as the remote shell. Scans and searches are read-only.</li>
+            <li>The local <code>SAFE_MODE</code> switch on the device refuses all patch actions.</li>
+          </ul>
+        </>,
+      },
+      {
+        id: 'patching-troubleshooting',
+        title: 'Troubleshooting',
+        content: <>
+          <DataTable
+            columns={['Symptom', 'Likely cause', 'What to do']}
+            rows={[
+              { cells: ['“WinGet is not available on this device”', 'App Installer is missing or too old (LTSC, Server, old Windows 10)', 'Install or update App Installer, then scan again.'] },
+              { cells: ['Job Skipped: reboot pending', 'Windows Update, servicing or a previous patch needs a restart', 'Restart the device. Patching resumes on its own.'] },
+              { cells: ['Failed: application running state (0x8A150101)', 'The application was open during the update', 'Nothing. It is retried next cycle. Schedule updates outside working hours.'] },
+              { cells: ['Failed: no applicable installer (0x8A150010)', 'The package has only per-user installers, or none for this architecture', 'Remove the product or use another package ID.'] },
+              { cells: ['Failed: restart then try again (0x8A15010A)', 'The installer needs a restart before it can run', 'Restart the device. The patch is retried.'] },
+              { cells: ['Everything shows “Not in policy”', 'No policy, a disabled policy, or the software is not covered', 'Assign or enable a policy. Add the product or turn on Approvals or Update all.'] },
+              { cells: ['Job status Offline or Timed out', 'The device disconnected before it reported back', 'Check the device’s presence in Fleet. Run if missed covers scheduled updates.'] },
+              { cells: ['Search WinGet catalog fails', 'No Windows device of your organization is online', 'Add the package by its WinGet ID instead.'] },
+            ]}
+          />
+        </>,
+      },
+      {
+        id: 'patching-limitations',
+        title: 'Current limitations',
+        content: <>
+          <ul>
+            <li>Ring (staged) deployments and global, cross-policy pre-approvals are not available yet. Use separate policies for pilot and production devices.</li>
+            <li>Pre-stage, maintenance mode, update notifications and self-service are stored but have no effect yet.</li>
+            <li>Release dates and CVE/CVSS data are not shown, because WinGet does not publish them. The lists show when a patch was first detected.</li>
+            <li>A reboot prompt that is waiting for the user stops if the agent service restarts. The device stays pending reboot.</li>
+            <li>Operating-system patching (Windows Update) is a separate remote-support action and not part of patch policies.</li>
+          </ul>
+          <PageCards items={[
+            { slug: 'devices', title: 'Work with devices', description: 'Fleet inventory, presence and the device detail page where the patch panel lives.', icon: 'device' },
+            { slug: 'agent-architecture', title: 'Agent architecture', description: 'How the signed agent connection delivers actions and results.', icon: 'shield' },
           ]} />
         </>,
       },

@@ -13,6 +13,7 @@ const documentationRoutes = [
   'agent-architecture',
   'automations',
   'identity-and-access',
+  'ai-spend-and-budget',
   'audit-trail',
   'api-overview',
   'authentication',

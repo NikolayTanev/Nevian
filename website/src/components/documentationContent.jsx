@@ -28,6 +28,7 @@ export const documentationGroups = [
       { slug: 'agent-architecture', label: 'Agent architecture' },
       { slug: 'automations', label: 'Automations', nested: true },
       { slug: 'identity-and-access', label: 'Identity & access' },
+      { slug: 'ai-spend-and-budget', label: 'AI spend & Azure budget' },
       { slug: 'audit-trail', label: 'Audit trail' },
     ],
   },
@@ -1344,6 +1345,171 @@ export const documentationPages = {
           <PageCards items={[
             { slug: 'authentication', title: 'Authentication details', description: 'See how browser, device, and Microsoft credentials are validated.', icon: 'shield' },
             { slug: 'audit-trail', title: 'Access-related records', description: 'Review invitation, membership, command, and recovery activity coverage.', icon: 'document' },
+          ]} />
+        </>,
+      },
+    ],
+  },
+
+  'ai-spend-and-budget': {
+    group: 'Platform',
+    title: 'AI spend & Azure budget',
+    summary: 'Track what Nevian’s AI features cost and measure that spend against the budget you already keep in Azure Cost Management.',
+    sections: [
+      {
+        id: 'budget-overview',
+        title: 'How the budget works',
+        content: <>
+          <p>
+            <strong>Billing → AI spend</strong> shows what Nevian’s AI features cost this month: every model call is recorded with its exact token counts and priced at Azure’s published list rates. The budget that spend is measured against is not entered in Nevian. It is read from <strong>Azure Cost Management</strong>, so the figure in Nevian always matches the one in Azure.
+          </p>
+          <p>
+            Nevian reads the budget with its own application identity in your organization’s Microsoft directory. That identity is created when the directory is connected on the Identity page. To read billing data it needs one additional read-only role in Azure, which an Azure administrator grants once.
+          </p>
+          <DataTable
+            columns={['Where', 'What you do there']}
+            rows={[
+              { cells: [<strong>Identity</strong>, 'Connect your Microsoft 365 directory. The Azure budget chip in the header shows whether the budget is connected.'] },
+              { cells: [<strong>Billing → Azure budget</strong>, 'Follow the guided setup, check access against Azure, and choose the budget. The settings icon next to the budget opens it again later.'] },
+              { cells: [<strong>Azure portal → Cost Management</strong>, 'Create the budget, change its amount, and grant Nevian read access.'] },
+            ]}
+          />
+          <Callout title="Read-only by design">
+            <p>The roles Nevian asks for let it see costs and budgets. They cannot change resources, payment details or the budget itself.</p>
+          </Callout>
+        </>,
+      },
+      {
+        id: 'budget-before-you-begin',
+        title: 'Before you begin',
+        content: <>
+          <Checklist items={[
+            'Your organization’s Microsoft 365 directory is connected to Nevian on the Identity page.',
+            'A cost budget exists in Azure Cost Management, on the billing account or on a subscription. If not, create one first; see Create or change the budget below.',
+            'Someone who can assign roles in Azure: a billing account owner for a billing account, or an Owner or User Access Administrator for a subscription.',
+            'A Nevian role with billing permissions, so the budget can be chosen in Nevian.',
+          ]} />
+        </>,
+      },
+      {
+        id: 'connect-directory',
+        title: 'Connect your Microsoft 365 directory',
+        step: 'Step 1',
+        content: <>
+          <p><Status tone="planned">Coming soon</Status></p>
+          <p>A step-by-step guide for connecting your directory on the Identity page is in preparation. If your directory is already connected, continue with step 2.</p>
+        </>,
+      },
+      {
+        id: 'grant-access',
+        title: 'Give Nevian read access to your costs',
+        step: 'Step 2',
+        content: <>
+          <p>Most budgets live on the <strong>billing account</strong>, which is the usual case for a Microsoft Customer Agreement. Grant the role there:</p>
+          <ol>
+            <li>In the search bar at the top of the Azure portal, type <strong>Cost Management + Billing</strong> and open it.</li>
+            <li>In the left menu, choose <strong>Billing scopes</strong> and select the billing account that holds your budget.</li>
+            <li>In that page’s left menu, open <strong>Access control (IAM)</strong>. If you do not see it, type <strong>IAM</strong> into the search box at the top of the left menu.</li>
+            <li>Choose <strong>+ Add</strong>.</li>
+            <li>Select the role <strong>Billing account reader</strong>. Choose the reader role, not owner or contributor.</li>
+            <li>Under <strong>User, group, or app</strong>, search for the Nevian application, select it and choose <strong>Add</strong>.</li>
+            <li>Back in Nevian, open <strong>Billing</strong> and choose <strong>Check again</strong> in the Azure budget card.</li>
+          </ol>
+          <p>
+            The Azure budget card in Nevian shows the application’s exact name, its <strong>Application (client) ID</strong> and its <strong>Object ID</strong>, each with a copy button. If the member search does not find the application by name, paste the Application (client) ID instead. The card also links straight to your billing accounts in the Azure portal.
+          </p>
+          <Callout tone="neutral" title="The Azure portal is localized">
+            <p>Menu and role names follow your portal language. In a German portal, for example, Cost Management + Billing is Kostenverwaltung + Abrechnung, Billing scopes is Abrechnungsbereiche, and Access control (IAM) is Zugriffssteuerung (IAM).</p>
+          </Callout>
+          <Callout title="Allow a few minutes">
+            <p>Azure can take a minute or two to apply a new role. If <strong>Check again</strong> still reports no access, wait briefly and check again.</p>
+          </Callout>
+        </>,
+      },
+      {
+        id: 'grant-access-subscription',
+        title: 'Budget on a subscription instead',
+        content: <>
+          <p>If your budget was created on a subscription, or the billing account’s member search does not offer the Nevian application, grant access on the subscription. In the Azure budget card, switch to the <strong>Subscription</strong> tab for the same steps.</p>
+          <ol>
+            <li>In the Azure portal, open <strong>Subscriptions</strong> and select the subscription that holds the budget.</li>
+            <li>Choose <strong>Access control (IAM)</strong>, then <strong>+ Add → Add role assignment</strong>.</li>
+            <li>Select the role <strong>Cost Management Reader</strong>.</li>
+            <li>Under <strong>Members</strong>, choose <strong>User, group, or service principal</strong>, add the Nevian application and save.</li>
+            <li>Back in Nevian, choose <strong>Check again</strong>.</li>
+          </ol>
+        </>,
+      },
+      {
+        id: 'choose-budget',
+        title: 'Choose the budget',
+        step: 'Step 3',
+        content: <>
+          <p>Once Nevian can read your billing data, the card lists every cost budget it finds, with its amount, reset period and the billing account or subscription it belongs to.</p>
+          <ol>
+            <li>Select the budget your AI spend should be measured against.</li>
+            <li>Choose <strong>Use this budget</strong>. The card’s status changes to <strong>Connected</strong>.</li>
+          </ol>
+          <p>AI spend, remaining budget and the daily budget line on the chart now use that budget. Choosing a budget requires billing permissions in Nevian; anyone who can view billing sees the result.</p>
+        </>,
+      },
+      {
+        id: 'change-budget',
+        title: 'Create or change the budget',
+        content: <>
+          <p>The budget amount is always set in Azure, never in Nevian. The <strong>Where the budget is set</strong> box in the Azure budget card shows the exact portal path to your budget and links straight to it. Selecting the budget amount in the Billing header opens it in Azure as well.</p>
+          <DataTable
+            columns={['Budget on', 'Path in the Azure portal']}
+            rows={[
+              { cells: ['Billing account', 'Cost Management + Billing → Billing scopes → your billing account → Budgets'] },
+              { cells: ['Subscription', 'Subscriptions → your subscription → Cost Management → Budgets'] },
+            ]}
+          />
+          <p>To create a budget:</p>
+          <ol>
+            <li>Open <strong>Budgets</strong> at the path above and choose <strong>+ Add</strong>.</li>
+            <li>Give it a name, set <strong>Reset period</strong> to <strong>Monthly</strong> and enter the <strong>Amount</strong>.</li>
+            <li>Optionally add alert thresholds and recipients, then choose <strong>Create</strong>.</li>
+            <li>Back in Nevian, choose <strong>Check again</strong> and select the new budget.</li>
+          </ol>
+          <p>Changes to an existing budget appear in Nevian within about ten minutes, or straight away with the refresh button next to the budget.</p>
+        </>,
+      },
+      {
+        id: 'spend-figures',
+        title: 'Reading the AI spend card',
+        content: <>
+          <DataTable
+            columns={['Figure', 'Meaning']}
+            rows={[
+              { cells: [<strong>AI spend this month</strong>, 'Nevian’s own real-time figure: token counts from every model call, priced at Azure list rates for your region.'] },
+              { cells: [<strong>Billed by Azure</strong>, 'What Azure has charged against the budget so far, with its forecast. This covers every service in the budget’s scope, not only AI, and Azure updates it a few times a day.'] },
+              { cells: [<strong>Remaining of budget</strong>, 'The budget minus the higher of the two figures above.'] },
+              { cells: [<strong>Requests and tokens</strong>, 'Model calls and tokens this month, broken down by model and feature further down the page.'] },
+            ]}
+          />
+          <Callout tone="neutral" title="List prices, not your invoice">
+            <p>AI spend uses Azure’s public pay-as-you-go rates. Agreement discounts are not included; the Billed by Azure figure reflects what you are actually charged.</p>
+          </Callout>
+        </>,
+      },
+      {
+        id: 'budget-troubleshooting',
+        title: 'Troubleshooting',
+        content: <>
+          <DataTable
+            columns={['The card says', 'What to do']}
+            rows={[
+              { cells: ['Connect your Microsoft 365 directory first', 'Connect the directory on the Identity page, then return to Billing.'] },
+              { cells: ['Nevian cannot see any billing account or subscription yet', 'The role from step 2 is missing or not applied yet. Check that it was assigned to the Nevian application, wait a minute, and choose Check again.'] },
+              { cells: ['No cost budget exists there yet', 'Create a budget as described above. Usage budgets are not listed; only cost budgets are.'] },
+              { cells: ['The budget no longer exists in Azure', 'The chosen budget was deleted or renamed. Choose another one from the list.'] },
+              { cells: ['The Nevian application cannot be found in the member search', 'Paste the Application (client) ID from the card, or grant access on the subscription instead.'] },
+            ]}
+          />
+          <PageCards items={[
+            { slug: 'identity-and-access', title: 'Identity & access', description: 'How organizations, roles and the Microsoft directory connection fit together.', icon: 'shield' },
+            { slug: 'security', title: 'Security', description: 'How Nevian handles credentials and integration identities.', icon: 'document' },
           ]} />
         </>,
       },

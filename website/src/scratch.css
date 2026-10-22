@@ -22,17 +22,16 @@ button { font: inherit; }
 .scratch-signup { padding: 10px 15px; border-radius: 8px; }
 .scratch-menu { display: none; width: 38px; height: 38px; border: 0; background: transparent; padding: 7px; }
 .scratch-menu i { display: block; height: 2px; margin: 7px 0; background: #fff; }
-.scratch-hero { width: min(1360px, calc(100% - 72px)); min-height: 250px; margin: 48px auto 0; display: grid; grid-template-columns: minmax(0, 760px) 1fr; align-items: end; gap: 80px; }
+.scratch-hero { width: min(1360px, calc(100% - 72px)); min-height: 250px; margin: 48px auto 0; display: grid; grid-template-columns: minmax(0, 760px) minmax(max-content, 1fr); align-items: end; gap: 48px; }
 .scratch-hero-copy h1 { max-width: 760px; margin: 0; font-size: clamp(50px, 4.7vw, 70px); line-height: .98; letter-spacing: -.06em; font-weight: 620; }
 .scratch-hero-copy p { max-width: 650px; margin: 14px 0 0; color: #9b9b9b; font-size: 16px; line-height: 1.35; }
 .scratch-actions { display: flex; gap: 12px; margin-top: 24px; }
 .scratch-actions a { min-height: 46px; padding: 0 19px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
 .scratch-secondary { background: #1b1b1b; color: #f1f1f1; }
 .scratch-secondary span { margin-left: 10px; color: #aaa; }
-.scratch-release { color: #b7b7b7; font-size: 13px; display: flex; align-items: center; gap: 6px; justify-self: end; margin-bottom: 10px; }
+.scratch-release { color: #b7b7b7; font-size: 13px; display: flex; align-items: center; gap: 6px; justify-self: end; margin-bottom: 10px; white-space: nowrap; }
 .scratch-release b { color: #fff; font-weight: 500; }
-.scratch-release svg { width: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-.scratch-release-mobile { display: none; }
+.scratch-release svg { flex: none; width: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 /* The preview always renders at full desktop width, pinned to the left. Narrower
    screens crop it on the right behind a fade instead of reflowing it, and phones
    scale the whole window down. */
@@ -83,9 +82,7 @@ button { font: inherit; }
   .scratch-signup { padding: 11px 16px; background: #f4f4f2; color: #090909; }
   .scratch-menu { display: block; }
   .scratch-hero { width: calc(100% - 36px); min-height: 0; margin-top: 104px; display: block; }
-  .scratch-release-desktop { display: none; }
-  .scratch-release-mobile { display: flex; justify-content: flex-start; margin-bottom: 44px; color: #fff; font-size: 13px; }
-  .scratch-release-mobile span { color: #8f8f8f; }
+  .scratch-release { justify-content: flex-start; justify-self: start; margin: 26px 0 0; font-size: 14px; }
   .scratch-hero-copy h1 { max-width: 610px; font-size: clamp(46px, 12.7vw, 68px); line-height: 1.04; letter-spacing: -.058em; }
   .scratch-hero-copy p { max-width: 560px; margin-top: 14px; font-size: 16px; line-height: 1.38; }
   .scratch-actions { margin-top: 30px; gap: 10px; }

@@ -107,7 +107,6 @@ export default function ScratchLanding() {
       <ScratchNav />
 
       <section className="scratch-hero" id="top">
-        <a className="scratch-release scratch-release-mobile" href="#how">Nevian <span>Explore the workspace</span><ArrowIcon /></a>
         <div className="scratch-hero-copy">
           <h1 aria-label="Cut routine IT workload by up to 60%">Cut routine IT workload by up to <strong aria-hidden="true">{workloadReduction}%</strong></h1>
           <p>Nevian is an AI-powered IT support platform. It verifies the requester, checks live device and directory context, follows your policies, completes approved actions, and hands exceptions to the right person with a full audit trail.</p>
@@ -115,7 +114,7 @@ export default function ScratchLanding() {
             <a className="scratch-primary" href="#contact">Book a demo</a>
           </div>
         </div>
-        <a className="scratch-release scratch-release-desktop" href="#how"><b>Nevian</b> Explore the workspace <ArrowIcon /></a>
+        <a className="scratch-release" href="#how"><b>Nevian</b> Explore the workspace <ArrowIcon /></a>
       </section>
 
       <section className="scratch-stage" id="how" aria-label="Nevian workspace preview">

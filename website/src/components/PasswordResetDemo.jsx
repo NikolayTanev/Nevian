@@ -2,15 +2,15 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowUp, Plus } from 'lucide-react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
-// Phase map: 0 idle · 1 user types · 2 agent replies · 3 click "Verify with
-// Microsoft" · 4-5 pick a verification method · 6-7 approve the push · 8
+// Phase map: 0 idle · 1 user types · 2 agent replies · 3 click "Verify
+// identity" · 4-5 pick a verification method · 6-7 approve the push · 8
 // completing · 9 verified · 10 thanks · 11-13 close the ticket.
 // No sign-in screens: the user forgot their password, so Nevian asks for a
 // step-up MFA challenge instead of a password.
 const phaseDurations = [1400, 2600, 2850, 1200, 2400, 1200, 2750, 1200, 1750, 2700, 2200, 2400, 1200, 2800];
 const demoUser = {
   name: 'Linda Mogridge',
-  email: 'linda.mogridge@contoso.com',
+  email: 'linda.mogridge@acme.com',
 };
 
 function UserAvatar({ phone = false }) {
@@ -21,11 +21,13 @@ function UserAvatar({ phone = false }) {
   );
 }
 
-function MicrosoftMark() {
+function AuthBrand({ label = 'Identity verification' }) {
   return (
     <span className="password-ms-brand">
-      <i className="is-red" /><i className="is-green" /><i className="is-blue" /><i className="is-yellow" />
-      <strong>Microsoft</strong>
+      <span className="password-auth-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.4 2.8 7.6 7 9 4.2-1.4 7-4.6 7-9V6l-7-3Zm-2 9 1.4 1.5L15 9.8" /></svg>
+      </span>
+      <strong>{label}</strong>
     </span>
   );
 }
@@ -98,16 +100,16 @@ function PersistentCursor({ frameRef, phase }) {
 
 function IdentityPane({ phase }) {
   const methods = [
-    ['shield', 'Approve a request on my Microsoft Authenticator app'],
-    ['code', 'Use a verification code from my mobile app'],
-    ['chat', 'Text +X XXX-XXXX-40'],
-    ['phone', 'Call +X XXX-XXXX-40'],
+    ['shield', 'Approve a push in your authenticator app'],
+    ['code', 'Enter a 6-digit code from your authenticator app'],
+    ['chat', 'Send a code via SMS to •••• ••40'],
+    ['phone', 'Verify with a security key or passkey'],
   ];
 
   return (
     <div className="password-ms-identity-frame">
       <div className="password-ms-identity">
-        <MicrosoftMark />
+        <AuthBrand />
         <div className="password-ms-account">{demoUser.email}</div>
         <h3>Verify your identity</h3>
         <div className="password-ms-methods">
@@ -119,24 +121,24 @@ function IdentityPane({ phase }) {
             </button>
           ))}
         </div>
-        <a>More information</a>
+        <a>Try another method</a>
         <button type="button" className="password-ms-cancel">Cancel</button>
       </div>
     </div>
   );
 }
 
-function AuthenticatorPane({ selected, phase }) {
+function AuthenticatorPane({ selected }) {
   return (
     <div className="password-mfa-pair">
       <div className="password-mfa-request">
-        <MicrosoftMark />
-        <span>← {demoUser.email}</span>
+        <AuthBrand label="Step-up MFA" />
+        <span>{demoUser.email}</span>
         <h3>Approve password reset</h3>
-        <p>Tap the number you see below in your Microsoft Authenticator app to confirm this reset.</p>
+        <p>Match the number below in your authenticator app to confirm this request.</p>
         <strong>28</strong>
-        <small>No numbers in the app? Make sure you&apos;re using the latest version.</small>
-        <a>Or, verify another way.</a>
+        <small>Works with any authenticator app or hardware token.</small>
+        <a>Use a one-time code instead</a>
       </div>
 
       <div className="password-phone">
@@ -145,22 +147,29 @@ function AuthenticatorPane({ selected, phase }) {
           <span aria-hidden="true"><i className="is-signal" /><i className="is-wifi" /><i className="is-battery" /></span>
         </div>
         <div className="password-phone-speaker" />
-        <div className="password-phone-header"><span>☰</span> Authenticator <b>＋</b></div>
+        <div className="password-phone-header">
+          <span>☰</span>
+          <em className="password-phone-title"><MiniIcon type="shield" /> Authenticator</em>
+          <b>＋</b>
+        </div>
         <div className="password-phone-accounts">
-          <div><UserAvatar phone /><span>{demoUser.name}<small>Contoso Corporation</small></span><b>›</b></div>
-          <div><i>IT</i><span>IT Operations<small>Microsoft Entra ID</small></span><b>›</b></div>
-          <div><i>NV</i><span>Nevian Demo<small>Passwordless</small></span><b>›</b></div>
+          <div><UserAvatar phone /><span>{demoUser.name}<small>Acme Corp · SSO</small></span><code className="password-phone-totp">482 910</code></div>
+          <div><i>IT</i><span>IT Operations<small>Admin vault</small></span><code className="password-phone-totp">194 027</code></div>
+          <div><i>NV</i><span>Nevian Workspace<small>Step-up MFA</small></span><code className="password-phone-totp">730 518</code></div>
         </div>
         <div className="password-phone-approval">
+          <div className="password-phone-approval-badge"><MiniIcon type="shield" /> Push verification</div>
           <strong>Approve password reset?</strong>
-          <span>Contoso Corporation</span>
+          <span>Acme Corp · NEV-LT-042</span>
           <small>{demoUser.email}</small>
-          <button type="button" className={selected ? 'is-selected' : ''} data-password-cursor-target="true">
-            28
-          </button>
-          <button type="button">54</button>
-          <button type="button">90</button>
-          <button type="button" className="is-deny">Deny</button>
+          <div className="password-phone-numbers">
+            <button type="button" className={selected ? 'is-selected' : ''} data-password-cursor-target="true">
+              28
+            </button>
+            <button type="button">54</button>
+            <button type="button">90</button>
+          </div>
+          <button type="button" className="is-deny">Deny request</button>
         </div>
         <div className="password-phone-home" aria-hidden="true" />
       </div>
@@ -171,10 +180,10 @@ function AuthenticatorPane({ selected, phase }) {
 function SigningPane() {
   return (
     <div className="password-ms-signing" data-password-cursor-target="true">
-      <MicrosoftMark />
+      <AuthBrand />
       <div className="password-ms-spinner"><i /><i /></div>
       <h3>Completing verification</h3>
-      <p>Securely returning to Nevian…</p>
+      <p>Identity confirmed · returning to Nevian…</p>
     </div>
   );
 }
@@ -279,7 +288,7 @@ export default function PasswordResetDemo() {
             <h2>Reset a password without opening a ticket.</h2>
           </div>
           <div className="password-demo-heading-copy">
-            <p>Nevian confirms the user&apos;s identity with Microsoft and records each step before restoring access.</p>
+            <p>Nevian confirms the user&apos;s identity with MFA and records each step before restoring access.</p>
             <button type="button" onClick={replay}>Replay demo <IconArrow /></button>
           </div>
         </header>
@@ -308,12 +317,12 @@ export default function PasswordResetDemo() {
                       <span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span>
                       <div className="password-chat-bubble is-agent">
                         <b>I can reset that.</b>
-                        <p>Microsoft needs to confirm it&apos;s you first.</p>
+                        <p>Please confirm your identity with your authenticator first.</p>
                         {phase > 3 ? (
-                          <span className="password-verify-button is-done"><IconCheck /> Verified with Microsoft</span>
+                          <span className="password-verify-button is-done"><IconCheck /> Identity verified</span>
                         ) : (
                           <button type="button" className={`password-verify-button${phase === 3 ? ' is-clicking' : ''}`} data-password-cursor-target={phase === 3 ? 'true' : undefined}>
-                            <MiniIcon type="shield" /> Verify with Microsoft <IconArrow />
+                            <MiniIcon type="shield" /> Verify identity <IconArrow />
                           </button>
                         )}
                       </div>
@@ -325,7 +334,7 @@ export default function PasswordResetDemo() {
                       <span className="password-demo-agent-mark"><img src="/assets/logo.png" alt="" /></span>
                       <div className="password-chat-bubble is-agent" data-password-cursor-target={phase === 9 ? 'true' : undefined}>
                         <b>Done, your password is reset.</b>
-                        <p>Microsoft will ask you to choose a new one at your next sign-in.</p>
+                        <p>You&apos;ll be prompted to choose a new one at your next sign-in.</p>
                       </div>
                     </div>
                   )}

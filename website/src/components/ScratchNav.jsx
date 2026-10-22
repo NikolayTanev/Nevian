@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import PlatformMenu from './PlatformMenu.jsx';
 
 const mobilePlatformLinks = [
   ['Platform overview', '/#features'],
-  ['Workflow', '/#how'],
+  ['Device context', '/device-context.html'],
+  ['Smart routing', '/smart-routing.html'],
   ['Security', '/security.html'],
-  ['Integrations', '/#integrations'],
+  ['Integrations', '/integrations.html'],
 ];
 
 // The dark/green Nevian navigation shared by the landing page and every
@@ -24,7 +26,7 @@ export default function ScratchNav() {
         </a>
         <div className="scratch-links">
           <a href="/#top">Home</a>
-          <a href="/#how">Workflow</a>
+          <a href="/#how">How it works</a>
           <PlatformMenu
             active={false}
             open={platformOpen}
@@ -47,9 +49,9 @@ export default function ScratchNav() {
 
       <div className={`scratch-mobile-nav ${mobileOpen ? 'is-open' : ''}`} aria-hidden={!mobileOpen}>
         <a href="/#top">Home</a>
-        <a href="/#how">Workflow</a>
+        <a href="/#how">How it works</a>
         <button type="button" aria-expanded={mobilePlatformOpen} onClick={() => setMobilePlatformOpen((open) => !open)}>
-          Platform <span>⌄</span>
+          Platform <ChevronDown className="scratch-mobile-caret" aria-hidden="true" />
         </button>
         <div className={`scratch-mobile-platform ${mobilePlatformOpen ? 'is-open' : ''}`}>
           {mobilePlatformLinks.map(([label, href]) => <a href={href} key={label}>{label}</a>)}

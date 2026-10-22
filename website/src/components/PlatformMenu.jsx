@@ -4,15 +4,15 @@ import { IconArrow, IconShield } from './Icons.jsx';
 const platformCards = [
   {
     key: 'overview',
-    title: 'Platform overview',
-    description: 'See how Nevian connects context, policy, and action.',
-    href: '/#features',
+    title: 'Device context',
+    description: 'See the device, its health, and its history behind every request.',
+    href: '/device-context.html',
   },
   {
     key: 'workflow',
-    title: 'Workflow',
-    description: 'Follow a request from report through resolution.',
-    href: '/#how',
+    title: 'Smart routing',
+    description: 'Follow a request from report to the right agent or engineer.',
+    href: '/smart-routing.html',
   },
   {
     key: 'security',
@@ -24,7 +24,7 @@ const platformCards = [
     key: 'integrations',
     title: 'Integrations',
     description: 'Connect the tools your IT team already uses.',
-    href: '/#integrations',
+    href: '/integrations.html',
   },
 ];
 

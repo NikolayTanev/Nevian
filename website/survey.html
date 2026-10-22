@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050505" />
+    <title>Nevian survey for IT teams</title>
+    <meta name="description" content="Three quick, anonymous questions for IT teams." />
+    <link rel="canonical" href="https://nevian.info/survey" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nevian" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Three quick questions for IT teams" />
+    <meta property="og:description" content="An anonymous survey for IT teams. We will share the results publicly." />
+    <meta property="og:url" content="https://nevian.info/survey" />
+    <meta property="og:image" content="https://nevian.info/assets/image.png" />
+    <meta property="og:image:alt" content="Nevian — AI-powered IT support" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Three quick questions for IT teams" />
+    <meta name="twitter:description" content="An anonymous survey for IT teams. We will share the results publicly." />
+    <meta name="twitter:image" content="https://nevian.info/assets/image.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/assets/logo.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+      html,body,#root{margin:0;min-height:100%;background:#050505;color-scheme:dark}
+      @view-transition{navigation:auto}
+      ::view-transition-old(root){animation:nevian-page-out 90ms ease-out both}
+      ::view-transition-new(root){animation:nevian-page-in 170ms cubic-bezier(.2,.75,.25,1) both}
+      @keyframes nevian-page-out{to{opacity:.86}}
+      @keyframes nevian-page-in{from{opacity:.82;transform:translateY(3px)}to{opacity:1;transform:none}}
+      @media(prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+    </style>
+    <script type="speculationrules">
+      {"prerender":[{"urls":["/"],"eagerness":"moderate"}]}
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/survey-main.jsx"></script>
+  </body>
+</html>

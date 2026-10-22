@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ArrowUp, Plus } from 'lucide-react';
 import { IconArrow, IconCheck } from './Icons.jsx';
 
 // Phase map: 0 idle · 1 user types · 2 agent replies · 3 click "Verify with
@@ -362,12 +363,12 @@ export default function PasswordResetDemo() {
                   </div>
                 </div>
                 <div className="password-demo-composer" data-password-cursor-target={phase === 0 ? 'true' : undefined}>
-                  <button type="button" className="is-attach" aria-label="Attach a document">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>
+                  <button type="button" className="is-attach" aria-label="Add attachment">
+                    <Plus aria-hidden="true" />
                   </button>
-                  <span>Message Nevian AI…</span>
+                  <span>Ask anything</span>
                   <button type="button" className="is-send" aria-label="Send message">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+                    <ArrowUp aria-hidden="true" />
                   </button>
                 </div>
               </main>

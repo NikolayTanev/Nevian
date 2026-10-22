@@ -74,6 +74,7 @@ export default defineConfig({
         documentation: resolve(root, 'documentation/index.html'),
         ...documentationInputs,
         'human-handoff': resolve(root, 'human-handoff.html'),
+        survey: resolve(root, 'survey.html'),
       },
     },
   },

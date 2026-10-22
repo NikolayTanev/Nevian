@@ -5176,74 +5176,53 @@ html.contact-route .site-nav {
   animation: password-type-user 1.55s steps(24, end) .25s forwards, password-caret .55s step-end infinite;
 }
 
+/* Matches the product's chat input: a rounded pill with a circular "+"
+   on the left, "Ask anything", and a circular send button on the right. */
 .password-demo-composer {
   display: flex;
   align-items: center;
-  gap: 12px;
-  gap: 6px;
-  height: 44px;
+  gap: 10px;
+  height: 46px;
   margin: 4px 16px 12px;
-  padding: 0 6px;
-  border: 1px solid rgba(255, 255, 255, .07);
-  border-radius: 12px;
-  color: #767d7b;
-  background: rgba(255, 255, 255, .025);
-  font-size: 12.5px;
+  padding: 0 7px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 999px;
+  color: #7d8481;
+  background: #1a1b1b;
+  font-size: 13.5px;
 }
 
-.password-demo-composer span { flex: 1; padding-left: 2px; }
+.password-demo-composer span { flex: 1; }
 
-/* Attach a document — quiet, icon-only. */
-.password-demo-composer .is-attach {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 0;
-  border-radius: 8px;
-  color: #8b928f;
-  background: transparent;
-  cursor: pointer;
-  transition: color .16s ease, background .16s ease;
-}
-
-.password-demo-composer .is-attach:hover {
-  color: #eef2f0;
-  background: rgba(255, 255, 255, .05);
-}
-
-.password-demo-composer .is-attach svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
+.password-demo-composer .is-attach,
 .password-demo-composer .is-send {
   display: grid;
   width: 32px;
   height: 32px;
   flex: 0 0 auto;
   place-items: center;
-  border: 0;
-  border-radius: 9px;
-  color: #fff;
-  background: #15a06b;
+  padding: 0;
+  border-radius: 999px;
   cursor: pointer;
 }
 
+.password-demo-composer .is-attach {
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: #d6dbd9;
+  background: transparent;
+}
+
+.password-demo-composer .is-send {
+  border: 0;
+  color: #9aa2a0;
+  background: #2b2c2c;
+}
+
+.password-demo-composer .is-attach svg,
 .password-demo-composer .is-send svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
+  width: 16px;
+  height: 16px;
   stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 .password-demo-context {
@@ -7121,9 +7100,8 @@ html.contact-route .site-nav {
   }
 
   .password-demo-composer .is-send {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
+    width: 26px;
+    height: 26px;
   }
 
   .password-demo-composer .is-attach svg,

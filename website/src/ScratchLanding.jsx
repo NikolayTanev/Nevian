@@ -52,7 +52,6 @@ const homeFaqs = [
 ];
 
 export default function ScratchLanding() {
-  const [demoRun, setDemoRun] = useState(0);
   const [workloadReduction, setWorkloadReduction] = useState(0);
 
   // GSAP-powered smooth scroll for in-page hash links (nav, platform menu, hero).
@@ -121,19 +120,9 @@ export default function ScratchLanding() {
 
       <section className="scratch-stage" id="how" aria-label="Nevian password reset demo">
         <div className="scratch-browser">
-          <div className="scratch-browser-bar">
-            <div className="scratch-browser-dots"><i /><i /><i /></div>
-            <div className="scratch-browser-address"><span aria-hidden="true">⌕</span> your-company.nevian-info.com/support</div>
-            <div className="scratch-browser-tools">
-              <button type="button" onClick={() => setDemoRun((run) => run + 1)} aria-label="Restart demo" title="Restart demo">
-                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 6.5A6 6 0 1 0 16 12M15.5 3v3.5H12" /></svg>
-              </button>
-              <a href="#contact" aria-label="Open support" title="Open support">
-                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11 4h5v5M16 4l-7 7M15 11v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4" /></svg>
-              </a>
-            </div>
-          </div>
-          <div className="scratch-demo"><PasswordResetDemo key={demoRun} /></div>
+          {/* Only renders the "9:41" status bar inside the mobile phone frame. */}
+          <div className="scratch-browser-bar" aria-hidden="true" />
+          <div className="scratch-demo"><PasswordResetDemo /></div>
         </div>
       </section>
 

@@ -33,7 +33,10 @@ button { font: inherit; }
 .scratch-release b { color: #fff; font-weight: 500; }
 .scratch-release svg { width: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 .scratch-release-mobile { display: none; }
-.scratch-stage { position: relative; width: min(1360px, calc(100% - 72px)); margin: 38px auto 0; perspective: 1600px; }
+/* The preview always renders at full desktop width, pinned to the left. Narrower
+   screens crop it on the right behind a fade instead of reflowing it, and phones
+   scale the whole window down. */
+.scratch-stage { --preview-scale: 1; --preview-width: 1240px; position: relative; width: min(1360px, calc(100% - 72px)); margin: 38px auto 0; }
 /* Soft green glow above the demo window. */
 .scratch-stage::before {
   content: '';
@@ -45,18 +48,29 @@ button { font: inherit; }
   filter: blur(40px);
   pointer-events: none;
 }
+.scratch-stage-clip { position: relative; z-index: 1; height: calc(722px * var(--preview-scale)); overflow: hidden; }
 /* Flat app window, Linear-style: hairline border, no drop shadow. */
-.scratch-browser { position: relative; z-index: 1; overflow: hidden; min-height: 720px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 12px; background: #0f1011; box-shadow: none; }
-/* No fake browser chrome on desktop; the bar only shows as the phone status bar on mobile. */
-.scratch-browser-bar { display: none; }
-.scratch-demo { height: 720px; overflow: hidden; background: #090a0a; }
-.scratch-demo .password-demo-section { padding: 0 !important; min-height: 0 !important; background: transparent !important; border: 0 !important; }
-.scratch-demo .password-demo-shell { width: 100% !important; max-width: none !important; margin: 0 !important; }
-.scratch-demo .password-demo-heading { display: none !important; }
-.scratch-demo .password-demo-frame { --password-chat-inset: 26px; border: 0 !important; border-radius: 0 !important; height: 720px; min-height: 0; aspect-ratio: auto; box-shadow: none !important; }
-.scratch-demo .password-demo-progress { display: none !important; }
-.scratch-demo .password-demo-camera { top: 0; right: 0; bottom: 0; left: 0; transform-origin: 100% 0; }
-.scratch-demo .password-demo-camera.is-message-closeup { transform: scale(2.55); }
+.scratch-browser {
+  position: relative;
+  width: max(100%, var(--preview-width));
+  height: 722px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 12px;
+  background: #0f1011;
+  transform: scale(var(--preview-scale));
+  transform-origin: 0 0;
+}
+.scratch-demo { height: 720px; overflow: hidden; background: #0f1011; }
+@media (max-width: 1311px) {
+  .scratch-stage-clip {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - min(180px, 28%)), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - min(180px, 28%)), transparent);
+  }
+}
+@media (max-width: 960px) {
+  .scratch-stage { --preview-scale: .8; }
+}
 .scratch-page .integrations-band { background: #050505; border-bottom: 0; }
 .scratch-page .integrations-band::after { background: linear-gradient(180deg, #050505 0%, rgba(5,5,5,.94) 34%, rgba(5,5,5,.48) 68%, rgba(5,5,5,0) 100%); }
 
@@ -76,197 +90,7 @@ button { font: inherit; }
   .scratch-hero-copy p { max-width: 560px; margin-top: 14px; font-size: 16px; line-height: 1.38; }
   .scratch-actions { margin-top: 30px; gap: 10px; }
   .scratch-actions a { min-height: 52px; padding: 0 17px; font-size: 15px; }
-  .scratch-stage { width: calc(100% - 36px); margin-top: 48px; display: flex; justify-content: center; }
-  .scratch-browser {
-    display: flex;
-    flex-direction: column;
-    width: min(360px, 100%);
-    min-height: 0;
-    height: min(720px, calc(100svh - 132px));
-    max-height: 740px;
-    aspect-ratio: 9 / 19.4;
-    overflow: hidden;
-    border: 10px solid #121314;
-    border-radius: 44px;
-    background: #0c0d0d;
-    box-shadow: 0 28px 70px rgba(0, 0, 0, .55);
-    transform: none;
-  }
-  .scratch-browser::before {
-    content: '';
-    position: absolute;
-    z-index: 8;
-    top: 8px;
-    left: 50%;
-    width: 88px;
-    height: 22px;
-    border-radius: 12px;
-    background: #0c0d0d;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-  .scratch-browser::after {
-    content: '';
-    position: absolute;
-    z-index: 8;
-    bottom: 7px;
-    left: 50%;
-    width: 112px;
-    height: 4px;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, .32);
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-  .scratch-browser-bar {
-    position: absolute;
-    z-index: 9;
-    top: 12px;
-    left: 22px;
-    right: auto;
-    display: block;
-    width: max-content;
-    height: auto;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    grid-template-columns: none;
-    pointer-events: none;
-  }
-  .scratch-browser-bar::before {
-    content: '9:41';
-    color: #eef2f0;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .02em;
-    font-variant-numeric: tabular-nums;
-  }
-  .scratch-demo {
-    position: relative;
-    flex: 1 1 auto;
-    height: auto;
-    min-height: 0;
-    zoom: 1;
-    overflow: hidden;
-    background: #0c0d0d;
-  }
-  .scratch-demo .password-demo-section,
-  .scratch-demo .password-demo-shell,
-  .scratch-demo .password-demo-frame {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: auto !important;
-    min-height: 0 !important;
-    max-width: none;
-    margin: 0;
-    aspect-ratio: auto;
-  }
-  .scratch-demo .password-demo-camera {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform: none !important;
-    transition: none;
-  }
-  .scratch-demo .password-demo-camera.is-message-closeup,
-  .scratch-demo .password-demo-camera.is-auth-open {
-    transform: none !important;
-  }
-  .scratch-demo .password-microsoft-layer { bottom: 0; }
-  .scratch-demo .password-demo-chat {
-    grid-template-rows: 76px minmax(0, 1fr) 72px;
-  }
-  .scratch-demo .password-demo-chat > header {
-    min-height: 76px;
-    align-items: flex-end;
-    padding: 0 16px 11px;
-    border: 0 !important;
-    box-shadow: none !important;
-    background: #0c0d0d;
-  }
-  .scratch-demo .password-demo-chat > header > div {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .scratch-demo .password-demo-chat > header .password-demo-agent-mark {
-    grid-row: auto;
-    align-self: center;
-  }
-  .scratch-demo .password-demo-chat > header b {
-    display: block;
-    margin: 0;
-    padding-top: 1px;
-    line-height: 1;
-    transform: none;
-  }
-  .scratch-demo .password-demo-composer {
-    margin: 4px 14px 26px;
-  }
-  .scratch-demo .password-mfa-pair {
-    width: 100%;
-    height: 100%;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-  .scratch-demo .password-mfa-request { display: none; }
-  .scratch-demo .password-phone {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    justify-self: stretch;
-  }
-  .scratch-demo .password-ms-identity-frame {
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border-radius: 0;
-    box-shadow: none;
-    background: #0c0d0d;
-  }
-  .scratch-demo .password-ms-identity {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    padding: 46px 20px 28px;
-    border: 0;
-    border-radius: 0;
-    background: #0c0d0d;
-  }
-  .scratch-demo .password-ms-signing {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    background: #0c0d0d;
-  }
-  .scratch-demo .password-microsoft-scene { width: 100%; height: 100%; }
-  .scratch-demo .password-phone-status,
-  .scratch-demo .password-phone-speaker,
-  .scratch-demo .password-phone-home { display: none; }
-  .scratch-demo .password-phone-header {
-    height: 76px;
-    justify-content: center;
-    padding: 28px 16px 10px;
-  }
-  .scratch-demo .password-phone-header span,
-  .scratch-demo .password-phone-header b {
-    display: none !important;
-  }
-  .scratch-demo .password-phone-approval {
-    top: 118px;
-    width: min(220px, 78%);
-    padding: 18px 18px 14px;
-  }
+  .scratch-stage { --preview-scale: .6; width: auto; margin: 48px 0 0 18px; }
 }
 
 @media (max-width: 420px) {
@@ -276,17 +100,7 @@ button { font: inherit; }
   .scratch-hero-copy p { font-size: 14px; }
   .scratch-actions { flex-direction: column; align-items: stretch; }
   .scratch-actions a { width: 100%; }
-  .scratch-stage { margin-top: 40px; }
-  .scratch-browser {
-    width: min(340px, 100%);
-    height: min(680px, calc(100svh - 118px));
-    border-width: 8px;
-    border-radius: 38px;
-  }
-  .scratch-demo .password-demo-camera.is-message-closeup,
-  .scratch-demo .password-demo-camera.is-auth-open {
-    transform: none !important;
-  }
+  .scratch-stage { --preview-scale: .52; margin-top: 40px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2211,133 +2025,3 @@ button { font: inherit; }
 .hho-visual .bento-handoff-meta b { font-size: 15.5px; }
 .hho-visual .bento-handoff-meta small { font-size: 12.5px; }
 .hho-visual .bento-handoff-status { font-size: 12.5px; padding: 5px 12px; }
-
-/* ===========================================================================
-   Homepage password-reset demo, restyled after Linear's app UI: one flat grey
-   surface, hairline dividers, quiet secondary text, agent replies as plain
-   text, user messages in a bordered grey box, no glows or tinted cards.
-   Colour/border only, so the mobile phone-frame layout rules still apply.
-   =========================================================================== */
-.scratch-demo,
-.scratch-demo .password-demo-workspace,
-.scratch-demo .password-demo-chat { background: #0f1011; }
-
-.scratch-demo .password-demo-chat > header { background: #0f1011; border-bottom-color: rgba(255, 255, 255, .06); }
-.scratch-demo .password-demo-chat > header b { color: #f7f8f8; font-size: 13px; font-weight: 550; }
-.scratch-demo .password-demo-chat > header small { color: #8a8f98; font-size: 11.5px; }
-.scratch-demo .password-demo-chat > header small i { box-shadow: none; }
-.scratch-demo .password-demo-chat > header button { color: #62666d; }
-
-.scratch-demo .password-demo-date { color: #62666d; font-size: 11px; letter-spacing: .02em; text-transform: none; }
-
-/* User message: bordered grey box, like Linear's prompt bubble. */
-.scratch-demo .password-chat-bubble.is-user {
-  min-height: 0;
-  padding: 10px 13px;
-  border: 1px solid rgba(255, 255, 255, .08);
-  border-radius: 8px;
-  color: #f7f8f8;
-  background: #1c1d1f;
-  font-size: 13.5px;
-  font-weight: 450;
-}
-
-/* Agent reply: a flat grey bubble, one step darker than the user's. */
-.scratch-demo .password-chat-bubble.is-agent {
-  padding: 10px 13px;
-  border: 1px solid rgba(255, 255, 255, .07);
-  border-radius: 8px;
-  background: #17181a;
-  font-size: 13.5px;
-}
-.scratch-demo .password-chat-bubble.is-agent > b { color: #f7f8f8; font-size: 13.5px; font-weight: 550; }
-.scratch-demo .password-chat-bubble p { color: #8a8f98; }
-
-/* Buttons inside the thread: small bordered grey controls. */
-.scratch-demo .password-verify-button,
-.scratch-demo .password-close-actions button {
-  min-height: 30px;
-  padding: 0 11px;
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 6px;
-  color: #f7f8f8;
-  background: #1c1d1f;
-  font-size: 12.5px;
-  font-weight: 500;
-  box-shadow: none;
-}
-.scratch-demo .password-close-actions button.is-close { border-color: transparent; color: #fff; background: var(--scratch-accent); }
-.scratch-demo .password-close-actions button.is-more { color: #8a8f98; background: transparent; }
-.scratch-demo .password-verify-button.is-done { border-color: rgba(255, 255, 255, .07); color: #8a8f98; background: transparent; }
-.scratch-demo .password-success-label { border-color: rgba(255, 255, 255, .08); background: #1c1d1f; }
-
-/* Right-hand context panel: Linear's properties sidebar. */
-.scratch-demo .password-demo-context { background: #0f1011; border-left-color: rgba(255, 255, 255, .06); }
-.scratch-demo .password-demo-context > span { color: #62666d; font-size: 11.5px; font-weight: 500; letter-spacing: 0; text-transform: none; }
-.scratch-demo .password-context-user b { color: #f7f8f8; font-weight: 550; }
-.scratch-demo .password-context-user small { color: #8a8f98; }
-.scratch-demo .password-demo-context dl div { border-color: rgba(255, 255, 255, .05); }
-.scratch-demo .password-demo-context dt { color: #8a8f98; }
-.scratch-demo .password-demo-context dd { color: #f7f8f8; font-weight: 500; }
-.scratch-demo .password-context-policy { border: 1px solid rgba(255, 255, 255, .07); border-radius: 8px; background: #17181a; box-shadow: none; }
-.scratch-demo .password-context-policy > svg { stroke: #8a8f98; }
-.scratch-demo .password-context-policy small { color: #8a8f98; }
-
-/* Composer in the same greys, centred at ~60% width on desktop. */
-.scratch-demo .password-demo-composer { border-color: rgba(255, 255, 255, .08); background: #17181a; color: #62666d; }
-@media (min-width: 761px) {
-  .scratch-demo .password-demo-composer { width: 60%; margin-inline: auto; }
-}
-.scratch-demo .password-demo-composer .is-send { background: #26272a; color: #8a8f98; }
-
-/* Microsoft step: no "splash". The chat just dims a little, the dialog fades
-   in quickly in place, and its thick blue frame is dropped. */
-/* The chat itself never fades (fading it let the old section's green radial
-   background bleed through). One even overlay covers the whole window,
-   including the input bar, so everything dims by the same amount. */
-.scratch-demo .password-demo-section::before,
-.scratch-demo .password-demo-section::after { display: none !important; }
-.scratch-demo .password-demo-camera.is-auth-open { opacity: 1 !important; }
-.scratch-demo .password-microsoft-layer { bottom: 0; background: rgba(8, 9, 10, .6); transition: opacity .2s ease, visibility .2s ease; }
-.scratch-demo .password-microsoft-scene { animation: scratch-ms-fade .2s ease both; }
-@keyframes scratch-ms-fade { from { opacity: 0; } to { opacity: 1; } }
-@media (min-width: 761px) {
-  .scratch-demo .password-demo-camera.is-auth-open { transform: none; }
-  .scratch-demo .password-ms-identity-frame {
-    padding: 0;
-    overflow: hidden;
-    border-radius: 10px;
-    background: transparent;
-  }
-  .scratch-demo .password-ms-identity { border: 0; }
-  /* Same rounded corners on every Microsoft card, not just the first. */
-  .scratch-demo .password-ms-card,
-  .scratch-demo .password-mfa-request,
-  .scratch-demo .password-ms-signing { overflow: hidden; border: 0; border-radius: 10px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .scratch-demo .password-microsoft-scene { animation: none; }
-}
-/* Agent logo sits beside the first line of its reply, not the last. */
-.scratch-demo .password-chat-row.is-agent { align-items: flex-start; }
-
-/* No chat header ("Nevian · Online · •••"): the thread starts at the top. */
-.scratch-demo .password-demo-chat > header { display: none !important; }
-.scratch-demo .password-demo-chat { grid-template-rows: minmax(0, 1fr) 56px; }
-.scratch-demo .password-demo-messages { padding-top: 18px; }
-@media (max-width: 760px) {
-  /* Leave room for the phone's "9:41" status line. */
-  .scratch-demo .password-demo-chat { grid-template-rows: minmax(0, 1fr) 72px; }
-  .scratch-demo .password-demo-messages { padding-top: 44px; }
-}
-
-/* No "splashes": drop the big dark drop shadows around the Microsoft cards
-   and the phone, and the green glowing ring on each cursor click. */
-.scratch-demo .password-ms-card,
-.scratch-demo .password-ms-identity-frame,
-.scratch-demo .password-mfa-request,
-.scratch-demo .password-phone,
-.scratch-demo .password-ms-signing,
-.scratch-demo .password-phone-approval { box-shadow: 0 0 0 1px rgba(255, 255, 255, .08) !important; }
-.scratch-demo .password-persistent-cursor { filter: none; }
-.scratch-demo .password-persistent-cursor i { display: none; }

@@ -119,10 +119,10 @@ export default function ScratchLanding() {
       </section>
 
       <section className="scratch-stage" id="how" aria-label="Nevian workspace preview">
-        <div className="scratch-browser">
-          {/* Only renders the "9:41" status bar inside the mobile phone frame. */}
-          <div className="scratch-browser-bar" aria-hidden="true" />
-          <div className="scratch-demo"><NevianAppPreview /></div>
+        <div className="scratch-stage-clip">
+          <div className="scratch-browser">
+            <div className="scratch-demo"><NevianAppPreview /></div>
+          </div>
         </div>
       </section>
 

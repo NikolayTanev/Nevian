@@ -1,3 +1,7 @@
+/** @OnlyCurrentDoc */
+// ^ Limits this script's permission to this one spreadsheet, instead of
+//   every spreadsheet in the Google account.
+
 // Nevian pain-point survey → Google Sheet (one row per answer).
 //
 // Create a Google Sheet, then Extensions → Apps Script, paste this file and
@@ -15,6 +19,12 @@ var TEAM_SIZES = ['1', '2-3', '4-10', '10+'];
 var LANGS = ['de', 'en'];
 
 var HEADERS = ['timestamp', 'lang', 'team_size'].concat(PAINS).concat(['other_text', 'wish']);
+
+// Basic throttling. Apps Script can't see visitor IPs, so this is a global
+// cap: it stops a script from flooding the sheet, not one person answering
+// twice. Raise the limits if a real post ever brings more traffic than this.
+var MAX_PER_MINUTE = 20;
+var MAX_PER_DAY = 1000;
 
 function doGet() {
   return json_({ ok: true, service: 'nevian-survey' });
@@ -53,12 +63,33 @@ function doPost(event) {
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
+    if (!takeSlot_()) {
+      return json_({ error: 'Too many responses right now. Please try again in a minute.' });
+    }
     getSheet_().appendRow(row);
   } finally {
     lock.releaseLock();
   }
 
   return json_({ ok: true });
+}
+
+// Counts accepted submissions per minute and per day in the script cache.
+// Returns false once either limit is reached. Called inside the script lock,
+// so concurrent requests can't race past the count.
+function takeSlot_() {
+  var cache = CacheService.getScriptCache();
+  var now = new Date();
+  var minuteKey = 'svy-m-' + Math.floor(now.getTime() / 60000);
+  var dayKey = 'svy-d-' + now.toISOString().slice(0, 10);
+
+  var perMinute = Number(cache.get(minuteKey) || 0);
+  var perDay = Number(cache.get(dayKey) || 0);
+  if (perMinute >= MAX_PER_MINUTE || perDay >= MAX_PER_DAY) return false;
+
+  cache.put(minuteKey, String(perMinute + 1), 120);   // expires after 2 min
+  cache.put(dayKey, String(perDay + 1), 21600);       // cache max is 6 h
+  return true;
 }
 
 // Optional: run once from the editor to add a "Summary" tab with live counts

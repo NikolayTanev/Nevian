@@ -5,6 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
+// true replaces the whole site (local dev and the deployed build) with coming-soon.html. Set to false to bring the full site back.
+const comingSoon = true;
+
 const documentationRoutes = [
   'onboard-first-device',
   'deployment-checklist',
@@ -56,26 +59,51 @@ function documentationRedirectPlugin() {
   };
 }
 
+// Serves coming-soon.html as the homepage and as 404.html, so every path on GitHub Pages lands on it.
+function comingSoonPlugin() {
+  return {
+    name: 'coming-soon',
+    enforce: 'post',
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const { pathname } = new URL(req.url ?? '/', 'http://localhost');
+        const isPage = req.headers.accept?.includes('text/html') && (pathname.endsWith('/') || pathname.endsWith('.html') || !pathname.includes('.'));
+        if (isPage) req.url = '/coming-soon.html';
+        next();
+      });
+    },
+    generateBundle(_, bundle) {
+      const page = bundle['coming-soon.html'];
+      delete bundle['coming-soon.html'];
+      for (const fileName of ['index.html', '404.html']) {
+        this.emitFile({ type: 'asset', fileName, source: page.source });
+      }
+    },
+  };
+}
+
+const siteInputs = {
+  main: resolve(root, 'index.html'),
+  hyperhedge: resolve(root, 'hyperhedge.html'),
+  workload: resolve(root, 'workload.html'),
+  'device-context': resolve(root, 'device-context.html'),
+  'identity-verification': resolve(root, 'identity-verification.html'),
+  integrations: resolve(root, 'integrations.html'),
+  'smart-routing': resolve(root, 'smart-routing.html'),
+  'audit-trail': resolve(root, 'audit-trail.html'),
+  insights: resolve(root, 'insights.html'),
+  security: resolve(root, 'security.html'),
+  documentation: resolve(root, 'documentation/index.html'),
+  ...documentationInputs,
+  'human-handoff': resolve(root, 'human-handoff.html'),
+  survey: resolve(root, 'survey.html'),
+};
+
 export default defineConfig({
-  plugins: [react(), documentationRedirectPlugin()],
+  plugins: [react(), documentationRedirectPlugin(), comingSoon && comingSoonPlugin()],
   build: {
     rollupOptions: {
-      input: {
-        main: resolve(root, 'index.html'),
-        hyperhedge: resolve(root, 'hyperhedge.html'),
-        workload: resolve(root, 'workload.html'),
-        'device-context': resolve(root, 'device-context.html'),
-        'identity-verification': resolve(root, 'identity-verification.html'),
-        integrations: resolve(root, 'integrations.html'),
-        'smart-routing': resolve(root, 'smart-routing.html'),
-        'audit-trail': resolve(root, 'audit-trail.html'),
-        insights: resolve(root, 'insights.html'),
-        security: resolve(root, 'security.html'),
-        documentation: resolve(root, 'documentation/index.html'),
-        ...documentationInputs,
-        'human-handoff': resolve(root, 'human-handoff.html'),
-        survey: resolve(root, 'survey.html'),
-      },
+      input: comingSoon ? { 'coming-soon': resolve(root, 'coming-soon.html') } : siteInputs,
     },
   },
 });

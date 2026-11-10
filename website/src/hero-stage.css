@@ -1,0 +1,454 @@
+/* Homepage hero story (HeroStage.jsx): a scroll-scrubbed walkthrough drawn
+   over the main panel of the app preview. Positions inside .nvs-world are in
+   px from the canvas centre, so the lines in .nvs-lines can share them. */
+
+/* Skip row under the window, only while the story is active. Its 44px total
+   height (12px gap + 32px row) is budgeted in STAGE_CHROME in HeroStage.jsx. */
+.scratch-story-row { display: none; }
+/* Lets the window grow past the 1360px column when HeroStage scales it up. */
+.scratch-stage.is-story { width: min(max(1360px, calc(1240px * var(--preview-scale))), calc(100% - 72px)); }
+.scratch-stage.is-story .scratch-stage-clip { -webkit-mask-image: none; mask-image: none; }
+.scratch-stage.is-story .scratch-story-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 32px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.scratch-story-skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 2px;
+  border: 0;
+  background: none;
+  color: #8d8d8d;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: color .16s ease;
+}
+
+.scratch-story-skip:hover,
+.scratch-story-skip:focus-visible { color: #fff; }
+
+.scratch-story-progress {
+  position: relative;
+  width: 64px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .12);
+}
+
+.scratch-story-progress b {
+  position: absolute;
+  inset: 0;
+  background: var(--scratch-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* Overlay layer: same box as .nva-panel. It stays transparent at the start so
+   the real Home view shows through; only the composer sits on top of it. */
+.nvs {
+  position: absolute;
+  z-index: 5;
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  left: 220px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The story's own panel, faded in over Home once the request is sent. */
+.nvs-surface {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--nva-line);
+  border-radius: 10px;
+  background: var(--nva-panel);
+  /* Once shown (and after the story, when it stays up), it takes the clicks
+     instead of letting them reach the hidden app underneath. */
+  pointer-events: auto;
+}
+
+.nvs-swap { display: inline-grid; }
+.nvs-swap > * { grid-area: 1 / 1; }
+
+/* The one "not resolved yet" indicator, used for every pending state. */
+.nvs-spinner {
+  display: inline-block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgba(255, 255, 255, .22);
+  border-top-color: var(--nva-text);
+  border-radius: 50%;
+  animation: nvs-spin 2.7s linear infinite; /* one calm turn every 2.7s */
+}
+
+@keyframes nvs-spin { to { transform: rotate(360deg); } }
+
+.nvs-status-icon { width: 14px; height: 14px; flex: none; }
+.nvs-spin-wrap { display: grid; place-items: center; }
+.nvs-title .nvs-spinner { width: 13px; height: 13px; }
+.nvs-policy-mark { width: 13px; height: 13px; place-items: center; }
+.nvs-policy-mark svg { width: 13px; height: 13px; color: var(--nva-accent); stroke-width: 2.4; }
+
+/* Top bar */
+.nvs-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 44px;
+  flex: none;
+  align-items: center;
+  padding: 0 14px 0 16px;
+  border-bottom: 1px solid var(--nva-line);
+  background: var(--nva-panel);
+  color: var(--nva-text);
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.nvs-title > span { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.nvs-title em { color: var(--nva-muted); font-style: normal; font-weight: 500; }
+
+.nvs-bar-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.nvs-pill {
+  display: inline-flex;
+  height: 28px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 13px 0 10px;
+  border: 1px solid var(--nva-line-2);
+  border-radius: 999px;
+  background: var(--nva-raised);
+  color: var(--nva-text-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.nvs-pill-icon { width: 14px; height: 14px; place-items: center; }
+.nvs-pill-icon svg { width: 13px; height: 13px; color: var(--nva-accent); stroke-width: 2.4; }
+.nvs-pill-text > span { white-space: nowrap; }
+/* HeroStage sets these opacities directly; the transition makes it a fade. */
+.nvs-pill-text > span,
+.nvs-pill-icon > *,
+.nvs-title-icon > * { transition: opacity .25s ease; }
+.nvs-title-icon { width: 14px; height: 14px; place-items: center; }
+
+.nvs-audit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  color: var(--nva-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.nvs-audit svg { width: 14px; height: 14px; stroke-width: 1.8; }
+
+.nvs-audit b {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .07);
+  color: var(--nva-text);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Canvas and the panning world */
+/* Soft left edge so the panned-away conversation fades out instead of clipping. */
+.nvs-canvas {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 72px);
+  mask-image: linear-gradient(to right, transparent, #000 72px);
+}
+.nvs-world { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; }
+
+.nvs-lines { position: absolute; top: 0; left: -600px; overflow: visible; pointer-events: none; }
+
+.nvs-lines path {
+  fill: none;
+  stroke: rgba(255, 255, 255, .22);
+  stroke-width: 1.2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+/* Context the agent pulls in: the requester and their device. */
+.nvs-context { position: absolute; top: 108px; left: -406px; display: grid; width: 170px; gap: 12px; }
+
+.nvs-node { display: flex; height: 34px; align-items: center; justify-content: flex-end; gap: 10px; text-align: right; }
+.nvs-node b { display: block; color: var(--nva-text); font-size: 12.5px; font-weight: 600; line-height: 1.3; }
+.nvs-node small { display: block; color: var(--nva-faint); font-size: 11px; line-height: 1.3; }
+
+.nvs-node i {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--nva-line-2);
+  border-radius: 6px;
+  color: var(--nva-muted);
+  background: var(--nva-raised);
+}
+
+.nvs-node i svg { width: 12px; height: 12px; stroke-width: 2; }
+
+/* Conversation */
+.nvs-convo { position: absolute; top: 96px; left: -210px; width: 420px; }
+.nvs-msg small,
+.nvs-answer small { display: block; color: var(--nva-faint); font-size: 11.5px; line-height: 16px; }
+
+.nvs-msg h3,
+.nvs-answer h3 {
+  margin: 6px 0 0;
+  color: var(--nva-text);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.012em;
+  line-height: 1.38;
+}
+
+.nvs-q { display: flex; gap: 10px; margin-top: 24px; color: var(--nva-text-2); font-size: 13.5px; line-height: 1.5; }
+.nvs-q .nva-avatar { margin-top: 1px; }
+
+/* Linda's reply sits in her own column, flush with her first message. */
+.nvs-answer { display: block; margin-top: 22px; }
+
+/* Helper windows and the actions card */
+.nvs-helper,
+.nvs-result { position: absolute; }
+.nvs-helper-policy { top: 36px; left: 286px; width: 284px; }
+.nvs-helper-approval { top: 270px; left: 286px; width: 284px; }
+.nvs-result { top: 110px; left: 616px; width: 250px; }
+
+.nvs-helper-label {
+  display: flex;
+  height: 18px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding: 0 2px;
+  font-size: 11.5px;
+}
+
+.nvs-helper-label b { color: var(--nva-text-2); font-weight: 550; }
+.nvs-state { color: var(--nva-faint); font-size: 11px; }
+.nvs-state > span { display: inline-flex; align-items: center; justify-self: end; gap: 5px; white-space: nowrap; }
+.nvs-state .is-done { color: var(--nva-accent); }
+.nvs-state svg { width: 11px; height: 11px; stroke-width: 2.6; }
+.nvs-state .nvs-spinner { width: 9px; height: 9px; }
+
+.nvs-window {
+  overflow: hidden;
+  border: 1px solid var(--nva-line-2);
+  border-radius: 10px;
+  background: var(--nva-card);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
+}
+
+.nvs-window-bar {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--nva-line);
+  color: var(--nva-muted);
+  background: #111111;
+  font-size: 11px;
+}
+
+.nvs-window-bar > i { width: 7px; height: 7px; border-radius: 50%; background: var(--nva-accent); }
+.nvs-window-bar em { margin-left: auto; font-style: normal; }
+.nvs-window-bar em b { color: var(--nva-text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Policy check rows */
+.nvs-policy { margin: 0; padding: 6px 0; list-style: none; }
+
+.nvs-policy li {
+  display: grid;
+  height: 28px;
+  align-items: center;
+  gap: 8px;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+.nvs-policy li > span { color: var(--nva-faint); font-size: 11.5px; }
+.nvs-policy li > b { overflow: hidden; color: var(--nva-text-2); font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.nvs-policy li > svg { width: 13px; height: 13px; color: var(--nva-accent); stroke-width: 2.4; }
+
+.nvs-policy li.is-warn > b { color: var(--nva-text); }
+
+/* Manager approval card */
+.nvs-approval { display: grid; gap: 10px; padding: 12px; }
+.nvs-approver { display: flex; align-items: center; gap: 9px; }
+.nvs-approver b { display: block; color: var(--nva-text); font-size: 12.5px; font-weight: 600; }
+.nvs-approver small { display: block; color: var(--nva-faint); font-size: 11px; }
+.nvs-approval > p { color: var(--nva-text-2); font-size: 12px; line-height: 1.5; }
+.nvs-approval-actions { display: flex; gap: 8px; }
+
+.nvs-btn {
+  display: inline-flex;
+  height: 28px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--nva-line-2);
+  border-radius: 7px;
+  color: var(--nva-muted);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 550;
+}
+
+.nvs-btn-approve { color: var(--nva-text-2); background: #1a1a1a; }
+.nvs-approval-status { color: var(--nva-faint); font-size: 11px; }
+.nvs-approval-status > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.nvs-approval-status .is-done { color: var(--nva-accent); }
+.nvs-approval-status svg { width: 12px; height: 12px; stroke-width: 2.6; }
+.nvs-approval-status .nvs-spinner { width: 9px; height: 9px; }
+
+.nvs-steps-head {
+  display: flex;
+  height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--nva-line);
+  font-size: 12px;
+}
+
+.nvs-steps-head > b { color: var(--nva-text); font-weight: 550; }
+.nvs-steps-head span { color: var(--nva-muted); }
+.nvs-steps-head span b { color: var(--nva-text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.nvs-steps ul { display: grid; gap: 10px; margin: 0; padding: 12px; list-style: none; }
+.nvs-step { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; line-height: 1.4; }
+.nvs-step-text { color: var(--nva-faint); }
+.nvs-step-mark { width: 14px; height: 16px; flex: none; place-items: center; }
+.nvs-step-mark svg { width: 14px; height: 14px; color: var(--nva-accent); stroke-width: 2.4; }
+
+.nvs-steps code,
+.nvs-record code {
+  display: block;
+  color: var(--nva-faint);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px;
+}
+
+.nvs-steps code { padding: 0 12px 12px; }
+
+/* Ticket record */
+.nvs-record {
+  position: absolute;
+  z-index: 3;
+  top: 52px;
+  right: 0;
+  left: 0;
+  width: 470px;
+  margin: 0 auto;
+  padding: 18px 20px 16px;
+  border: 1px solid var(--nva-line-2);
+  border-radius: 12px;
+  background: var(--nva-card);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+}
+
+.nvs-record header { display: flex; align-items: center; gap: 8px; }
+.nvs-record-id { color: var(--nva-muted); font-size: 12px; font-weight: 500; }
+.nvs-record header > b { color: var(--nva-text); font-size: 15px; font-weight: 600; }
+
+.nvs-record-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 3px 9px;
+  border: 1px solid var(--nva-line-2);
+  border-radius: 999px;
+  color: var(--nva-text-2);
+  font-size: 11.5px;
+}
+
+.nvs-record > p { margin: 10px 0 14px; color: var(--nva-text-2); font-size: 13px; line-height: 1.55; }
+.nvs-record ol { margin: 0; padding: 0; border-top: 1px solid var(--nva-line); list-style: none; }
+
+.nvs-record li {
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  grid-template-columns: 40px minmax(0, 1fr) 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--nva-line);
+}
+
+.nvs-record time { color: var(--nva-faint); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.nvs-record li b { display: block; color: var(--nva-text); font-size: 12.5px; font-weight: 550; }
+.nvs-record li small { display: block; color: var(--nva-faint); font-size: 11px; }
+.nvs-record li svg { width: 14px; height: 14px; color: var(--nva-accent); stroke-width: 2.4; }
+.nvs-record code { margin-top: 12px; }
+
+/* Composer: the Home composer's own styles (.nva-composer), positioned by
+   HeroStage. --from-* is the real Home composer, --to-* the dock at the bottom
+   of the canvas, and --dock (0 to 1) moves between them. */
+.nva-composer.nvs-composer {
+  --dock: 0;
+  --dock-y: 0; /* vertical progress; its ease briefly goes past 1 */
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--from-y, 0px) + (var(--to-y, 0px) - var(--from-y, 0px)) * var(--dock-y));
+  left: calc(var(--from-x, 0px) + (var(--to-x, 0px) - var(--from-x, 0px)) * var(--dock));
+  width: calc(var(--from-w, 560px) + (var(--to-w, 560px) - var(--from-w, 560px)) * var(--dock));
+  margin: 0;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, calc(.4 * var(--dock)));
+}
+
+/* GSAP drives the send button's colours; a CSS transition would smear them. */
+.nva-composer .nvs-send { transition: none; }
+
+.nvs-input { display: grid; min-width: 0; flex: 1; }
+.nvs-input > * { grid-area: 1 / 1; min-width: 0; overflow: hidden; font-size: 13.5px; line-height: 30px; text-overflow: ellipsis; white-space: nowrap; }
+.nvs-typed { display: flex; align-items: center; color: var(--nva-text); }
+.nvs-typed-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.nvs-caret {
+  width: 1.5px;
+  height: 16px;
+  flex: none;
+  margin-left: 1px;
+  background: var(--nva-text-2);
+  animation: nvs-blink 1s steps(1) infinite;
+}
+
+@keyframes nvs-blink { 50% { opacity: 0; } }

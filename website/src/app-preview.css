@@ -6,20 +6,21 @@
 .scratch-demo > .nva { position: absolute; inset: 0; height: auto; }
 
 .nva {
-  --nva-bg: #0e0f10;
-  --nva-panel: #131415;
-  --nva-card: #17181a;
-  --nva-raised: #1a1b1d;
-  --nva-raised-2: #212225;
-  --nva-line: rgba(255, 255, 255, .07);
-  --nva-line-2: rgba(255, 255, 255, .1);
-  --nva-hover: rgba(255, 255, 255, .04);
-  --nva-active: rgba(255, 255, 255, .075);
-  --nva-text: #f7f8f8;
-  --nva-text-2: #d0d3d8;
-  --nva-muted: #8a8f98;
-  --nva-faint: #62666d;
-  --nva-accent: #4cb782;
+  /* Matches the Nevian app: near-black base, cards one step up, neutral greys. */
+  --nva-bg: #050505;
+  --nva-panel: #080808;
+  --nva-card: #0d0d0d;
+  --nva-raised: #121212;
+  --nva-raised-2: #1a1a1a;
+  --nva-line: rgba(255, 255, 255, .075);
+  --nva-line-2: rgba(255, 255, 255, .11);
+  --nva-hover: rgba(255, 255, 255, .035);
+  --nva-active: rgba(255, 255, 255, .065);
+  --nva-text: #fafafa;
+  --nva-text-2: #d4d4d4;
+  --nva-muted: #8c8c8c;
+  --nva-faint: #616161;
+  --nva-accent: #22b573;
   --nva-warn: #e2b340;
   position: relative;
   display: grid;
@@ -62,6 +63,7 @@
 .nva :where(h1, h2, h3, h4, p, dl, dd) { margin: 0; font-family: inherit; }
 
 .nva button:focus-visible,
+.nva a:focus-visible,
 .nva input:focus-visible {
   outline: 1px solid rgba(255, 255, 255, .28);
   outline-offset: 1px;
@@ -78,7 +80,7 @@
   place-items: center;
   border-radius: 50%;
   color: var(--nva-text-2);
-  background: #26282b;
+  background: #1c1c1c;
   font-size: 8.5px;
   font-weight: 600;
 }
@@ -96,7 +98,7 @@
   border: 1px solid var(--nva-line);
   border-radius: 7px;
   color: var(--nva-text-2);
-  background: #1c1d20;
+  background: #141414;
 }
 
 .nva-tile svg { width: 15px; height: 15px; stroke-width: 1.7; }
@@ -129,8 +131,8 @@
 
 .nva-round:hover { color: var(--nva-text); background: var(--nva-hover); }
 .nva-round svg { width: 15px; height: 15px; stroke-width: 2; }
-.nva-round.is-send { color: var(--nva-text); background: #2c2d31; }
-.nva-round.is-send:disabled { color: var(--nva-faint); background: #222326; cursor: default; }
+.nva-round.is-send { color: var(--nva-text); background: #242424; }
+.nva-round.is-send:disabled { color: var(--nva-faint); background: #171717; cursor: default; }
 
 .nva-btn {
   display: inline-flex;
@@ -177,9 +179,7 @@
   font-weight: 600;
 }
 
-.nva-workspace:hover { background: var(--nva-hover); }
 .nva-workspace img { width: 18px; height: 18px; object-fit: contain; }
-.nva-workspace svg { width: 13px; height: 13px; color: var(--nva-faint); }
 .nva-side-actions { display: flex; gap: 4px; margin-left: auto; }
 
 .nva-nav { display: grid; gap: 1px; }
@@ -199,7 +199,7 @@
 .nva-nav-item svg { width: 15px; height: 15px; color: var(--nva-muted); stroke-width: 1.8; }
 .nva-nav-item:hover { background: var(--nva-hover); }
 .nva-nav-item.is-active { color: var(--nva-text); background: var(--nva-active); }
-.nva-nav-item.is-active svg { color: var(--nva-text); }
+.nva-nav-item.is-active svg { color: var(--nva-accent); }
 
 .nva-nav-count {
   min-width: 18px;
@@ -321,7 +321,7 @@
 .nva-composer,
 .nva-reply { cursor: default; user-select: none; }
 .nva-composer .nva-round:hover { color: var(--nva-muted); background: none; }
-.nva-composer .nva-round.is-send:hover { color: var(--nva-text); background: #2c2d31; }
+.nva-composer .nva-round.is-send:hover { color: var(--nva-text); background: #242424; }
 .nva-composer-placeholder { flex: 1; color: var(--nva-faint); font-size: 13.5px; line-height: 30px; }
 .nva-reply .nva-composer-placeholder { font-size: 13px; line-height: 28px; }
 .nva-search input::placeholder { color: var(--nva-faint); }
@@ -509,7 +509,7 @@
   min-width: 18px;
   padding: 0 5px;
   border-radius: 9px;
-  color: #0e0f10;
+  color: #050505;
   background: var(--nva-text);
   font-size: 11px;
   font-style: normal;
@@ -558,7 +558,7 @@
 .nva-agent-meta { display: inline-flex; align-items: center; gap: 3px; margin-left: auto; color: var(--nva-faint); font-size: 12px; }
 .nva-agent-meta svg { width: 12px; height: 12px; }
 
-.nva-actions { margin-top: 12px; overflow: hidden; border: 1px solid var(--nva-line); border-radius: 8px; background: #121314; }
+.nva-actions { margin-top: 12px; overflow: hidden; border: 1px solid var(--nva-line); border-radius: 8px; background: #0a0a0a; }
 .nva-actions-head { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--nva-line); font-size: 12.5px; }
 .nva-actions-head b { color: var(--nva-text); font-weight: 550; }
 .nva-actions-head span { color: var(--nva-muted); }

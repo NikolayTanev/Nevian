@@ -35,11 +35,11 @@ const people = {
 };
 
 const statusMeta = {
-  todo: { label: 'Todo', color: '#8a8f98' },
+  todo: { label: 'Todo', color: '#8c8c8c' },
   progress: { label: 'In progress', color: '#e2b340' },
   approval: { label: 'Needs approval', color: '#8b93ff' },
   escalated: { label: 'Escalated', color: '#e8875b' },
-  resolved: { label: 'Resolved', color: '#4cb782' },
+  resolved: { label: 'Resolved', color: '#22b573' },
 };
 
 const priorityLabels = ['No priority', 'Low', 'Medium', 'High'];
@@ -83,7 +83,7 @@ const initialTickets = [
     updated: '26m ago',
     created: 'Today, 08:51',
     channel: 'Catalog',
-    labels: [['Hardware', '#8a8f98']],
+    labels: [['Hardware', '#8c8c8c']],
     description: 'The space bar on my keyboard stopped working.',
     activity: [
       { type: 'event', who: 'linda', text: 'requested Keyboard and mouse from the catalog', time: '26m ago' },
@@ -173,7 +173,7 @@ const initialTickets = [
     updated: 'Oct 17',
     created: 'Oct 16, 10:20',
     channel: 'Catalog',
-    labels: [['Hardware', '#8a8f98']],
+    labels: [['Hardware', '#8c8c8c']],
     description: 'Ordered from the catalog.',
     activity: [
       { type: 'event', who: 'linda', text: 'requested USB-C cable from the catalog', time: 'Oct 16' },
@@ -241,7 +241,7 @@ function StatusIcon({ status }) {
     return (
       <svg className="nva-status" viewBox="0 0 14 14" aria-hidden="true">
         <circle cx="7" cy="7" r="6.25" fill={color} />
-        <path d="M4.4 7.2 6.2 9l3.4-3.6" fill="none" stroke="#111214" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4.4 7.2 6.2 9l3.4-3.6" fill="none" stroke="#050505" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     );
   }
@@ -300,13 +300,14 @@ function Sidebar({ view, onNavigate, openCount, tickets, selectedId, onOpenTicke
   return (
     <aside className="nva-side">
       <div className="nva-side-top">
-        <button type="button" className="nva-workspace">
+        <span className="nva-workspace">
           <img src="/assets/logo.png" alt="" />
           Nevian
-          <ChevronDown aria-hidden="true" />
-        </button>
+        </span>
         <div className="nva-side-actions">
-          <button type="button" className="nva-icon-btn" aria-label="Search"><Search aria-hidden="true" /></button>
+          {/* Plain hash link: the page's smooth-scroll handler takes it to the
+              contact form, same as "Book a demo". */}
+          <a className="nva-icon-btn" href="#contact" aria-label="Book a demo"><Search aria-hidden="true" /></a>
         </div>
       </div>
 
@@ -523,7 +524,7 @@ function CatalogView({ category, onCategory, requested, cart, onToggleCart, onOp
                       <footer>
                         {ticketId ? (
                           <button type="button" className="nva-btn nva-cart-toggle is-done" onClick={() => onOpenTicket(ticketId)}>
-                            <Check aria-hidden="true" /> Requested · {ticketId}
+                            <Check aria-hidden="true" /> Requested
                           </button>
                         ) : (
                           <button type="button" className={`nva-btn nva-cart-toggle${inCart ? ' is-added' : ''}`} aria-pressed={inCart} onClick={() => onToggleCart(item.id)}>
@@ -700,8 +701,18 @@ function TicketsView({ tickets: ordered, selectedId, onSelect, starred, onToggle
   );
 }
 
-export default function NevianAppPreview() {
+// `children` render as an overlay layer inside the app shell (used by the
+// homepage scroll story), so they inherit the app's design tokens.
+// `navigateRef` receives the view setter so the story can switch views. A
+// synthetic .click() cannot: while pinned, the stage is moved out of the React
+// root and React no longer sees its events.
+export default function NevianAppPreview({ children = null, navigateRef = null }) {
   const [view, setView] = useState('home');
+  useEffect(() => {
+    if (!navigateRef) return undefined;
+    navigateRef.current = setView;
+    return () => { navigateRef.current = null; };
+  }, [navigateRef]);
   const [tickets, setTickets] = useState(initialTickets);
   const [selectedId, setSelectedId] = useState('NEV-0034');
   const [category, setCategory] = useState('all');
@@ -761,7 +772,7 @@ export default function NevianAppPreview() {
       status: needsApproval.length ? 'approval' : 'progress',
       priority: 1,
       channel: 'Catalog',
-      labels: [...new Set(items.map((item) => kindByCategory[item.category]))].map((kind) => [kind, '#8a8f98']),
+      labels: [...new Set(items.map((item) => kindByCategory[item.category]))].map((kind) => [kind, '#8c8c8c']),
       description: `Requested from the catalog: ${names.join(', ')}.`,
       activity: [
         { type: 'event', who: 'linda', text: `requested ${items.length === 1 ? names[0] : `${items.length} items`} from the catalog`, time: 'just now' },
@@ -821,6 +832,7 @@ export default function NevianAppPreview() {
           />
         )}
       </main>
+      {children}
     </div>
   );
 }

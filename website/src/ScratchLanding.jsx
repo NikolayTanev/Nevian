@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import NevianAppPreview from './components/NevianAppPreview.jsx';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
+import HeroStage from './components/HeroStage.jsx';
 import Integrations from './components/Integrations.jsx';
 import FitSection from './components/FitSection.jsx';
 import ContactSection from './components/ContactSection.jsx';
@@ -9,7 +11,10 @@ import Footer from './components/Footer.jsx';
 import ScratchNav from './components/ScratchNav.jsx';
 import { ArrowIcon, bentoContent } from './components/BentoVisuals.jsx';
 
-gsap.registerPlugin(ScrollToPlugin);
+gsap.registerPlugin(ScrollToPlugin, ScrollTrigger, ScrollSmoother);
+
+// Header offset used when an in-page link lands on its section.
+const ANCHOR_OFFSET = 68;
 
 // Bento cards mirror the reference layout: label + arrow anchored bottom-left,
 // media area left open for real assets. Wording is drawn from the product.
@@ -53,6 +58,29 @@ const homeFaqs = [
 
 export default function ScratchLanding() {
   const [workloadReduction, setWorkloadReduction] = useState(0);
+  const wrapperRef = useRef(null);
+  const contentRef = useRef(null);
+
+  // Light ScrollSmoother on mouse/trackpad devices. Touch keeps native scrolling.
+  // Layout effect so it exists before HeroStage builds its ScrollTriggers.
+  useLayoutEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (reduce || !finePointer) return undefined;
+
+    const smoother = ScrollSmoother.create({
+      wrapper: wrapperRef.current,
+      content: contentRef.current,
+      smooth: 0.7,
+      effects: false,
+      smoothTouch: false,
+    });
+    document.documentElement.classList.add('has-smooth-scroll');
+    return () => {
+      smoother.kill();
+      document.documentElement.classList.remove('has-smooth-scroll');
+    };
+  }, []);
 
   // GSAP-powered smooth scroll for in-page hash links (nav, platform menu, hero).
   useEffect(() => {
@@ -70,11 +98,20 @@ export default function ScratchLanding() {
       const target = document.querySelector(hash);
       if (!target) return;
       event.preventDefault();
-      gsap.to(window, {
-        duration: reduce ? 0 : 0.9,
-        ease: 'power2.inOut',
-        scrollTo: { y: target, offsetY: 68 },
-      });
+      const smoother = ScrollSmoother.get();
+      if (smoother) {
+        // A pinned section (the hero story) lands where its pin starts, so it
+        // arrives centred and at the first frame of the story.
+        const pin = ScrollTrigger.getAll().find((trigger) => trigger.pin === target);
+        const y = pin ? pin.start : Math.min(smoother.offset(target, `top ${ANCHOR_OFFSET}px`), ScrollTrigger.maxScroll(window));
+        gsap.to(smoother, { scrollTop: y, duration: 0.9, ease: 'power2.inOut', overwrite: true });
+      } else {
+        gsap.to(window, {
+          duration: reduce ? 0 : 0.9,
+          ease: 'power2.inOut',
+          scrollTo: { y: target, offsetY: ANCHOR_OFFSET },
+        });
+      }
       window.history.pushState(null, '', hash);
     };
     document.addEventListener('click', handleClick);
@@ -103,61 +140,62 @@ export default function ScratchLanding() {
   }, []);
 
   return (
-    <main className="scratch-page">
+    <>
+      {/* The nav lives outside the smoothed content: ScrollSmoother transforms its
+          content, which would break sticky and fixed positioning inside it. */}
       <ScratchNav />
+      <div id="smooth-wrapper" ref={wrapperRef}>
+        <div id="smooth-content" ref={contentRef}>
+          <main className="scratch-page">
+            <section className="scratch-hero" id="top">
+              <div className="scratch-hero-copy">
+                <h1 aria-label="Cut routine IT workload by up to 60%">Cut routine IT workload by up to <strong aria-hidden="true">{workloadReduction}%</strong></h1>
+                <p>Nevian is an AI-powered IT support platform. It verifies the requester, checks live device and directory context, follows your policies, completes approved actions, and hands exceptions to the right person with a full audit trail.</p>
+                <div className="scratch-actions">
+                  <a className="scratch-primary" href="#contact">Book a demo</a>
+                </div>
+              </div>
+              <a className="scratch-release" href="#how"><b>Nevian</b> Explore the workspace <ArrowIcon /></a>
+            </section>
 
-      <section className="scratch-hero" id="top">
-        <div className="scratch-hero-copy">
-          <h1 aria-label="Cut routine IT workload by up to 60%">Cut routine IT workload by up to <strong aria-hidden="true">{workloadReduction}%</strong></h1>
-          <p>Nevian is an AI-powered IT support platform. It verifies the requester, checks live device and directory context, follows your policies, completes approved actions, and hands exceptions to the right person with a full audit trail.</p>
-          <div className="scratch-actions">
-            <a className="scratch-primary" href="#contact">Book a demo</a>
-          </div>
+            <HeroStage />
+
+            <Integrations />
+
+            <section className="scratch-bento" id="features" aria-label="The Nevian platform">
+              <h2 className="scratch-bento-title">One platform for AI-powered IT support,<br />endpoint context, and secure automation</h2>
+              <div className="scratch-bento-grid">
+                {bentoCards.map((card) => (
+                  <article key={card.area} className={`scratch-bento-card scratch-bento-${card.area}`}>
+                    <div className="scratch-bento-media">{bentoContent[card.area] || null}</div>
+                    <a className="scratch-bento-label" href={card.href}>{card.label} <ArrowIcon /></a>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <FitSection />
+
+            <section className="sec-faq" aria-label="Frequently asked questions">
+              <h2 className="feature-caps-title">Frequently asked<br />questions</h2>
+              <div className="sec-faq-list">
+                {homeFaqs.map((item) => (
+                  <details className="sec-faq-item" key={item.q}>
+                    <summary>
+                      {item.q}
+                      <span className="sec-faq-mark" aria-hidden="true" />
+                    </summary>
+                    <p>{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+
+            <ContactSection />
+            <Footer showCta={false} />
+          </main>
         </div>
-        <a className="scratch-release" href="#how"><b>Nevian</b> Explore the workspace <ArrowIcon /></a>
-      </section>
-
-      <section className="scratch-stage" id="how" aria-label="Nevian workspace preview">
-        <div className="scratch-stage-clip">
-          <div className="scratch-browser">
-            <div className="scratch-demo"><NevianAppPreview /></div>
-          </div>
-        </div>
-      </section>
-
-      <Integrations />
-
-      <section className="scratch-bento" id="features" aria-label="The Nevian platform">
-        <h2 className="scratch-bento-title">One platform for AI-powered IT support,<br />endpoint context, and secure automation</h2>
-        <div className="scratch-bento-grid">
-          {bentoCards.map((card) => (
-            <article key={card.area} className={`scratch-bento-card scratch-bento-${card.area}`}>
-              <div className="scratch-bento-media">{bentoContent[card.area] || null}</div>
-              <a className="scratch-bento-label" href={card.href}>{card.label} <ArrowIcon /></a>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <FitSection />
-
-      <section className="sec-faq" aria-label="Frequently asked questions">
-        <h2 className="feature-caps-title">Frequently asked<br />questions</h2>
-        <div className="sec-faq-list">
-          {homeFaqs.map((item) => (
-            <details className="sec-faq-item" key={item.q}>
-              <summary>
-                {item.q}
-                <span className="sec-faq-mark" aria-hidden="true" />
-              </summary>
-              <p>{item.a}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      <ContactSection />
-      <Footer showCta={false} />
-    </main>
+      </div>
+    </>
   );
 }

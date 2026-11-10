@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('.', import.meta.url));
 
 // true replaces the whole site (local dev and the deployed build) with coming-soon.html. Set to false to bring the full site back.
-const comingSoon = false;
+const comingSoon = true;
 
 const documentationRoutes = [
   'onboard-first-device',
